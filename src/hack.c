@@ -2629,7 +2629,7 @@ inv_weight()
 	   retained in u.ugold in order to keep the status line accurate; we
 	   mustn't add its weight in twice under that circumstance */
 	wt = (otmp && otmp->oclass == COIN_CLASS) ? 0 :
-		(int)((u.ugold + 50L) / 100L);
+		(int)((u.ugold + 50L) / 10000L);
 #endif
 	while (otmp) {
 		//Correct artifact weights before adding them.  Because that code isn't being run.
