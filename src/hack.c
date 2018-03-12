@@ -2542,14 +2542,14 @@ weight_cap()
 {
 	long carrcap = 0, maxcap = MAX_CARR_CAP;
 
-	carrcap = 25*(ACURRSTR + ACURR(A_CON)) + 50;
+	carrcap = 50*(ACURRSTR + ACURR(A_CON)) + 500;
 	
 	struct permonst *mdat = youracedata;
 	
 #ifdef STEED
 	/*If mounted your steed is doing the carrying, use its data instead*/
 	if(u.usteed && u.usteed->data){
-		carrcap = 25L*(acurrstr((int)(u.usteed->mstr)) + u.usteed->mcon) + 50L;
+		carrcap = 50L*(acurrstr((int)(u.usteed->mstr)) + u.usteed->mcon) + 500L;
 		mdat = u.usteed->data;
 	}
 #endif
