@@ -1117,8 +1117,22 @@ enter_explore_mode()
 	char buf[BUFSZ];
 	int really_xplor = FALSE;
 #endif
+
+#ifndef AMYMODE
 	pline("Explore mode is for local games, not public servers.");
 	return 0;
+#endif
+
+#ifdef AMYMODE
+	if (!wizard) {
+		getlin ("Do you want to enter WIZARD mode? [yes/no]?",buf);
+		(void) lcase (buf);
+		if (!(strcmp (buf, "yes"))) {
+			wizard = TRUE;
+			return 0;
+		}
+	}
+#endif
 
 	if(!discover && !wizard) {
 		pline("Beware!  From explore mode there will be no return to normal game.");
