@@ -1118,11 +1118,6 @@ enter_explore_mode()
 	int really_xplor = FALSE;
 #endif
 
-#ifndef AMYMODE
-	pline("Explore mode is for local games, not public servers.");
-	return 0;
-#endif
-
 #ifdef AMYMODE
 	if (!wizard) {
 		getlin ("Do you want to enter WIZARD mode? [yes/no]?",buf);
@@ -1132,6 +1127,11 @@ enter_explore_mode()
 			return 0;
 		}
 	}
+#endif
+
+#ifndef AMYMODE
+	pline("Explore mode is for local games, not public servers.");
+	return 0;
 #endif
 
 	if(!discover && !wizard) {
