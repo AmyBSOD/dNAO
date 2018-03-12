@@ -88,7 +88,7 @@ static struct Bool_Opt
 # if defined(MICRO) || defined(WIN32) || defined(CURSES_GRAPHICS)
 	{"color",         &iflags.wc_color,TRUE, SET_IN_GAME},		/*WC*/
 # else	/* systems that support multiple terminals, many monochrome */
-	{"color",         &iflags.wc_color, FALSE, SET_IN_GAME},	/*WC*/
+	{"color",         &iflags.wc_color, TRUE, SET_IN_GAME},	/*WC*/
 # endif
 #ifdef CURSES_GRAPHICS
 	{"cursesgraphics", &iflags.cursesgraphics, TRUE, SET_IN_GAME},
@@ -136,10 +136,10 @@ static struct Bool_Opt
 	{"use_inverse",   &iflags.wc_inverse, FALSE, SET_IN_GAME},		/*WC*/
 #endif
 	{"hilite_hidden_stairs",    &iflags.hilite_hidden_stairs, TRUE, SET_IN_GAME},	/*WC*/
-	{"hilite_obj_piles",    &iflags.hilite_obj_piles, FALSE, SET_IN_GAME},	/*WC*/
+	{"hilite_obj_piles",    &iflags.hilite_obj_piles, TRUE, SET_IN_GAME},	/*WC*/
 	{"dnethack_start_text",    &iflags.dnethack_start_text, TRUE, DISP_IN_GAME},
 	{"role_obj_names",    &iflags.role_obj_names, TRUE, SET_IN_GAME},
-	{"obscure_role_obj_names",    &iflags.obscure_role_obj_names, FALSE, SET_IN_GAME},
+	{"obscure_role_obj_names",    &iflags.obscure_role_obj_names, TRUE, SET_IN_GAME},
 	{"dnethack_dungeon_colors",    &iflags.dnethack_dungeon_colors, TRUE, SET_IN_GAME},
 	{"hitpointbar", &iflags.hitpointbar, FALSE, SET_IN_GAME},
 	{"hp_monitor", (boolean *)0, TRUE, SET_IN_FILE}, /* For backward compat, HP monitor patch */
@@ -157,7 +157,7 @@ static struct Bool_Opt
 	{"item_use_menu", &iflags.item_use_menu, TRUE, SET_IN_GAME},
 	{"large_font", &iflags.obsolete, FALSE, SET_IN_FILE},	/* OBSOLETE */
 	{"legacy", &flags.legacy, TRUE, DISP_IN_GAME},
-	{"lit_corridor", &flags.lit_corridor, FALSE, SET_IN_GAME},
+	{"lit_corridor", &flags.lit_corridor, TRUE, SET_IN_GAME},
 	{"lootabc", &iflags.lootabc, FALSE, SET_IN_GAME},
 #ifdef MAC_GRAPHICS_ENV
 	{"Macgraphics", &iflags.MACgraphics, TRUE, SET_IN_GAME},
@@ -178,7 +178,7 @@ static struct Bool_Opt
 #else
 	{"menucolors", (boolean *)0, FALSE, SET_IN_GAME},
 #endif
-	{"menu_glyphs", &iflags.use_menu_glyphs, FALSE, SET_IN_GAME},
+	{"menu_glyphs", &iflags.use_menu_glyphs, TRUE, SET_IN_GAME},
 #ifdef WIZARD
 	/* for menu debugging only*/
 	{"menu_tab_sep", &iflags.menu_tab_sep, FALSE, SET_IN_GAME},
@@ -206,11 +206,11 @@ static struct Bool_Opt
 #endif
 #ifdef PARANOID
 	{"paranoid_hit", &iflags.paranoid_hit, FALSE, SET_IN_GAME},
-	{"paranoid_quit", &iflags.paranoid_quit, FALSE, SET_IN_GAME},
-	{"paranoid_remove", &iflags.paranoid_remove, FALSE, SET_IN_GAME},
+	{"paranoid_quit", &iflags.paranoid_quit, TRUE, SET_IN_GAME},
+	{"paranoid_remove", &iflags.paranoid_remove, TRUE, SET_IN_GAME},
 #endif
 	{"perm_invent", &flags.perm_invent, FALSE, SET_IN_GAME},
-       {"pickup_thrown", &iflags.pickup_thrown, FALSE, SET_IN_GAME},
+       {"pickup_thrown", &iflags.pickup_thrown, TRUE, SET_IN_GAME},
 	{"popup_dialog",  &iflags.wc_popup_dialog, FALSE, SET_IN_GAME},	/*WC*/
 	{"prayconfirm", &flags.prayconfirm, TRUE, SET_IN_GAME},
 	{"preload_tiles", &iflags.wc_preload_tiles, TRUE, DISP_IN_GAME},	/*WC*/
@@ -232,11 +232,11 @@ static struct Bool_Opt
 	{"sanity_check", (boolean *)0, FALSE, SET_IN_FILE},
 #endif
 #ifdef SHOW_BORN
-	{"showborn", &iflags.show_born, FALSE, SET_IN_GAME},
+	{"showborn", &iflags.show_born, TRUE, SET_IN_GAME},
 #endif
-	{"showbuc", &iflags.show_buc, FALSE, SET_IN_GAME},
+	{"showbuc", &iflags.show_buc, TRUE, SET_IN_GAME},
 #ifdef EXP_ON_BOTL
-	{"showexp", &flags.showexp, FALSE, SET_IN_GAME},
+	{"showexp", &flags.showexp, TRUE, SET_IN_GAME},
 #else
 	{"showexp", (boolean *)0, FALSE, SET_IN_FILE},
 #endif
@@ -246,7 +246,7 @@ static struct Bool_Opt
         {"showrealtime", &iflags.showrealtime, FALSE, SET_IN_GAME},
 #endif
 #ifdef SCORE_ON_BOTL
-	{"showscore", &flags.showscore, FALSE, SET_IN_GAME},
+	{"showscore", &flags.showscore, TRUE, SET_IN_GAME},
 #else
 	{"showscore", (boolean *)0, FALSE, SET_IN_FILE},
 #endif
@@ -255,7 +255,7 @@ static struct Bool_Opt
 	{"softkeyboard", &iflags.wc2_softkeyboard, FALSE, SET_IN_FILE},
 	{"sortpack", &flags.sortpack, TRUE, SET_IN_GAME},
 	{"sound", &flags.soundok, TRUE, SET_IN_GAME},
-	{"sparkle", &flags.sparkle, TRUE, SET_IN_GAME},
+	{"sparkle", &flags.sparkle, FALSE, SET_IN_GAME},
 	{"standout", &flags.standout, FALSE, SET_IN_GAME},
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
         {"statuscolors", &iflags.use_status_colors, TRUE, SET_IN_GAME},
@@ -264,7 +264,7 @@ static struct Bool_Opt
 #endif
 	{"splash_screen",     &iflags.wc_splash_screen, TRUE, DISP_IN_GAME},	/*WC*/
 	{"tiled_map",     &iflags.wc_tiled_map, PREFER_TILED, DISP_IN_GAME},	/*WC*/
-	{"time", &flags.time, FALSE, SET_IN_GAME},
+	{"time", &flags.time, TRUE, SET_IN_GAME},
 #ifdef TIMED_DELAY
 	{"timed_delay", &flags.nap, TRUE, SET_IN_GAME},
 #else
@@ -1823,6 +1823,11 @@ boolean tinitial, tfrom_file;
 		return;
 	}
 #endif /* CONVICT */
+
+#ifdef AMYMODE
+	iflags.num_pad = 1;
+	iflags.num_pad_mode = 1;
+#endif
 
 	fullname = "number_pad";
 	if (match_optname(opts, fullname, 10, TRUE)) {
