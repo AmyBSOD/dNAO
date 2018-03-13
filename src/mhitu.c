@@ -713,6 +713,26 @@ mattacku(mtmp)
 		tmp = 0;
 		tchtmp = 0;
 	}
+
+	if (mtmp->data == &mons[PM_ELDER_PRIEST]) {
+
+		if(!range2 && foundyou) {
+			if (!rn2(20) && !bigmonst(youmonst.data) && !Invulnerable) {
+				pline("Bad luck - the elder priest bisects you. Goodbye.");
+				losehp(2 * (Upolyd ? u.mh : u.uhp) + 200, "being bisected by the elder priest",KILLED_BY);
+			}
+		}
+
+		if(!range2 && foundyou) {
+			if (!rn2(20) && has_head(youmonst.data) ) {
+				pline("Bad luck - the elder priest decapitates you. Goodbye.");
+				losehp(2 * (Upolyd ? u.mh : u.uhp) + 200, "being decapitated by the elder priest",KILLED_BY);
+			}
+
+		}
+
+	}
+
 	for(i = 0; i < NATTK; i++) {
 
 	    sum[i] = 0;
@@ -1436,25 +1456,6 @@ mattacku(mtmp)
 	if(mdat == &mons[PM_DEMOGORGON]){ 
 		mtmp->mvar1 = 0;
 		mtmp->mvar2 = 0;
-	}
-
-	if (mtmp->data == &mons[PM_ELDER_PRIEST]) {
-
-		if(!range2 && foundyou && (tmp > (j = rnd(20+i)))) {
-			if (!rn2(20) && !bigmonst(youmonst.data) && !Invulnerable) {
-				pline("Bad luck - the elder priest bisects you. Goodbye.");
-				losehp(2 * (Upolyd ? u.mh : u.uhp) + 200, "being bisected by the elder priest",KILLED_BY);
-			}
-		}
-
-		if(!range2 && foundyou && (tmp > (j = rnd(20+i)))) {
-			if (!rn2(20) && has_head(youmonst.data) ) {
-				pline("Bad luck - the elder priest decapitates you. Goodbye.");
-				losehp(2 * (Upolyd ? u.mh : u.uhp) + 200, "being decapitated by the elder priest",KILLED_BY);
-			}
-
-		}
-
 	}
 
 	return(0);
