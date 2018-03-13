@@ -2560,6 +2560,10 @@ const char *str;
 		if(str) 
 		pline(str, s_suffix(mon_nam(mon)), "fractured surface");
 		return TRUE;
+	} else if(intreflect(mon->data)){
+		if(str) 
+		pline(str, s_suffix(mon_nam(mon)), "reflexive surface");
+		return TRUE;
 	} else if (mon->data == &mons[PM_SILVER_DRAGON] ||
 		mon->data == &mons[PM_CHROMATIC_DRAGON]) {
 	    /* Silver dragons only reflect when mature; babies do not */
