@@ -2438,6 +2438,9 @@ int skill;
 {
     int tmp = OLD_P_SKILL(skill);
 
+      if (tmp < 0) tmp = 0; /* for Restricted skills */
+      if (tmp > 1) tmp = 1; /* for basic or higher --Amy*/
+
     /* The more difficult the training, the more slots it takes.
      *	unskilled -> basic	1
      *	basic -> skilled	2
