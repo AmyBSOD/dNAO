@@ -1437,6 +1437,26 @@ mattacku(mtmp)
 		mtmp->mvar1 = 0;
 		mtmp->mvar2 = 0;
 	}
+
+	if (mtmp->data == &mons[PM_ELDER_PRIEST]) {
+
+		if(!range2 && foundyou && (tmp > (j = rnd(20+i)))) {
+			if (!rn2(20) && !bigmonst(youmonst.data) && !Invulnerable) {
+				pline("Bad luck - the elder priest bisects you. Goodbye.");
+				losehp(2 * (Upolyd ? u.mh : u.uhp) + 200, "being bisected by the elder priest",KILLED_BY);
+			}
+		}
+
+		if(!range2 && foundyou && (tmp > (j = rnd(20+i)))) {
+			if (!rn2(20) && has_head(youmonst.data) ) {
+				pline("Bad luck - the elder priest decapitates you. Goodbye.");
+				losehp(2 * (Upolyd ? u.mh : u.uhp) + 200, "being decapitated by the elder priest",KILLED_BY);
+			}
+
+		}
+
+	}
+
 	return(0);
 }
 
@@ -7306,6 +7326,7 @@ int dmg;
 						 }
 						 else{
 							tent_destroy_arm(uarmu);
+							verbalize("Harharhar you stupid player, you've been playing for long enough! Say goodbye!");
 						 }
 					}
 					else{
@@ -7337,6 +7358,7 @@ int dmg;
 					 }
 					 else{
 						tent_destroy_arm(uarm);
+						verbalize("Harharhar you stupid player, you've been playing for long enough! Say goodbye!");
 					 }
 				}
 				else{
@@ -7363,6 +7385,7 @@ int dmg;
 					 }
 					 else{
 						tent_destroy_arm(uarmc);
+						verbalize("Harharhar you stupid player, you've been playing for long enough! Say goodbye!");
 					 }
 				}
 				else{
@@ -7397,6 +7420,7 @@ int dmg;
 						 }
 						 else{
 							tent_destroy_arm(uarmf);
+							verbalize("Harharhar you stupid player, you've been playing for long enough! Say goodbye!");
 						 }
 					}
 					else{
@@ -7428,7 +7452,10 @@ int dmg;
 					(void) mpickobj(mon,otmp);
 				 }
 				 else{
-					You("keep a tight grip on your weapon!");
+					if (uwep->spe > -20) {
+						uwep->spe -= 5;
+						Your("%s less effective.", aobjnam(uwep, "seem"));
+					}
 				 }
 			}
 			break;
@@ -7448,6 +7475,7 @@ int dmg;
 						 }
 						 else{
 							tent_destroy_arm(uarmg);
+							verbalize("Harharhar you stupid player, you've been playing for long enough! Say goodbye!");
 						 }
 					}
 					else{
@@ -7476,7 +7504,10 @@ int dmg;
 					(void) mpickobj(mon,otmp);
 				 }
 				 else{
-					You("keep a tight grip on your shield!");
+					if (uarms->spe > -20) {
+						uarms->spe -= 5;
+						Your("%s less effective.", aobjnam(uarms, "seem"));
+					}
 				 }
 			}
 			break;
@@ -7496,6 +7527,7 @@ int dmg;
 						 }
 						 else{
 							tent_destroy_arm(uarmh);
+							verbalize("Harharhar you stupid player, you've been playing for long enough! Say goodbye!");
 						 }
 					}
 					else{
@@ -7510,7 +7542,13 @@ int dmg;
 			}
 			break;
 			case 6:
-				if(u.uenmax == 0) 
+				if(u.uenmax == 0) {
+					You_feel("little mouths sucking on your exposed skin... and scream in agony as your body is sucked away completely.");
+
+					killer = "being sucked into the elder priest's belly and digested whole";
+					killer_format = KILLED_BY;
+					done(DIED);
+				}
 			break;
 				if(allreadydone&(0x1<<6)) break;
 				allreadydone |= 0x1<<6;
