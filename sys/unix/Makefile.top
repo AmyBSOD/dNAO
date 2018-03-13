@@ -17,7 +17,7 @@ export VERSION := $(shell util/version.pl)
 
 # make NetHack
 PREFIX	 = /opt/dnethack
-GAME     = dnethack
+GAME     = dnhslex
 # GAME     = nethack.prg
 GAMEUID  = nethack
 GAMEGRP  = nethack
