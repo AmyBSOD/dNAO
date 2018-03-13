@@ -489,7 +489,6 @@ bot2()
 	hp = Upolyd ? u.mh : u.uhp;
 	hpmax = Upolyd ? u.mhmax : u.uhpmax;
 
-        if(hp < 0) hp = 0;
         (void) describe_level(newbot2);
         Sprintf(nb = eos(newbot2), "%c:%-2ld", oc_syms[COIN_CLASS],
 #ifndef GOLDOBJ
