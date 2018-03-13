@@ -222,7 +222,8 @@ register int x;
 {
 	register int tmp, utmp;
 
-	utmp = (u.ulevel < 15) ? 5 : u.ulevel/3;
+	/* Amy edit: high upper limit, and don't make it depend on player's level */
+	utmp = 100;
 	tmp = 1;
 	while (tmp < utmp && !rn2(x))
 		tmp++;
