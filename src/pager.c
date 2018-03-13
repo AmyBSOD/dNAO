@@ -1344,6 +1344,7 @@ append(char * buf, int condition, char * text, boolean many)
 int
 generate_list_of_resistances(struct monst * mtmp, char * temp_buf, int resists)
 {
+	struct permonst * ptr = mtmp->data;
 	unsigned int mr_flags;
 	unsigned long mg_flags = mtmp->data->mflagsg;
 	if (resists == 1)
@@ -1370,6 +1371,7 @@ generate_list_of_resistances(struct monst * mtmp, char * temp_buf, int resists)
 	many = append(temp_buf, ((mg_flags & MG_RSLASH) != 0L), "slashing", many);
 	many = append(temp_buf, ((mg_flags & MG_RPIERCE) != 0L), "piercing", many);
 	//many = append(temp_buf, ((mg_flags & MG_RALL) == MG_RALL), "blunt & slashing & piercing", many);
+	many = append(temp_buf, intreflect(ptr), "has reflection", many);
 	return many;
 }
 
@@ -1812,6 +1814,23 @@ get_description_of_damage_type(uchar id)
 	case AD_SAMU: return "steal Amulet";
 	case AD_CURS: return "steal intrinsic";
 	case AD_SQUE: return "steal Quest Artifact or Amulet";
+	case AD_GLIB: return "disarms player";
+	case AD_DARK: return "causes darkness";
+	case AD_GRAV: return "gravity";
+	case AD_PSI: return "psionic blast";
+	case AD_MANA: return "mana damage";
+	case AD_WTHR: return "withers items";
+	case AD_ICUR: return "item cursing";
+	case AD_SOUN: return "sound blast";
+	case AD_DEPR: return "depression";
+	case AD_DFOO: return "unique Pride attack";
+	case AD_VENO: return "superpoisonous gas";
+	case AD_PLAS: return "plasma";
+	case AD_DISP: return "pushes player back";
+	case AD_TIME: return "time";
+	case AD_WRAT: return "unique Wrath attack";
+	case AD_NEXU: return "nexus";
+	case AD_INSA: return "insanity";
 	default:
 			impossible("bug in get_description_of_damage_type(%d)", id);
 			return "<MISSING DESCRIPTION, THIS IS A BUG>";

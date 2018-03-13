@@ -57,6 +57,8 @@
 #define MS_TRUMPET	47	/* Archon's trumpet */
 
 
+#define MS_SHOE	80
+
 #define MR_FIRE		0x001	/* 1 resists fire */
 #define MR_COLD		0x002	/* 2 resists cold */
 #define MR_SLEEP	0x004	/* 4 resists sleep */
@@ -97,6 +99,11 @@
 #define MM_FLOAT		0x00002000L	/* Monster floats instead of truely flying (modifier) */
 #define MM_NOTONL		0x00004000L	/* Tries to avoid being on same line as player */
 #define MM_FLEETFLEE	0x00008000L	/* Flees if adjacent if it thinks it can outrun you */
+
+/* new stuff by Amy */
+#define MM_REVIVE		0x00100000L	/* resurrects like a troll */
+#define MM_MIND_FLAYER	0x00200000L	/* faint wave of psychic energy */
+#define MM_REFLECT	0x00400000L	/* intrinsic reflection */
 
 //Monster Thoughts and behavior
 #define MT_WANTSAMUL	0x00000001L	/* would like to steal the amulet */

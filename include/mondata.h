@@ -108,6 +108,9 @@
 				 (ptr) == &mons[PM_GARGOYLE] || \
 				 (ptr) == &mons[PM_WINGED_GARGOYLE] || \
 				 (ptr) == &mons[PM_XORN])
+
+#define intreflect(ptr)	(((ptr)->mflagsm & MM_REFLECT) != 0L)
+
 #define is_anhydrous(ptr)	(flaming(ptr)  || \
 							 is_clockwork(ptr) || \
 							 is_stone(ptr) || \
@@ -445,7 +448,7 @@
 				 (ptr) == &mons[PM_HUMAN])
 
 /* return TRUE if the monster tends to revive */
-#define is_reviver(ptr)		(is_rider(ptr) || (ptr)->mlet == S_TROLL || (ptr)->mlet == S_FUNGUS)
+#define is_reviver(ptr)		(is_rider(ptr) || (ptr)->mlet == S_TROLL || (ptr)->mlet == S_FUNGUS || (((ptr)->mflagsm & MM_REVIVE) != 0L) )
 
 #define is_demihuman(ptr)	((ptr->mflagsa & MA_DEMIHUMAN))
 
@@ -515,7 +518,8 @@
 				 (ptr) == &mons[PM_ELDER_BRAIN] || \
 				 (ptr) == &mons[PM_LUGRIBOSSK] || \
 				 (ptr) == &mons[PM_MAANZECORIAN] || \
-				 (ptr) == &mons[PM_GREAT_CTHULHU] \
+				 (ptr) == &mons[PM_GREAT_CTHULHU] || \
+				 (((ptr)->mflagsm & MM_MIND_FLAYER) != 0L) \
 				)
 
 #define nonliving(ptr)	(is_unalive(ptr) || is_undead(ptr) || \

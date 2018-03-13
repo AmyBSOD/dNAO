@@ -872,6 +872,24 @@ asGuardian:
 	case MS_GURGLE:
 	    pline_msg = "gurgles.";
 	    break;
+	case MS_SHOE:
+	    if (mtmp->mtame) {
+		if (u.usteed && u.usteed == mtmp)
+			verbl_msg = "Yes! Please! Keep wearing us and we'll take you to the end of the world and beyond!";
+		else
+			verbl_msg = "Come on my dear, find someone whom we can kick to death!";
+	    } else if (mtmp->mpeaceful) {
+		if (u.usteed && u.usteed == mtmp)
+			verbl_msg = "You're not our owner, but we allow you to wear us for a while because we like you.";
+		else
+			verbl_msg = "We are beautiful, in every single way!";
+	    } else {
+		if (u.usteed && u.usteed == mtmp)
+			verbl_msg = "Okay, you may wear us. But as soon as you take us off, we'll teach you a lesson in pain.";
+		else
+			verbl_msg = "You don't need to fight. Just stand there and we'll cause soothing pain to you.";
+	    }
+	    break;
 	case MS_BURBLE:
 	    pline_msg = "burbles.";
 	    break;
