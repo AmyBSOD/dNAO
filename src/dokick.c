@@ -113,6 +113,11 @@ register boolean clumsy;
 	
 	if(uarmf && (uarmf->otyp == STILETTOS)){
 		dmg += rnd(bigmonst(mon->data) ? 2 : 6);
+		if (mon->data == &mons[PM_ELDER_PRIEST]) {
+			dmg += 50;
+			pline("Your high heels severely wound the elder priest's tentacles!");
+
+		}
 	}
 	
 	if(uarmf && (uarmf->otyp == KICKING_BOOTS)){
