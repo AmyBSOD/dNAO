@@ -8297,7 +8297,7 @@ phase_door()
 	}
 
 	pline("Your body is transported to another location!"); /* for debug purposes --Amy */
-	(void) safe_teledsPD();
+	(void) safe_teledsPD(0);
 }
 
 /* A function that pushes the player around, mainly to be used by ranged attackers so they can get a shot. --Amy */
