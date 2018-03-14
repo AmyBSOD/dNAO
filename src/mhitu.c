@@ -3405,6 +3405,141 @@ dopois:
 		litroom(FALSE, (struct obj *)0);
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_TIME:
+		hitmsg(mtmp, mattk);
+		if (mtmp->mcan) break;
+		switch (rnd(10)) {
+
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				You_feel("life has clocked back.");
+			      losexp("time", FALSE, TRUE, TRUE); /* resistance is futile :D */
+				break;
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+				switch (rnd(A_MAX)) {
+					case A_STR:
+						pline("You're not as strong as you used to be...");
+						ABASE(A_STR) -= 5;
+						if(ABASE(A_STR) < ATTRMIN(A_STR)) {dmg *= 3; ABASE(A_STR) = ATTRMIN(A_STR);}
+						break;
+					case A_DEX:
+						pline("You're not as agile as you used to be...");
+						ABASE(A_DEX) -= 5;
+						if(ABASE(A_DEX) < ATTRMIN(A_DEX)) {dmg *= 3; ABASE(A_DEX) = ATTRMIN(A_DEX);}
+						break;
+					case A_CON:
+						pline("You're not as hardy as you used to be...");
+						ABASE(A_CON) -= 5;
+						if(ABASE(A_CON) < ATTRMIN(A_CON)) {dmg *= 3; ABASE(A_CON) = ATTRMIN(A_CON);}
+						break;
+					case A_WIS:
+						pline("You're not as wise as you used to be...");
+						ABASE(A_WIS) -= 5;
+						if(ABASE(A_WIS) < ATTRMIN(A_WIS)) {dmg *= 3; ABASE(A_WIS) = ATTRMIN(A_WIS);}
+						break;
+					case A_INT:
+						pline("You're not as bright as you used to be...");
+						ABASE(A_INT) -= 5;
+						if(ABASE(A_INT) < ATTRMIN(A_INT)) {dmg *= 3; ABASE(A_INT) = ATTRMIN(A_INT);}
+						break;
+					case A_CHA:
+						pline("You're not as beautiful as you used to be...");
+						ABASE(A_CHA) -= 5;
+						if(ABASE(A_CHA) < ATTRMIN(A_CHA)) {dmg *= 3; ABASE(A_CHA) = ATTRMIN(A_CHA);}
+						break;
+				}
+				break;
+			case 10:
+				pline("You're not as powerful as you used to be...");
+				ABASE(A_STR)--;
+				ABASE(A_DEX)--;
+				ABASE(A_CON)--;
+				ABASE(A_WIS)--;
+				ABASE(A_INT)--;
+				ABASE(A_CHA)--;
+				if(ABASE(A_STR) < ATTRMIN(A_STR)) {dmg *= 2; ABASE(A_STR) = ATTRMIN(A_STR);}
+				if(ABASE(A_DEX) < ATTRMIN(A_DEX)) {dmg *= 2; ABASE(A_DEX) = ATTRMIN(A_DEX);}
+				if(ABASE(A_CON) < ATTRMIN(A_CON)) {dmg *= 2; ABASE(A_CON) = ATTRMIN(A_CON);}
+				if(ABASE(A_WIS) < ATTRMIN(A_WIS)) {dmg *= 2; ABASE(A_WIS) = ATTRMIN(A_WIS);}
+				if(ABASE(A_INT) < ATTRMIN(A_INT)) {dmg *= 2; ABASE(A_INT) = ATTRMIN(A_INT);}
+				if(ABASE(A_CHA) < ATTRMIN(A_CHA)) {dmg *= 2; ABASE(A_CHA) = ATTRMIN(A_CHA);}
+				break;
+		}
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_WRAT:
+		pline("%s reaches out, and the life is drawn from your bones.", Monnam(mtmp));
+
+		if(u.uen < 1) {
+		    You_feel("less energised!");
+		    u.uenmax -= rn1(10,10);
+		    if(u.uenmax < 0) u.uenmax = 0;
+		} else if(u.uen <= 10) {
+		    You_feel("your magical energy dwindle to nothing!");
+		    u.uen = 0;
+		} else {
+		    You_feel("your magical energy dwindling rapidly!");
+		    u.uen /= 2;
+		}
+
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_NEXU:
+		hitmsg(mtmp, mattk);
+		if (mtmp->mcan) break;
+
+		if (level.flags.noteleport) dmg *= (1 + rnd(2));
+
+		switch (rnd(7)) {
+
+			case 1:
+			case 2:
+			case 3:
+				pline("%s sends you far away!", Monnam(mtmp) );
+				tele();
+				break;
+			case 4:
+			case 5:
+				pline("%s sends you away!", Monnam(mtmp) );
+				phase_door();
+				break;
+			case 6:
+
+				level_tele();
+				break;
+			case 7:
+				{
+					int firststat = rn2(A_MAX);
+					int secondstat = rn2(A_MAX);
+					int firstswapstat = ABASE(firststat);
+					int secondswapstat = ABASE(secondstat);
+					int difference = (firstswapstat - secondswapstat);
+					ABASE(secondstat) += difference;
+					ABASE(firststat) -= difference;
+					AMAX(secondstat) = ABASE(secondstat);
+					AMAX(firststat) = ABASE(firststat);
+					pline("Your stats got scrambled!");
+				}
+				break;
+		}
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_INSA:
+		hitmsg(mtmp, mattk);
+		if(!mtmp->mcan) {
+			pline("You're getting insane!");
+		    make_hallucinated((HHallucination + dmg),FALSE,0L);
+		    make_stunned(HStun + dmg, TRUE);
+		    make_confused(HConfusion + dmg, FALSE);
+		}
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
 	    case AD_HALU:
 		hitmsg(mtmp, mattk);
 		if (rn2(2) ) {
