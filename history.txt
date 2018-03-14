@@ -1,0 +1,16 @@
+DNHslex History File by Amy, given in reverse chronological order
+
+- Added monsters from various other NetHack variants, and new attacks that they can use.
+- Humans that aren't always peaceful don't give murder penalties when killed.
+- The bottom line displays negative HP if the player takes enough damage.
+- Advancing a skill always costs only a single skill point.
+- The game should no longer delete your savegame without a prompt if it encounters a version incompatibility.
+- Buffed the elder priest. Also, kicking him with high heels does lots of extra damage.
+- Many item types that couldn't generate randomly now can.
+- The rne function no longer caps at lower values if the player's experience level is low.
+- Many monster types that couldn't generate randomly now can.
+- Items weigh less, and the player has a higher carry cap.
+- Changed some of the default options.
+- Every role/race/gender/align combo is playable.
+
+Buuuuuuuuuuuuuundlebundlebundle! Play DNHSLEX on em.slashem.me now! <3
