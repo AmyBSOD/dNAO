@@ -1476,6 +1476,7 @@ int attk;
 
 	switch(attk) {
 	    /* 0 is burning, which we should never be called with */
+	    case AD_WTHR: hurt = rn2(4);
 	    case AD_RUST: hurt = 1; break;
 	    case AD_CORR: hurt = 3; break;
 	    default: hurt = 2; break;
@@ -1667,6 +1668,7 @@ hitmu(mtmp, mattk)
 	struct permonst *olduasmon = youracedata;
 	int res;
 	struct attack alt_attk;
+	int hallutime;
 
 	if (!canspotmon(mtmp))
 	    map_invisible(mtmp->mx, mtmp->my);
@@ -2055,7 +2057,25 @@ hitmu(mtmp, mattk)
 		}
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_PLAS:
+		hitmsg(mtmp, mattk);
+		if (mtmp->mcan) break;
+
+			pline("You're seared by %s hot plasma radiation!", Fire_resistance ? "very" : "extremely");
+			if (!Fire_resistance) dmg *= 2;
+
+		    if (!rn2(2 : 5)) /* extremely hot - very high chance to burn items! --Amy */
+		      (void)destroy_item(POTION_CLASS, AD_FIRE);
+		    if (!rn2(2 : 5)) 
+		      (void)destroy_item(SCROLL_CLASS, AD_FIRE);
+		    if (!rn2(2 : 5)) 
+		      (void)destroy_item(SPBOOK_CLASS, AD_FIRE);
+		    burn_away_slime();
+			make_stunned(HStun + dmg, TRUE);
+
+		break;
 	    case AD_FIRE:
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 		hitmsg(mtmp, mattk);
 		if (uncancelled) {
 		    pline("You're %s!", on_fire(youracedata, mattk));
@@ -2288,6 +2308,19 @@ hitmu(mtmp, mattk)
 		}
 		dmg = 0;
 		break;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_VENO:
+		hitmsg(mtmp, mattk);
+		if (!Poison_resistance) pline("You're badly poisoned!");
+		if (!rn2( (Poison_resistance && rn2(20) ) ? 20 : 4 )) (void) adjattrib(A_STR, -rnd(2), FALSE);
+		if (!rn2( (Poison_resistance && rn2(20) ) ? 20 : 4 )) (void) adjattrib(A_DEX, -rnd(2), FALSE);
+		if (!rn2( (Poison_resistance && rn2(20) ) ? 20 : 4 )) (void) adjattrib(A_CON, -rnd(2), FALSE);
+		if (!rn2( (Poison_resistance && rn2(20) ) ? 20 : 4 )) (void) adjattrib(A_INT, -rnd(2), FALSE);
+		if (!rn2( (Poison_resistance && rn2(20) ) ? 20 : 4 )) (void) adjattrib(A_WIS, -rnd(2), FALSE);
+		if (!rn2( (Poison_resistance && rn2(20) ) ? 20 : 4 )) (void) adjattrib(A_CHA, -rnd(2), FALSE);
+		if (!rn2(2)) (void)destroy_item(POTION_CLASS, AD_COLD);
+		ptmp = rn2(A_MAX);
+		goto dopois;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	    case AD_DRST:
 		ptmp = A_STR;
@@ -2972,6 +3005,11 @@ dopois:
 		hurtarmor(AD_RUST);
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_WTHR:
+		hitmsg(mtmp, mattk);
+		hurtarmor(AD_WTHR);
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
 	    case AD_CORR:
 		hitmsg(mtmp, mattk);
 		if (mtmp->mcan) break;
@@ -3115,6 +3153,20 @@ dopois:
 		dmg = 0;
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_ICUR:
+		hitmsg(mtmp, mattk);
+		if (!rn2(5)) {
+			You_feel("as if you need some help.");
+			rndcurse();
+		}
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_MANA:
+		hitmsg(mtmp, mattk);
+		if (mtmp->mcan) break;
+		drain_en(dmg);
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
 	    case AD_CONF:
 		hitmsg(mtmp, mattk);
 		if(!mtmp->mcan && !rn2(4) && !mtmp->mspec_used) {
@@ -3127,6 +3179,52 @@ dopois:
 		dmg = 0;
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_PSI:
+		hitmsg(mtmp, mattk);
+		if(!mtmp->mcan && !rn2(4)) {
+
+			pline("Your mind is blasted by psionic energy.");
+
+			switch (rnd(8)) {
+
+				case 1:
+				case 2:
+				case 3:
+					make_confused(HConfusion + dmg, FALSE);
+					break;
+				case 4:
+				case 5:
+				case 6:
+					make_stunned(HStun + dmg, FALSE);
+					break;
+				case 7:
+					make_confused(HConfusion + dmg, FALSE);
+					make_stunned(HStun + dmg, FALSE);
+					break;
+				case 8:
+					make_hallucinated(HHallucination + dmg, FALSE, 0L);
+					break;
+
+			}
+			if (!rn2(200)) {
+				forget(rnd(25));
+				pline("You forget some important things...");
+			}
+			if (!rn2(200)) {
+				losexp("psionic drain", TRUE, FALSE, FALSE);
+			}
+			if (!rn2(200)) {
+				adjattrib(A_INT, -1, 1);
+				adjattrib(A_WIS, -1, 1);
+			}
+			if (!rn2(200)) {
+				pline("You scream in pain!");
+				wake_nearby();
+			}
+
+		}
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
 	    case AD_GLIB:
 		hitmsg(mtmp, mattk);
 
@@ -3134,6 +3232,132 @@ dopois:
 		pline("Your hands got hit hard!");
 		incr_itimeout(&Glib, dmg);
 
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_SOUN:
+		hitmsg(mtmp, mattk);
+		if (mtmp->mcan) break;
+		pline("Your ears are blasted by hellish noise!");
+		make_stunned(HStun + dmg, TRUE);
+		if (!rn2(2)) (void)destroy_item(POTION_CLASS, AD_COLD);
+		wake_nearby();
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_DEPR:
+		hitmsg(mtmp, mattk);
+		if (!rn2(3)) {
+
+		    switch(rnd(20)) {
+		    case 1:
+			if (!Unchanging && !Antimagic) {
+				You("undergo a freakish metamorphosis!");
+			      polyself(FALSE);
+			}
+			break;
+		    case 2:
+			You("need reboot.");
+			newman();
+			break;
+		    case 3: case 4:
+			if (uncancelled && !rn2(4) && u.ulycn == NON_PM &&
+			!Protection_from_shape_changers &&
+			!spec_ability2(uwep, SPFX2_NOWERE) &&
+			!uclockwork) {
+			    You_feel("feverish.");
+			    exercise(A_CON, FALSE);
+			    u.ulycn = PM_WERECOW;
+			} else {
+				if (multi >= 0) {
+				    if (Sleep_resistance && rn2(20)) break;
+				    fall_asleep(-rnd(10), TRUE);
+				    if (Blind) You("are put to sleep!");
+				    else You("are put to sleep by %s!", mon_nam(mtmp));
+				}
+			}
+			break;
+		    case 5: case 6:
+			if (!u.ustuck && !sticks(youmonst.data)) {
+				setustuck(mtmp);
+				pline("%s grabs you!", Monnam(mtmp));
+			}
+			break;
+		    case 7:
+		    case 8:
+			Your("position suddenly seems very uncertain!");
+			tele();
+			break;
+		    case 9:
+			u_slow_down();
+			break;
+		    case 10:
+			hurtarmor(AD_RUST);
+			break;
+		    case 11:
+			hurtarmor(AD_DCAY);
+			break;
+		    case 12:
+			hurtarmor(AD_CORR);
+			break;
+		    case 13:
+			if (multi >= 0) {
+			    if (Free_action && rn2(20)) {
+				You("momentarily stiffen.");            
+			    } else {
+				if (Blind) You("are frozen!");
+				else You("are frozen by %s!", mon_nam(mtmp));
+				nomovemsg = 0;	/* default: "you can move again" */
+				nomul(-rnd(10), "paralyzed by a monster attack");
+				exercise(A_DEX, FALSE);
+			    }
+			}
+			break;
+		    case 14:
+			if (Hallucination)
+				pline("What a groovy feeling!");
+			else
+				You(Blind ? "%s and get dizzy..." : "%s and your vision blurs...",
+					    stagger(youmonst.data, "stagger"));
+			hallutime = rn1(7, 16);
+			make_stunned(HStun + hallutime + dmg, FALSE);
+			(void) make_hallucinated(HHallucination + hallutime + dmg,TRUE,0L);
+			break;
+		    case 15:
+			if(!Blind)
+				Your("vision bugged.");
+			hallutime += rn1(10, 25);
+			hallutime += rn1(10, 25);
+			(void) make_hallucinated(HHallucination + hallutime + dmg + dmg,TRUE,0L);
+			break;
+		    case 16:
+			if(!Blind)
+				Your("vision turns to screen saver.");
+			hallutime += rn1(10, 25);
+			(void) make_hallucinated(HHallucination + hallutime + dmg,TRUE,0L);
+			break;
+		    case 17:
+			{
+			    struct obj *obj = some_armor(&youmonst);
+
+			    if (obj && drain_item(obj)) {
+				Your("%s less effective.", aobjnam(obj, "seem"));
+			    }
+			}
+			break;
+		    default:
+			    if(Confusion)
+				 You("are getting even more confused.");
+			    else You("are getting confused.");
+			    make_confused(HConfusion + dmg, FALSE);
+			break;
+		    }
+		    exercise(A_INT, FALSE);
+
+		}
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_DISP:
+		hitmsg(mtmp, mattk);
+		pushplayer();
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////
 	    case AD_GRAV:
@@ -3146,6 +3370,31 @@ dopois:
 		phase_door();
 		pushplayer();
 		make_stunned(HStun + dmg, TRUE);
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_DFOO:
+	      pline("%s determines to take you down a peg or two...", Monnam(mtmp));
+		if (!rn2(3)) {
+		    sprintf(buf, "%s %s",
+			    s_suffix(Monnam(mtmp)), mpoisons_subj(mtmp, mattk));
+		    poisoned(buf, rn2(A_MAX), mdat->mname, 30);
+		}
+		if (!rn2(4)) {
+			You_feel("drained...");
+			permdmg = 1;
+		}
+		if (!rn2(4)) {
+			You_feel("less energised!");
+			u.uenmax -= rn1(10,10);
+			if (u.uenmax < 0) u.uenmax = 0;
+			if(u.uen > u.uenmax) u.uen = u.uenmax;
+		}
+		if (!rn2(4)) {
+			if(!Drain_resistance)
+			    losexp("life drainage", TRUE, FALSE, FALSE);
+			else You_feel("woozy for an instant, but shrug it off.");
+		}
+
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////
 	    case AD_DARK:
@@ -4198,6 +4447,8 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 {
 	int succeeded = 0;
 	int attack_type = mattk->adtyp;
+	int dmgplus;
+	dmgplus = d((int)mattk->damn, (int)mattk->damd);
 	struct	permonst *mdat = mtmp->data;
 	char buf[BUFSZ];
 	if(mtmp->data->maligntyp < 0 && Is_illregrd(&u.uz)) return 0;
@@ -4324,6 +4575,226 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		litroom(FALSE, (struct obj *)0);
 	    }
 	    break;
+
+	    case AD_DISP:
+	      if(!mtmp->mcan && canseemon(mtmp && !is_blind(mtmp) && !Blind && !rn2(5) ) {
+			pline("%s fires a jumping flamer!", Monnam(mtmp));
+			pushplayer();
+	            if (!rn2(5)) mdamageu(mtmp, (1 + dmgplus));
+		}
+		break;
+
+	    case AD_MANA:
+		if (!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(20) ) {
+		    pline("%s attacks you with a mana gaze, the damage of which is completely unresistable!", Monnam(mtmp));
+		drain_en(dmgplus);
+	      if (dmgplus) mdamageu(mtmp, dmgplus);
+		}
+		break;
+
+	    case AD_SPC2:
+	      if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(7) ) {
+			char visageword[BUFSZ]; /* from ToME */
+			strcpy(visageword, "bad"); /* fail safe --Amy */
+
+			if (!Hallucination) switch(rnd(20)) {
+
+				case 1:
+					strcpy(visageword, "abominable");
+					break;
+				case 2:
+					strcpy(visageword, "abysmal");
+					break;
+				case 3:
+					strcpy(visageword, "appalling");
+					break;
+				case 4:
+					strcpy(visageword, "baleful");
+					break;
+				case 5:
+					strcpy(visageword, "blasphemous");
+					break;
+				case 6:
+					strcpy(visageword, "disgusting");
+					break;
+				case 7:
+					strcpy(visageword, "dreadful");
+					break;
+				case 8:
+					strcpy(visageword, "filthy");
+					break;
+				case 9:
+					strcpy(visageword, "grisly");
+					break;
+				case 10:
+					strcpy(visageword, "hideous");
+					break;
+				case 11:
+					strcpy(visageword, "hellish");
+					break;
+				case 12:
+					strcpy(visageword, "horrible");
+					break;
+				case 13:
+					strcpy(visageword, "infernal");
+					break;
+				case 14:
+					strcpy(visageword, "loathsome");
+					break;
+				case 15:
+					strcpy(visageword, "nightmarish");
+					break;
+				case 16:
+					strcpy(visageword, "repulsive");
+					break;
+				case 17:
+					strcpy(visageword, "sacrilegious");
+					break;
+				case 18:
+					strcpy(visageword, "terrible");
+					break;
+				case 19:
+					strcpy(visageword, "unclean");
+					break;
+				case 20:
+					strcpy(visageword, "unspeakable");
+					break;
+
+			} else switch(rnd(22)) {
+
+				case 1:
+					strcpy(visageword, "silly");
+					break;
+				case 2:
+					strcpy(visageword, "hilarious");
+					break;
+				case 3:
+					strcpy(visageword, "absurd");
+					break;
+				case 4:
+					strcpy(visageword, "insipid");
+					break;
+				case 5:
+					strcpy(visageword, "ridiculous");
+					break;
+				case 6:
+					strcpy(visageword, "laughable");
+					break;
+				case 7:
+					strcpy(visageword, "ludicrous");
+					break;
+				case 8:
+					strcpy(visageword, "far-out");
+					break;
+				case 9:
+					strcpy(visageword, "groovy");
+					break;
+				case 10:
+					strcpy(visageword, "postmodern");
+					break;
+				case 11:
+					strcpy(visageword, "fantastic");
+					break;
+				case 12:
+					strcpy(visageword, "dadaistic");
+					break;
+				case 13:
+					strcpy(visageword, "cubistic");
+					break;
+				case 14:
+					strcpy(visageword, "cosmic");
+					break;
+				case 15:
+					strcpy(visageword, "awesome");
+					break;
+				case 16:
+					strcpy(visageword, "incomprehensible");
+					break;
+				case 17:
+					strcpy(visageword, "fabulous");
+					break;
+				case 18:
+					strcpy(visageword, "amazing");
+					break;
+				case 19:
+					strcpy(visageword, "incredible");
+					break;
+				case 20:
+					strcpy(visageword, "chaotic");
+					break;
+				case 21:
+					strcpy(visageword, "wild");
+					break;
+				case 22:
+					strcpy(visageword, "preposterous");
+					break;
+
+			}
+
+		pline("You behold the %s visage of %s!", visageword, mon_nam(mtmp));
+		if (Hallucination && rn2(2) ) switch (rnd(5)) {
+
+			case 1:
+				pline("Wow, cosmic, man!");
+				break;
+			case 2:
+				pline("Rad!");
+				break;
+			case 3:
+				pline("Groovy!");
+				break;
+			case 4:
+				pline("Cool!");
+				break;
+			case 5:
+				pline("Far out!");
+				break;
+
+		}
+
+		/* In ToME, hallucination completely prevents the effects because you can't see the monster clearly enough. */
+		if (Hallucination) break;
+
+			switch (rnd(8)) {
+
+				case 1:
+				case 2:
+				case 3:
+					make_confused(HConfusion + dmgplus + 5, FALSE);
+					break;
+				case 4:
+				case 5:
+				case 6:
+					make_stunned(HStun + dmgplus + 5, FALSE);
+					break;
+				case 7:
+					make_confused(HConfusion + dmgplus + 5, FALSE);
+					make_stunned(HStun + dmgplus + 5, FALSE);
+					break;
+				case 8:
+					make_hallucinated(HHallucination + dmgplus + 5, FALSE, 0L);
+					break;
+	
+			}
+			if (!rn2(200)) {
+				forget(rnd(25));
+				pline("You forget some important things...");
+			}
+			if (!rn2(200)) {
+				losexp("psionic drain", TRUE, FALSE, FALSE);
+			}
+			if (!rn2(200)) {
+				adjattrib(A_INT, -1, 1);
+				adjattrib(A_WIS, -1, 1);
+			}
+			if (!rn2(200)) {
+				pline("You scream in pain!");
+				wake_nearby();
+			}
+
+		}
+		break;
+
 
 		case AD_CNCL:
 			if(!is_blind(mtmp) && couldsee(mtmp->mx, mtmp->my)){

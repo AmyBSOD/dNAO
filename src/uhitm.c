@@ -4480,7 +4480,13 @@ uchar aatyp, adtyp;
 		return (malive | mhit);	
 
 	switch(ptr->mattk[i].adtyp) {
-		
+
+	  case AD_ICUR:
+		if (!rn2(3)) {
+			You_feel("as if you need some help.");
+			rndcurse();
+		}
+	    break;
 	  case AD_BARB:
 		if(ptr == &mons[PM_RAZORVINE]) You("are hit by the springing vines!");
 		else You("are hit by %s barbs!", s_suffix(mon_nam(mon)));
@@ -4888,6 +4894,20 @@ dobpois:
 			if(!Stunned)
 			    make_stunned((long)tmp, TRUE);
 			break;
+	    case AD_PLAS:
+		pline("You are suddenly extremely hot!");
+		if (!Fire_resistance) tmp *= 2;
+
+		if (!rn2(2)) /* extremely hot - very high chance to burn items! --Amy */
+			(void)destroy_item(POTION_CLASS, AD_FIRE);
+		if (!rn2(2))
+		      (void)destroy_item(SCROLL_CLASS, AD_FIRE);
+		if (!rn2(2))
+		      (void)destroy_item(SPBOOK_CLASS, AD_FIRE);
+		burn_away_slime();
+		make_stunned(HStun + tmp, TRUE);
+		mdamageu(mon, tmp);
+		break;
 	    case AD_FIRE:
 			if(monnear(mon, u.ux, u.uy)) {
 				    if(Fire_resistance) {
