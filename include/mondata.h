@@ -498,6 +498,8 @@
 				 likes_lava(ptr))
 
 #define touch_petrifies(ptr)	((ptr) == &mons[PM_COCKATRICE] || \
+				 (ptr) == &mons[PM_ASPHYNX] ||\
+				 (ptr) == &mons[PM_BASILISK] ||\
 				 (ptr) == &mons[PM_CHICKATRICE])
 
 #define is_weeping(ptr)		((ptr) == &mons[PM_WEEPING_ANGEL])
