@@ -485,6 +485,7 @@
 				 ptr == &mons[PM_SALAMANDER])
 #define pm_invisible(ptr) ((ptr) == &mons[PM_STALKER] || \
 			   (ptr) == &mons[PM_BLACK_LIGHT] ||\
+			   (ptr) == &mons[PM_PIXIE] ||\
 			   (ptr) == &mons[PM_PHANTOM_FUNGUS] ||\
 			   (ptr) == &mons[PM_CENTER_OF_ALL] ||\
 			   (ptr) == &mons[PM_DARKNESS_GIVEN_HUNGER] ||\

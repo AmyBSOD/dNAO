@@ -5717,14 +5717,14 @@ register int	mmflags;
 					// else for(num = 6; num >= 0; num--) makemon(&mons[PM_METROID], mtmp->mx, mtmp->my, MM_ADJACENTOK);
 			}
 		break;
-//		case S_VAMPIRE:
-//			{
-//				if(mndx == PM_STAR_VAMPIRE){
-//				    mtmp->minvis = TRUE;
-//				    mtmp->perminvis = TRUE;
-//				}
-//			}
-//		break;
+		case S_VAMPIRE:
+			{
+				if(mndx == PM_MOON_VAMPIRE){
+				    mtmp->minvis = TRUE;
+				    mtmp->perminvis = TRUE;
+				}
+			}
+		break;
 		case S_BLOB:
 			if (mndx == PM_SHOGGOTH || mndx == PM_PRIEST_OF_GHAUNADAUR){
 				mtmp->mhpmax = 3*mtmp->mhpmax;
@@ -5770,6 +5770,12 @@ register int	mmflags;
 			){
 				mtmp->msleeping = 1;
 			}
+
+				if(mndx == PM_PIXIE){
+				    mtmp->perminvis = TRUE;
+				    mtmp->minvis = TRUE;
+				}
+
 		break;
 		case S_ORC:
 			if (Race_if(PM_ELF)) mtmp->mpeaceful = FALSE;
