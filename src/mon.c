@@ -4632,7 +4632,7 @@ xkilled(mtmp, dest)
 	if(redisp) newsym(x,y);
 cleanup:
 	/* punish bad behaviour */
-	if(is_human(mdat) && !(u.sealsActive&SEAL_MALPHAS) && (!always_hostile_mon(mtmp) && mtmp->malign <= 0) &&
+	if(is_human(mdat) && !(u.sealsActive&SEAL_MALPHAS) && (always_peaceful(mdat) && mtmp->malign <= 0) &&
 	   (mndx < PM_ARCHEOLOGIST || mndx > PM_WIZARD) &&
 	   u.ualign.type != A_CHAOTIC) {
 		HTelepat &= ~INTRINSIC;
