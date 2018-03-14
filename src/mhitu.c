@@ -4577,7 +4577,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 	    break;
 
 	    case AD_DISP:
-	      if(!mtmp->mcan && canseemon(mtmp && !is_blind(mtmp) && !Blind && !rn2(5) ) {
+	      if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(5) ) {
 			pline("%s fires a jumping flamer!", Monnam(mtmp));
 			pushplayer();
 	            if (!rn2(5)) mdamageu(mtmp, (1 + dmgplus));
