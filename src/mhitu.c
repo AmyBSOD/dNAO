@@ -2064,11 +2064,11 @@ hitmu(mtmp, mattk)
 			pline("You're seared by %s hot plasma radiation!", Fire_resistance ? "very" : "extremely");
 			if (!Fire_resistance) dmg *= 2;
 
-		    if (!rn2(2 : 5)) /* extremely hot - very high chance to burn items! --Amy */
+		    if (!rn2(2)) /* extremely hot - very high chance to burn items! --Amy */
 		      (void)destroy_item(POTION_CLASS, AD_FIRE);
-		    if (!rn2(2 : 5)) 
+		    if (!rn2(2)) 
 		      (void)destroy_item(SCROLL_CLASS, AD_FIRE);
-		    if (!rn2(2 : 5)) 
+		    if (!rn2(2)) 
 		      (void)destroy_item(SPBOOK_CLASS, AD_FIRE);
 		    burn_away_slime();
 			make_stunned(HStun + dmg, TRUE);
@@ -3377,7 +3377,7 @@ dopois:
 		if (!rn2(3)) {
 		    sprintf(buf, "%s %s",
 			    s_suffix(Monnam(mtmp)), mpoisons_subj(mtmp, mattk));
-		    poisoned(buf, rn2(A_MAX), mdat->mname, 30);
+		    poisoned(buf, rn2(A_MAX), mdat->mname, 30, 0);
 		}
 		if (!rn2(4)) {
 			You_feel("drained...");
