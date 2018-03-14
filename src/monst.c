@@ -6410,7 +6410,7 @@ struct permonst _mons2[] = {
 	MB_HUMANOID|MB_POIS /*MB*/, MG_INFRAVISIBLE /*MG*/,
 	0 /*MA*/,  MV_NORMAL /*MV*/, CLR_CYAN),
     MON("genetic engineer", S_QUANTMECH, /* slashem */
-	LVL(12, 12, 3, 10, 0), (G_GENO|3),
+	LVL(12, 12, 3, 10, 0), (G_GENO|1),
 	A(ATTK(AT_CLAW, AD_POLY, 1, 4),
 	  NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
 	SIZ(WT_HUMAN, CN_HUMAN, 0, MS_HUMANOID, MZ_HUMAN), MR_POISON, 0,
