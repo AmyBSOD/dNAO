@@ -441,6 +441,22 @@ boolean trapok;
 	return TRUE;
 }
 
+boolean
+teleokX(x, y, trapok)
+register int x, y;
+boolean trapok;
+{
+	int udist = distu(x,y);
+
+	if (!trapok && t_at(x, y)) return FALSE;
+	if (!goodpos(x, y, &youmonst, 0)) return FALSE;
+	if (!tele_jump_ok(u.ux, u.uy, x, y)) return FALSE;
+	if (!in_out_region(x, y)) return FALSE;
+	if (udist < 3) return FALSE;
+	if (udist > 100) return FALSE;
+	return TRUE;
+}
+
 void
 teleds(nux, nuy, allow_drag)
 register int nux,nuy;
@@ -564,6 +580,24 @@ boolean allow_drag;
 		nux = rnd(COLNO-1);
 		nuy = rn2(ROWNO);
 	} while (!teleok(nux, nuy, (boolean)(tcnt > 200)) && ++tcnt <= 400);
+
+	if (tcnt <= 400) {
+		teleds(nux, nuy, allow_drag);
+		return TRUE;
+	} else
+		return FALSE;
+}
+
+boolean
+safe_teledsPD(allow_drag)
+boolean allow_drag;
+{
+	register int nux, nuy, tcnt = 0;
+
+	do {
+		nux = rnd(COLNO-1);
+		nuy = rn2(ROWNO);
+	} while (!teleokX(nux, nuy, (boolean)(tcnt > 200)) && ++tcnt <= 400);
 
 	if (tcnt <= 400) {
 		teleds(nux, nuy, allow_drag);

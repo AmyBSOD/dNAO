@@ -196,23 +196,23 @@
 #define AD_CURS		137	/* random curse (ex. gremlin) */
 #define AD_SQUE		138	/* hits, may steal Quest Art or Amulet (Nemeses) */
 
-#define AD_GLIB		180	/* disarm the player */
-#define AD_DARK		181	/* make area unlit */
-#define AD_GRAV		182	/* gravity */
-#define AD_PSI		183	/* psionic blast */
-#define AD_MANA		184	/* mana */
-#define AD_WTHR		185	/* wither */
-#define AD_ICUR		186	/* curse items */
-#define AD_SOUN		187	/* sound */
-#define AD_DEPR		188	/* depression */
-#define AD_DFOO		189	/* drain stuff */
-#define AD_VENO		190	/* superpoisonous gas */
-#define AD_PLAS		191	/* plasma */
-#define AD_DISP		192	/* push player */
-#define AD_TIME		193	/* time */
-#define AD_WRAT		194	/* wrath */
-#define AD_NEXU		195	/* nexus */
-#define AD_INSA		196	/* insanity */
+#define AD_GLIB		180	/* disarm the player */ /* currently only melee */
+#define AD_DARK		181	/* make area unlit */ /* melee and gaze */
+#define AD_GRAV		182	/* gravity */ /* currently only melee */
+#define AD_PSI		183	/* psionic blast */ /* currently only gaze, but available as random melee */
+#define AD_MANA		184	/* mana */ /* melee and gaze */
+#define AD_WTHR		185	/* wither */ /* currently only melee */
+#define AD_ICUR		186	/* curse items */ /* currently only passive, but available as random melee */
+#define AD_SOUN		187	/* sound */ /* currently only melee */
+#define AD_DEPR		188	/* depression */ /* currently only melee */
+#define AD_DFOO		189	/* drain stuff */ /* currently only melee */
+#define AD_VENO		190	/* superpoisonous gas */ /* currently only melee */
+#define AD_PLAS		191	/* plasma */ /* melee and passive */
+#define AD_DISP		192	/* push player */ /* melee and gaze */
+#define AD_TIME		193	/* time */ /* currently only melee */
+#define AD_WRAT		194	/* wrath */ /* currently only melee */
+#define AD_NEXU		195	/* nexus */ /* currently only melee */
+#define AD_INSA		196	/* insanity */ /* currently only melee */
 
 /*
  *  Monster to monster attacks.  When a monster attacks another (mattackm),

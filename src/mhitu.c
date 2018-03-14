@@ -37,7 +37,7 @@ STATIC_DCL void FDECL(wildmiss, (struct monst *,struct attack *));
 STATIC_DCL void FDECL(hurtarmor,(int));
 STATIC_DCL void FDECL(hitmsg,(struct monst *,struct attack *));
 
-static const int gazeattacks[] = {AD_DEAD, AD_CNCL, AD_PLYS, AD_DRLI, AD_ENCH, AD_STON, AD_LUCK,
+static const int gazeattacks[] = {AD_DEAD, AD_CNCL, AD_PLYS, AD_DRLI, AD_ENCH, AD_STON, AD_LUCK, AD_DARK, AD_PSI, AD_MANA, AD_DISP,
 										AD_CONF, AD_SLOW, AD_STUN, AD_BLND, AD_FIRE, AD_FIRE,
 										AD_COLD, AD_COLD, AD_ELEC, AD_ELEC, AD_HALU, AD_SLEE };
 static const int elementalgaze[] = {AD_FIRE,AD_COLD,AD_ELEC};
@@ -3127,6 +3127,45 @@ dopois:
 		dmg = 0;
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_GLIB:
+		hitmsg(mtmp, mattk);
+
+		/* hurt the player's hands --Amy */
+		pline("Your hands got hit hard!");
+		incr_itimeout(&Glib, dmg);
+
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_GRAV:
+
+		if (level.flags.noteleport || u.uhave.amulet) dmg *= 2;
+
+		hitmsg(mtmp, mattk);
+		if (mtmp->mcan) break;
+		pline("Gravity warps around you...");
+		phase_door();
+		pushplayer();
+		make_stunned(HStun + dmg, TRUE);
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_DARK:
+		hitmsg(mtmp, mattk);
+
+		/* create darkness around the player --Amy */
+		pline("That felt evil and sinister!");
+		litroom(FALSE, (struct obj *)0);
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_HALU:
+		hitmsg(mtmp, mattk);
+		if (rn2(2) ) {
+		    boolean chg;
+		    chg = make_hallucinated(HHallucination + (dmg * rnd(4)),FALSE,0L);
+		    You("%s", chg ? "inhale a cloud of psychedelic drugs!" : "took another hit of the good stuff!");
+		}
+		break;
+
+///////////////////////////////////////////////////////////////////////////////////////////
 		case AD_TELE:
 			if (!tele_restrict(mtmp)) (void) rloc(mtmp, FALSE);
 			return 3;
@@ -4276,6 +4315,16 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 				}
 			   }
 			break;
+
+	    case AD_DARK:
+		if (!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(4) ) {
+
+		/* create darkness around the player --Amy */
+		pline("%s's sinister gaze fills your mind with dreadful, evil thoughts!", Monnam(mtmp));
+		litroom(FALSE, (struct obj *)0);
+	    }
+	    break;
+
 		case AD_CNCL:
 			if(!is_blind(mtmp) && couldsee(mtmp->mx, mtmp->my)){
 				pline("Your magic fades.");
@@ -8236,6 +8285,66 @@ register struct attack *mattk;
 		return 2;
 	}
 	return 1;
+}
+
+void
+phase_door()
+{
+	/* Disable teleportation in stronghold && Vlad's Tower */
+	if (level.flags.noteleport) {
+		    pline("A mysterious force prevents you from phasing!");
+		    return;
+	}
+
+	pline("Your body is transported to another location!"); /* for debug purposes --Amy */
+	(void) safe_teledsPD();
+}
+
+/* A function that pushes the player around, mainly to be used by ranged attackers so they can get a shot. --Amy */
+void
+pushplayer()
+{
+		coord ccc;
+		int direction, pushwidth, trycnt;
+	    register struct obj *otmp;
+		trycnt = 0;
+
+newtry:
+		direction = rnd(8);
+		pushwidth = rnd(2);
+		if (!rn2(2)) pushwidth += rnd(2);
+		ccc.x = u.ux;
+		ccc.y = u.uy;
+
+		while (pushwidth--) {
+		if (direction == 1 || direction == 5) ccc.x += 1; 
+		else if (direction == 2 || direction == 6) ccc.x -= 1; 
+		else if (direction == 3 || direction == 7) ccc.y += 1; 
+		else if (direction == 4 || direction == 8) ccc.y -= 1; 
+
+		if (direction == 5) ccc.y += 1;
+		else if (direction == 6) ccc.y -= 1;
+		else if (direction == 7) ccc.x -= 1;
+		else if (direction == 8) ccc.x += 1;
+
+		if (!isok(ccc.x, ccc.y)) break; /* otherwise the game could segfault! */
+
+		if ((levl[ccc.x][ccc.y].typ != ROOM && levl[ccc.x][ccc.y].typ != AIR && levl[ccc.x][ccc.y].typ != STAIRS && levl[ccc.x][ccc.y].typ != LADDER && levl[ccc.x][ccc.y].typ != FOUNTAIN && levl[ccc.x][ccc.y].typ != THRONE && levl[ccc.x][ccc.y].typ != SINK && levl[ccc.x][ccc.y].typ != TOILET && levl[ccc.x][ccc.y].typ != GRAVE && levl[ccc.x][ccc.y].typ != ALTAR && levl[ccc.x][ccc.y].typ != ICE && levl[ccc.x][ccc.y].typ != CLOUD &&
+			 levl[ccc.x][ccc.y].typ != CORR) || MON_AT(ccc.x, ccc.y) || (otmp = sobj_at(BOULDER, ccc.x, ccc.y)) != 0 ) break;
+		}
+
+		if ((levl[ccc.x][ccc.y].typ != ROOM && levl[ccc.x][ccc.y].typ != AIR && levl[ccc.x][ccc.y].typ != STAIRS && levl[ccc.x][ccc.y].typ != LADDER && levl[ccc.x][ccc.y].typ != FOUNTAIN && levl[ccc.x][ccc.y].typ != THRONE && levl[ccc.x][ccc.y].typ != SINK && levl[ccc.x][ccc.y].typ != TOILET && levl[ccc.x][ccc.y].typ != GRAVE && levl[ccc.x][ccc.y].typ != ALTAR && levl[ccc.x][ccc.y].typ != ICE && levl[ccc.x][ccc.y].typ != CLOUD &&
+			 levl[ccc.x][ccc.y].typ != CORR) || MON_AT(ccc.x, ccc.y) || (otmp = sobj_at(BOULDER, ccc.x, ccc.y)) != 0) {
+		if (trycnt < 50) {trycnt++; goto newtry;}
+		return; /* more than 50 tries */
+		}
+
+		if (!isok(ccc.x, ccc.y)) return; /* otherwise the game could segfault! */
+
+		pline("You're pushed back!");
+		u_on_newpos(ccc.x, ccc.y);
+		doredraw();
+		return;
 }
 
 #endif /* OVL1 */

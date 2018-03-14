@@ -1190,6 +1190,8 @@ E int FDECL(domlcseduce, (struct monst *));
 E int FDECL(dosflseduce, (struct monst *));
 E int FDECL(dopaleseduce, (struct monst *));
 E int FDECL(dotent, (struct monst *, int));
+E void NDECL(pushplayer);
+E void NDECL(phase_door);
 #endif
 
 /* ### minion.c ### */
@@ -2367,6 +2369,7 @@ E void FDECL(place_monster, (struct monst *,int,int));
 /* ### teleport.c ### */
 
 E boolean FDECL(teleok, (int,int,BOOLEAN_P));
+E boolean FDECL(teleokX, (int,int,BOOLEAN_P));
 E boolean FDECL(goodpos, (int,int,struct monst *,unsigned));
 E boolean FDECL(eonline, (coord *,XCHAR_P,XCHAR_P,struct permonst *));
 E boolean FDECL(eofflin, (coord *,XCHAR_P,XCHAR_P,struct permonst *));
@@ -2375,6 +2378,7 @@ E boolean FDECL(enexto_core, (coord *,XCHAR_P,XCHAR_P,struct permonst *,unsigned
 E void FDECL(xpathto, (int,XCHAR_P,XCHAR_P,int (*)(genericptr_t,int,int),void *));
 E void FDECL(teleds, (int,int,BOOLEAN_P));
 E boolean FDECL(safe_teleds, (BOOLEAN_P));
+E boolean FDECL(safe_teledsPD, (BOOLEAN_P));
 E boolean FDECL(teleport_pet, (struct monst *,BOOLEAN_P));
 E void NDECL(tele);
 E int NDECL(dotele);
