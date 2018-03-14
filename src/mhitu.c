@@ -3277,7 +3277,7 @@ dopois:
 			break;
 		    case 5: case 6:
 			if (!u.ustuck && !sticks(youmonst.data)) {
-				setustuck(mtmp);
+				u.ustuck = mtmp;
 				pline("%s grabs you!", Monnam(mtmp));
 			}
 			break;

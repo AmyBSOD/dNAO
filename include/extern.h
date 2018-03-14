@@ -1898,6 +1898,7 @@ E const char *FDECL(piratesay, (const char *));
 E void NDECL(init_uasmon);
 E void NDECL(set_uasmon);
 E void NDECL(change_sex);
+E void NDECL(newman);
 E void FDECL(polyself, (BOOLEAN_P));
 E int FDECL(polymon, (int));
 E void NDECL(rehumanize);

@@ -18,7 +18,6 @@ STATIC_DCL void NDECL(break_armor);
 STATIC_DCL void FDECL(drop_weapon,(int));
 STATIC_DCL void NDECL(uunstick);
 STATIC_DCL int FDECL(armor_to_dragon,(int));
-STATIC_DCL void NDECL(newman);
 STATIC_DCL short NDECL(doclockmenu);
 
 /* Assumes u.umonster is set up already */
@@ -178,7 +177,7 @@ change_sex()
 	}
 }
 
-STATIC_OVL void
+void
 newman()
 {
 	int tmp, oldlvl;
