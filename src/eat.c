@@ -1438,6 +1438,7 @@ BOOLEAN_P tin, nobadeffects, drained;
 		    polyself(FALSE);
 		}
 		break;
+	    case PM_ADVERSARY:
 	    case PM_MIND_FLAYER:
 	    case PM_MASTER_MIND_FLAYER:
 		if(!drained || !rn2(5)) {
