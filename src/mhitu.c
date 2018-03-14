@@ -3265,7 +3265,7 @@ dopois:
 			!uclockwork) {
 			    You_feel("feverish.");
 			    exercise(A_CON, FALSE);
-			    u.ulycn = PM_WERECOW;
+			    u.ulycn = PM_WEREWOLF;
 			} else {
 				if (multi >= 0) {
 				    if (Sleep_resistance && rn2(20)) break;
