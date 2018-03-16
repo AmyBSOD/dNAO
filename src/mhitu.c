@@ -1680,6 +1680,7 @@ hitmu(mtmp, mattk)
 	struct attack alt_attk;
 	int hallutime;
 	int attack_type = mattk->adtyp;
+	int i;
 
 	if(mattk->adtyp == AD_RBRE){
 		attack_type = meleedmgtypes[rn2(SIZE(meleedmgtypes))];	//flat random member of meleedmgtypes
