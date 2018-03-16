@@ -4939,7 +4939,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 				return(1);
 
 			}
-			dmgplus += dmgval(uwep, &youmonst);
+			dmgplus += dmgval(uwep, &youmonst, 0);
 			
 			if (uwep->opoisoned){
 				sprintf(buf, "%s %s",
