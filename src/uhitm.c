@@ -4498,12 +4498,57 @@ uchar aatyp, adtyp;
 
 	switch(ptr->mattk[i].adtyp) {
 
+	  case AD_LETHE:
+			pline("The waters of the Lethe wash over you!");
+			if(u.sealsActive&SEAL_HUGINN_MUNINN){
+				unbind(SEAL_HUGINN_MUNINN,TRUE);
+			} else {
+				(void) adjattrib(A_INT, -tmp, FALSE);
+				forget(25);
+				water_damage(invent, FALSE, FALSE, TRUE, &youmonst);
+
+				exercise(A_WIS, FALSE);
+			}
+			if (ABASE(A_INT) <= 3) {
+				int lifesaved = 0;
+				struct obj *wore_amulet = uamul;
+				
+				while(1) {
+				    /* avoid looping on "die(y/n)?" */
+				    if (lifesaved && (discover || wizard)) {
+						if (wore_amulet && !uamul) {
+						    /* used up AMULET_OF_LIFE_SAVING; still
+						       subject to dying from brainlessness */
+						    wore_amulet = 0;
+						} else {
+						    /* explicitly chose not to die;
+						       arbitrarily boost intelligence */
+						    ABASE(A_INT) = ATTRMIN(A_INT) + 2;
+						    You_feel("like a scarecrow.");
+						    break;
+						}
+					}
+					if (lifesaved)
+						pline("Unfortunately your mind is still gone.");
+					else
+						Your("last thought drifts away.");
+					killer = "memmory loss";
+					killer_format = KILLED_BY;
+					done(DIED);
+					lifesaved++;
+				}
+		    }
+		break;
 	  case AD_ICUR:
 		if (!rn2(3)) {
 			You_feel("as if you need some help.");
 			rndcurse();
 		}
 	    break;
+	    case AD_BLND:
+		    if (!Blind) pline("You are blinded by a flash of light!");
+		    make_blinded(Blinded+(long)tmp,FALSE);
+		break;
 	  case AD_BARB:
 		if(ptr == &mons[PM_RAZORVINE]) You("are hit by the springing vines!");
 		else You("are hit by %s barbs!", s_suffix(mon_nam(mon)));
@@ -4636,6 +4681,9 @@ uchar aatyp, adtyp;
 		mdamageu(mon, tmp);
 	    case AD_DRST:
 		ptmp = A_STR;
+		goto dobpois;
+	    case AD_POSN:
+		ptmp = rn2(A_MAX);
 		goto dobpois;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	    case AD_DRDX:
@@ -4857,6 +4905,163 @@ dobpois:
 			    doseduce(mon);
 			}
 		  }break;
+
+	      case AD_STCK:
+
+			if (!u.ustuck && !sticks(youracedata)) {
+				if(Upolyd && u.umonnum == PM_TOVE) break;
+				else u.ustuck = mon;
+			}
+
+			break;
+
+	      case AD_SUCK:
+
+			if (noncorporeal(youracedata) || amorphous(youracedata)) tmp = 0;
+			else{
+				if( has_head(youracedata) && !uarmh && !rn2(20) && 
+					((!Upolyd && u.uhp < .1*u.uhpmax) || (Upolyd && u.mh < .1*u.mhmax))
+				){
+					tmp = 2 * (Upolyd ? u.mh : u.uhp)
+						  + 400; //FATAL_DAMAGE_MODIFIER;
+					pline("%s sucks your %s off!",
+					      Monnam(mon), body_part(HEAD));
+				}
+				else{
+					You_feel("%s trying to suck your extremities off!",mon_nam(mon));
+					// if(youmonst.movement > -1 * NORMAL_SPEED) youmonst.movement -= NORMAL_SPEED / 2; //Tarmunora memorial balance correction
+					if(!rn2(10)){
+						Your("%s twist from the suction!", makeplural(body_part(LEG)));
+					    set_wounded_legs(RIGHT_SIDE, rnd(60-ACURR(A_DEX)));
+					    set_wounded_legs(LEFT_SIDE, rnd(60-ACURR(A_DEX)));
+					    exercise(A_STR, FALSE);
+					    exercise(A_DEX, FALSE);
+					}
+					if(uwep && !rn2(6)){
+						You_feel("%s pull on your weapon!",mon_nam(mon));
+						if( d(1,130) > ACURR(A_STR)){
+							Your("weapon is sucked out of your grasp!");
+							optr = uwep;
+							uwepgone();
+							freeinv(optr);
+							(void) mpickobj(mon,optr);
+						}
+						else{
+							You("keep a tight grip on your weapon!");
+						}
+					}
+					static int bboots1 = 0;
+					if (!bboots1) bboots1 = find_bboots();
+					if(!rn2(10) && uarmf && uarmf->otyp != bboots1){
+						Your("boots are sucked off!");
+						optr = uarmf;
+						if (donning(optr)) cancel_don();
+						(void) Boots_off();
+						freeinv(optr);
+						(void) mpickobj(mon,optr);
+					}
+					if(!rn2(6) && uarmg && !uwep){
+						You_feel("%s pull on your gloves!",mon_nam(mon));
+						if( d(1,40) > ACURR(A_STR)){
+							Your("gloves are sucked off!");
+							optr = uarmg;
+							if (donning(optr)) cancel_don();
+							(void) Gloves_off();
+							freeinv(optr);
+							(void) mpickobj(mon,optr);
+						}
+						else You("keep your %s closed.", makeplural(body_part(HAND)));
+					}
+					if(!rn2(8) && uarms){
+						You_feel("%s pull on your shield!",mon_nam(mon));
+						if( d(1,150) > ACURR(A_STR)){
+							Your("shield is sucked out of your grasp!");
+							optr = uarms;
+							if (donning(optr)) cancel_don();
+							Shield_off();
+							freeinv(optr);
+							(void) mpickobj(mon,optr);
+						 }
+						 else{
+							You("keep a tight grip on your shield!");
+						 }
+					}
+					if(!rn2(4) && uarmh){
+						Your("helmet is sucked off!");
+						optr = uarmh;
+						if (donning(optr)) cancel_don();
+						(void) Helmet_off();
+						freeinv(optr);
+						(void) mpickobj(mon,optr);
+					}
+				}
+			}
+
+			break;
+
+	      case AD_DISN:
+
+				if (Disint_resistance) {
+					You("are not disintegrated.");
+					break;
+				} else if (uarms) {
+					/* destroy shield; other possessions are safe */
+					 for(i=d(1,4); i>0; i--){
+						if(uarms->spe > -1*objects[(uarms)->otyp].a_ac){
+							damage_item(uarms);
+							if(i==1) Your("%s damaged.", aobjnam(uarms, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarms);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if (uarmc) {
+					/* destroy cloak */
+					 for(i=d(1,4); i>0; i--){
+						if(uarmc->spe > -1*objects[(uarmc)->otyp].a_ac){
+							damage_item(uarmc);
+							if(i==1) Your("%s damaged.", aobjnam(uarmc, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarmc);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if (uarm) {
+					/* destroy suit */
+					 for(i=d(1,4); i>0; i--){
+						if(uarm->spe > -1*objects[(uarm)->otyp].a_ac){
+							damage_item(uarm);
+							if(i==1) Your("%s damaged.", aobjnam(uarm, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarm);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if(uarmu && objects[uarmu->otyp].a_can > 0){
+					/* destroy underwear */
+					 for(i=d(1,4); i>0; i--){
+						if(uarmu->spe > -1*objects[(uarmu)->otyp].a_ac){
+							damage_item(uarmu);
+							if(i==1) Your("%s damaged.", aobjnam(uarmu, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarmu);
+						 i = 0;
+						}
+					 }
+					break;
+				}
+			    done(DIED); /* killed by a died */
+			    return 1; /* lifesaved */
+
+
+			break;
 
 	      case AD_PLYS:
 		if(ptr->mlet == S_EYE) {

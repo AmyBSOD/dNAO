@@ -37,10 +37,18 @@ STATIC_DCL void FDECL(wildmiss, (struct monst *,struct attack *));
 STATIC_DCL void FDECL(hurtarmor,(int));
 STATIC_DCL void FDECL(hitmsg,(struct monst *,struct attack *));
 
-static const int gazeattacks[] = {AD_DEAD, AD_CNCL, AD_PLYS, AD_DRLI, AD_ENCH, AD_STON, AD_LUCK, AD_DARK, AD_PSI, AD_MANA, AD_DISP,
-										AD_CONF, AD_SLOW, AD_STUN, AD_BLND, AD_FIRE, AD_FIRE,
+static const int gazeattacks[] = {AD_DEAD, AD_CNCL, AD_PLYS, AD_DRLI, AD_ENCH, AD_STON, AD_LUCK, AD_DARK, AD_PSI, AD_MANA, AD_DISP, AD_ABDC,
+										AD_CONF, AD_SLOW, AD_STUN, AD_BLND, AD_FIRE, AD_FIRE, AD_DREN, AD_HODS, AD_DRST,
+										AD_DISE, AD_PEST, AD_TLPT, AD_PHYS, AD_SUCK, AD_DETH, AD_MALK, AD_WEEP,
 										AD_COLD, AD_COLD, AD_ELEC, AD_ELEC, AD_HALU, AD_SLEE };
 static const int elementalgaze[] = {AD_FIRE,AD_COLD,AD_ELEC};
+
+static const int meleedmgtypes[] = {AD_PHYS, AD_SHDW, AD_STAR, AD_BLUD, AD_FIRE, AD_COLD, AD_SLEE, AD_ELEC, AD_DRST, AD_ACID, AD_BLND, AD_STUN, AD_SLOW,
+						 AD_PLYS, AD_DRLI, AD_DREN, AD_LEGS, AD_STON, AD_STCK, AD_SGLD, AD_SITM, AD_TLPT, AD_RUST, AD_CONF, AD_WRAP, AD_DRDX,
+						 AD_DRCO, AD_DRIN, AD_NPDC, AD_DISE, AD_HALU, AD_DETH, AD_FAMN, AD_PEST, AD_SLIM, AD_ENCH, AD_CORR, AD_POSN, AD_WISD,
+						 AD_VORP, AD_SHRD, AD_TCKL, AD_WET, AD_LETHE, AD_SUCK, AD_MALK, AD_UVUU, AD_ABDC, AD_TELE, AD_CHRN, AD_LVLT, AD_GLIB,
+						 AD_DARK, AD_GRAV, AD_PSI, AD_MANA, AD_WTHR, AD_ICUR, AD_SOUN, AD_DEPR, AD_DFOO, AD_VENO, AD_PLAS, AD_DISP, AD_TIME,
+						 AD_WRAT, AD_NEXU, AD_INSA, AD_HALU, AD_LUCK, AD_WEEP, AD_DISN};
 
 /* See comment in mhitm.c.  If we use this a lot it probably should be */
 /* changed to a parameter to mhitu. */
@@ -1118,6 +1126,70 @@ mattacku(mtmp)
 			}
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+		case AD_DISN:
+		    You_feel("like a drill is tearing you apart!");
+
+				if (Disint_resistance) {
+					You("are not disintegrated.");
+					break;
+				} else if (uarms) {
+					/* destroy shield; other possessions are safe */
+					 for(i=d(1,4); i>0; i--){
+						if(uarms->spe > -1*objects[(uarms)->otyp].a_ac){
+							damage_item(uarms);
+							if(i==1) Your("%s damaged.", aobjnam(uarms, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarms);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if (uarmc) {
+					/* destroy cloak */
+					 for(i=d(1,4); i>0; i--){
+						if(uarmc->spe > -1*objects[(uarmc)->otyp].a_ac){
+							damage_item(uarmc);
+							if(i==1) Your("%s damaged.", aobjnam(uarmc, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarmc);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if (uarm) {
+					/* destroy suit */
+					 for(i=d(1,4); i>0; i--){
+						if(uarm->spe > -1*objects[(uarm)->otyp].a_ac){
+							damage_item(uarm);
+							if(i==1) Your("%s damaged.", aobjnam(uarm, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarm);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if(uarmu && objects[uarmu->otyp].a_can > 0){
+					/* destroy underwear */
+					 for(i=d(1,4); i>0; i--){
+						if(uarmu->spe > -1*objects[(uarmu)->otyp].a_ac){
+							damage_item(uarmu);
+							if(i==1) Your("%s damaged.", aobjnam(uarmu, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarmu);
+						 i = 0;
+						}
+					 }
+					break;
+				}
+			    done(DIED); /* killed by a died */
+			    return 1; /* lifesaved */
+
+		    break;
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 		case AT_WEAP:
 		case AT_DEVA:
 			if(range2) {
@@ -1671,6 +1743,11 @@ hitmu(mtmp, mattk)
 	int res;
 	struct attack alt_attk;
 	int hallutime;
+	int attack_type = mattk->adtyp;
+
+	if(mattk->adtyp == AD_RBRE){
+		attack_type = meleedmgtypes[rn2(SIZE(meleedmgtypes))];	//flat random member of meleedmgtypes
+	}
 
 	if (!canspotmon(mtmp))
 	    map_invisible(mtmp->mx, mtmp->my);
@@ -2968,6 +3045,7 @@ dopois:
 				}
 		    }
 			level_tele();
+			return 3; /*You teleported, monster should stop attacking.*/
 		}
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -3414,6 +3492,13 @@ dopois:
 
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_LUCK:
+		hitmsg(mtmp, mattk);
+		if (mtmp->mcan) break;
+		change_luck(-1);
+		You_feel("unlucky.");
+		break;
+///////////////////////////////////////////////////////////////////////////////////////////
 	    case AD_DARK:
 		hitmsg(mtmp, mattk);
 
@@ -3529,6 +3614,7 @@ dopois:
 			case 6:
 
 				level_tele();
+				return 3; /*You teleported, monster should stop attacking.*/
 				break;
 			case 7:
 				{
@@ -4333,6 +4419,73 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 		case AD_DISE:
 		    if (!diseasemu(mtmp->data)) tmp = 0;
 		break;
+
+		case AD_DISN:
+		    You_feel("like a drill is tearing you apart!");
+			if (!rn2(10))  {
+
+				if (Disint_resistance) {
+					You("are not disintegrated.");
+					break;
+				} else if (uarms) {
+					/* destroy shield; other possessions are safe */
+					 for(i=d(1,4); i>0; i--){
+						if(uarms->spe > -1*objects[(uarms)->otyp].a_ac){
+							damage_item(uarms);
+							if(i==1) Your("%s damaged.", aobjnam(uarms, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarms);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if (uarmc) {
+					/* destroy cloak */
+					 for(i=d(1,4); i>0; i--){
+						if(uarmc->spe > -1*objects[(uarmc)->otyp].a_ac){
+							damage_item(uarmc);
+							if(i==1) Your("%s damaged.", aobjnam(uarmc, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarmc);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if (uarm) {
+					/* destroy suit */
+					 for(i=d(1,4); i>0; i--){
+						if(uarm->spe > -1*objects[(uarm)->otyp].a_ac){
+							damage_item(uarm);
+							if(i==1) Your("%s damaged.", aobjnam(uarm, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarm);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if(uarmu && objects[uarmu->otyp].a_can > 0){
+					/* destroy underwear */
+					 for(i=d(1,4); i>0; i--){
+						if(uarmu->spe > -1*objects[(uarmu)->otyp].a_ac){
+							damage_item(uarmu);
+							if(i==1) Your("%s damaged.", aobjnam(uarmu, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarmu);
+						 i = 0;
+						}
+					 }
+					break;
+				}
+			    done(DIED); /* killed by a died */
+			    return 1; /* lifesaved */
+
+			}
+		    break;
+
 		case AD_LETHE:
 			pline("The waters of the Lethe wash over you!");
 			if(u.sealsActive&SEAL_HUGINN_MUNINN){
@@ -4609,6 +4762,9 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 	if(mattk->adtyp == AD_RGAZ){
 		attack_type = gazeattacks[rn2(SIZE(gazeattacks))];	//flat random member of gazeattacks
 	}
+	if(mattk->adtyp == AD_RBRE){ /* too lazy to transform them all into AD_RGAZ... :-P --Amy */
+		attack_type = gazeattacks[rn2(SIZE(gazeattacks))];	//flat random member of gazeattacks
+	}
 	else if(mattk->adtyp == AD_RETR){
 		attack_type = elementalgaze[rn2(SIZE(elementalgaze))];	//flat random member of elementalgaze
 	}
@@ -4719,6 +4875,86 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 			   }
 			break;
 
+	    case AD_DETH:
+		if(!mtmp->mcan && canseemon(mtmp) && !Blind && !is_blind(mtmp) && !rn2(18) ) {
+		    if (Displaced && rn2(3)) {
+			pline("%s gazes at your displaced image!",Monnam(mtmp));
+			    break;
+		    }
+		    if ((Invisible && rn2(3)) || !rn2(4)) {
+			pline("%s gazes around, but misses you!",Monnam(mtmp));
+			break;
+		    }
+		    if (!rn2(8)) pline("%s gazes directly at you!",Monnam(mtmp));
+		    if(Reflecting) {
+			pline("%s gazes around, but you reflect it!",Monnam(mtmp));
+			break;
+		    } else if (is_undead(youmonst.data)) {
+			pline("Was that the gaze of death?");
+			break;
+		    } else if (rn2(5) ) {
+			/* Still does normal damage */
+			pline("It is pitch black...");
+			losehp(15 + dmgplus, "black gaze", KILLED_BY_AN);
+			u.uhpmax -= 2;
+			if (u.uhp > u.uhpmax) u.uhp = u.uhpmax;
+			break;
+		    } else if (Antimagic) {
+			You("shudder momentarily...");
+		    } else {
+			You(rn2(2) ? "have died." : "die...");
+			killer_format = KILLED_BY_AN;
+			killer = "gaze of death";
+			succeeded = 1;
+			done(DIED);
+		    }
+		}
+		break;
+
+	    case AD_HODS:
+	        if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(5) ) {
+                  pline("%s summons a mirror image of you, which promptly attacks you!", Monnam(mtmp));
+		 if(uwep){
+			if (uwep->otyp == CORPSE
+				&& touch_petrifies(&mons[uwep->corpsenm])) {
+			    dmgplus = 1;
+			    pline("%s hits you with the %s corpse.",
+				Monnam(mtmp), mons[uwep->corpsenm].mname);
+
+			    if (!Stoned && !Stone_resistance && !(poly_when_stoned(youracedata) &&
+					polymon(PM_STONE_GOLEM))) {
+				Stoned = 5;
+				delayed_killer = mtmp->data->mname;
+				if (mtmp->data->geno & G_UNIQ) {
+				    if (!type_is_pname(mtmp->data)) {
+					static char kbuf[BUFSZ];
+
+					/* "the" buffer may be reallocated */
+					Strcpy(kbuf, the(delayed_killer));
+					delayed_killer = kbuf;
+				    }
+				    killer_format = KILLED_BY;
+				} else killer_format = KILLED_BY_AN;
+				return(1);
+
+			}
+			dmgplus += dmgval(uwep, &youmonst);
+			
+			if (uwep->opoisoned){
+				sprintf(buf, "%s %s",
+					s_suffix(Monnam(mtmp)), mpoisons_subj(mtmp, mattk));
+				poisoned(buf, A_CON, mtmp->data->mname, 30, 0);
+			}
+			
+			if (dmgplus <= 0) dmgplus = 1;
+			if (!(uwep->oartifact &&
+				artifact_hit(mtmp, &youmonst, uwep, &dmgplus,dieroll)))
+			     hitmsg(mtmp, mattk);
+		 }
+             mdamageu(mtmp, d(3,8) + dmgplus);
+		}
+		break;
+
 	    case AD_DARK:
 		if (!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(4) ) {
 
@@ -4728,6 +4964,33 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 	    }
 	    break;
 
+	    case AD_WEEP:
+		if (!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(40) ) {
+			pline("%s weeps!", Monnam(mtmp));
+			if(!u.uevent.udemigod){
+				if (Teleport_control || Drain_resistance) {
+					if(flags.verbose) You("feel like you could have lost some potential.");
+				} else {
+					int potentialLost = 0;
+					level_tele();
+					You("suddenly feel like you've lost some potential.");
+					potentialLost = min(abs(u.uz.dlevel - u.utolev.dlevel),u.ulevel-1)/2 + 1;
+					for(; potentialLost>0; potentialLost--) losexp("loss of potential",FALSE,TRUE,TRUE); /*not verbose, force drain, drain exp also*/
+					dmgplus = 0;
+					return 3; /*You teleported, monster should stop attacking.*/
+				}
+			}
+			else{/*The angels will try to drain you dry during the endgame*/
+				if (Drain_resistance) {
+					if(flags.verbose) You("feel like you could have lost some potential.");
+				} else {
+					You("suddenly feel like you've lost some potential.");
+					losexp("loss of potential",FALSE,TRUE,TRUE); /*not verbose, force drain, drain exp also*/
+				}
+			}
+		}
+		break;
+
 	    case AD_DISP:
 	      if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(5) ) {
 			pline("%s fires a jumping flamer!", Monnam(mtmp));
@@ -4735,6 +4998,188 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 	            if (!rn2(5)) mdamageu(mtmp, (1 + dmgplus));
 		}
 		break;
+
+	    case AD_POSN:
+	        if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(5) ) {
+	                pline("%s stares into your eyes...", Monnam(mtmp));
+	                poisoned("The gaze", rn2(A_MAX), mtmp->data->mname, 30, 0);
+	        }
+	        break;
+
+	    case AD_DRST:
+	        if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(5) ) {
+	                pline("%s stares into your eyes...", Monnam(mtmp));
+	                poisoned("The gaze", rn2(A_STR), mtmp->data->mname, 30, 0);
+	        }
+	        break;
+
+          case AD_DISE:
+          case AD_PEST:
+	        if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(12) ) {
+			pline("%s leers down on you!", Monnam(mtmp));
+		    	diseasemu(mtmp->data);
+	        }
+	        break;
+
+	    case AD_MALK:
+		if (!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(5) ) {
+		    int dmg = d(3,6);
+		    if (!rn2(10)) dmg += dmgplus;
+
+		    pline("%s attacks you with an electrifying gaze!", Monnam(mtmp));
+
+			if (!rn2(4) && !sticks(youracedata)) {
+				if(Upolyd && u.umonnum == PM_TOVE) You("are much too slithy to grab!");
+				else {
+					u.ustuck = mtmp;
+					pline("%s grabs you!", Monnam(mtmp));
+				}
+			}
+
+		    if (Shock_resistance) {
+			pline_The("gaze doesn't shock you!");
+			dmg = 0;
+		    }
+		    if (!rn2(2)) /* high voltage - stronger than ordinary shock attack --Amy */
+			destroy_item(WAND_CLASS, AD_ELEC);
+		    if (!rn2(2))
+			destroy_item(RING_CLASS, AD_ELEC);
+		    if (dmg) mdamageu(mtmp, dmg);
+		}
+		break;
+
+	      case AD_DREN:
+		if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && rn2(5) ) {
+			if (!rn2(4)) {
+				pline("%s drains your energy with its gaze!", Monnam(mtmp));
+				drain_en(10);
+				if (!rn2(5)) drain_en(dmgplus);
+			}
+		}
+		break;
+
+	    case AD_SUCK:
+
+	      if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && (!rn2(20) ) {
+			pline("%s uses a vacuum cleaner on you! Or is that a gluon gun?", Monnam(mtmp));
+
+			if (noncorporeal(youracedata) || amorphous(youracedata)) dmgplus = 0;
+			else{
+				if( has_head(youracedata) && !uarmh && !rn2(20) && 
+					((!Upolyd && u.uhp < .1*u.uhpmax) || (Upolyd && u.mh < .1*u.mhmax))
+				){
+					dmgplus = 2 * (Upolyd ? u.mh : u.uhp)
+						  + 400; //FATAL_DAMAGE_MODIFIER;
+					pline("%s sucks your %s off!",
+					      Monnam(mtmp), body_part(HEAD));
+				}
+				else{
+					You_feel("%s trying to suck your extremities off!",mon_nam(mtmp));
+					// if(youmonst.movement > -1 * NORMAL_SPEED) youmonst.movement -= NORMAL_SPEED / 2; //Tarmunora memorial balance correction
+					if(!rn2(10)){
+						Your("%s twist from the suction!", makeplural(body_part(LEG)));
+					    set_wounded_legs(RIGHT_SIDE, rnd(60-ACURR(A_DEX)));
+					    set_wounded_legs(LEFT_SIDE, rnd(60-ACURR(A_DEX)));
+					    exercise(A_STR, FALSE);
+					    exercise(A_DEX, FALSE);
+					}
+					if(uwep && !rn2(6)){
+						You_feel("%s pull on your weapon!",mon_nam(mtmp));
+						if( d(1,130) > ACURR(A_STR)){
+							Your("weapon is sucked out of your grasp!");
+							optr = uwep;
+							uwepgone();
+							freeinv(optr);
+							(void) mpickobj(mtmp,optr);
+						}
+						else{
+							You("keep a tight grip on your weapon!");
+						}
+					}
+					static int bboots1 = 0;
+					if (!bboots1) bboots1 = find_bboots();
+					if(!rn2(10) && uarmf && uarmf->otyp != bboots1){
+						Your("boots are sucked off!");
+						optr = uarmf;
+						if (donning(optr)) cancel_don();
+						(void) Boots_off();
+						freeinv(optr);
+						(void) mpickobj(mtmp,optr);
+					}
+					if(!rn2(6) && uarmg && !uwep){
+						You_feel("%s pull on your gloves!",mon_nam(mtmp));
+						if( d(1,40) > ACURR(A_STR)){
+							Your("gloves are sucked off!");
+							optr = uarmg;
+							if (donning(optr)) cancel_don();
+							(void) Gloves_off();
+							freeinv(optr);
+							(void) mpickobj(mtmp,optr);
+						}
+						else You("keep your %s closed.", makeplural(body_part(HAND)));
+					}
+					if(!rn2(8) && uarms){
+						You_feel("%s pull on your shield!",mon_nam(mtmp));
+						if( d(1,150) > ACURR(A_STR)){
+							Your("shield is sucked out of your grasp!");
+							optr = uarms;
+							if (donning(optr)) cancel_don();
+							Shield_off();
+							freeinv(optr);
+							(void) mpickobj(mtmp,optr);
+						 }
+						 else{
+							You("keep a tight grip on your shield!");
+						 }
+					}
+					if(!rn2(4) && uarmh){
+						Your("helmet is sucked off!");
+						optr = uarmh;
+						if (donning(optr)) cancel_don();
+						(void) Helmet_off();
+						freeinv(optr);
+						(void) mpickobj(mtmp,optr);
+					}
+				}
+			}
+
+		}
+
+		break;
+
+	    case AD_TLPT:
+	        if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(15) ) {
+			pline("%s stares blinkingly at you!", Monnam(mtmp));
+	                if(flags.verbose)
+	                        Your("position suddenly seems very uncertain!");
+	                tele();
+		}
+		break;
+
+	    case AD_ABDC:
+	        if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind) {
+			pline("%s stares blinkingly at you!", Monnam(mtmp));
+	                if(flags.verbose)
+	                        Your("position suddenly seems very uncertain!");
+	                tele();
+		}
+		break;
+
+	    case AD_PHYS:
+	        if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && rn2(3) ) {
+	                if (Displaced && rn2(3)) {
+	                        if (!Blind) pline("%s gazes at your displaced image!",Monnam(mtmp));
+	                        break;
+	                }
+	                if ((Invisible && rn2(3)) || !rn2(4)) {
+	                        if (!Blind) pline("%s gazes around, but misses you!",Monnam(mtmp));
+	                        break;
+	                }
+	                pline("%s gazes directly at you!",Monnam(mtmp));
+	                pline("You are wracked with pains!");
+	                mdamageu(mtmp, d(3,8) + dmgplus);
+	        }
+	        break;
 
 	    case AD_MANA:
 		if (!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(20) ) {
@@ -4744,7 +5189,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		}
 		break;
 
-	    case AD_SPC2:
+	    case AD_PSI:
 	      if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(7) ) {
 			char visageword[BUFSZ]; /* from ToME */
 			strcpy(visageword, "bad"); /* fail safe --Amy */
