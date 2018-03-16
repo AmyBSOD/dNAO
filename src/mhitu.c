@@ -5061,7 +5061,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 
 	    case AD_SUCK:
 
-	      if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && (!rn2(20) ) {
+	      if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(20) ) {
 			pline("%s uses a vacuum cleaner on you! Or is that a gluon gun?", Monnam(mtmp));
 
 			if (noncorporeal(youracedata) || amorphous(youracedata)) dmgplus = 0;
