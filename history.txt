@@ -1,5 +1,6 @@
 DNHslex History File by Amy, given in reverse chronological order
 
+- The game should not become unwinnable if you anger the quest leader, and the downstair is open by default.
 - Added monsters from various other NetHack variants, and new attacks that they can use.
 - Humans that aren't always peaceful don't give murder penalties when killed.
 - The bottom line displays negative HP if the player takes enough damage.
