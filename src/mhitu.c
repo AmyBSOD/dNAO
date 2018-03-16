@@ -4754,6 +4754,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 	int succeeded = 0;
 	int attack_type = mattk->adtyp;
 	int dmgplus;
+	struct obj *optr;
 	dmgplus = d((int)mattk->damn, (int)mattk->damd);
 	struct	permonst *mdat = mtmp->data;
 	char buf[BUFSZ];
