@@ -4917,29 +4917,28 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 	        if(!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(5) ) {
                   pline("%s summons a mirror image of you, which promptly attacks you!", Monnam(mtmp));
 		 if(uwep){
-			if (uwep->otyp == CORPSE
-				&& touch_petrifies(&mons[uwep->corpsenm])) {
+			if (uwep->otyp == CORPSE && touch_petrifies(&mons[uwep->corpsenm])) {
 			    dmgplus = 1;
 			    pline("%s hits you with the %s corpse.",
 				Monnam(mtmp), mons[uwep->corpsenm].mname);
 
-			    if (!Stoned && !Stone_resistance && !(poly_when_stoned(youracedata) &&
-					polymon(PM_STONE_GOLEM))) {
-				Stoned = 5;
-				delayed_killer = mtmp->data->mname;
-				if (mtmp->data->geno & G_UNIQ) {
-				    if (!type_is_pname(mtmp->data)) {
-					static char kbuf[BUFSZ];
+			    if (!Stoned && !Stone_resistance && !(poly_when_stoned(youracedata) && polymon(PM_STONE_GOLEM))) {
+					Stoned = 5;
+					delayed_killer = mtmp->data->mname;
+					if (mtmp->data->geno & G_UNIQ) {
+					    if (!type_is_pname(mtmp->data)) {
+						static char kbuf[BUFSZ];
 
-					/* "the" buffer may be reallocated */
-					Strcpy(kbuf, the(delayed_killer));
-					delayed_killer = kbuf;
-				    }
-				    killer_format = KILLED_BY;
-				} else killer_format = KILLED_BY_AN;
-				return(1);
+						/* "the" buffer may be reallocated */
+						Strcpy(kbuf, the(delayed_killer));
+						delayed_killer = kbuf;
+					    }
+					    killer_format = KILLED_BY;
+					} else killer_format = KILLED_BY_AN;
+					return(1);
 
-			}
+				}
+			    }
 			dmgplus += dmgval(uwep, &youmonst, 0);
 			
 			if (uwep->opoisoned){
