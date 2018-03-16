@@ -189,7 +189,8 @@ boolean seal;
 			  !seal ? 1 : -1;
 	}
     schedule_goto(dest, FALSE, FALSE, portal_flag, (char *)0, (char *)0);
-    if (seal) {	/* remove the portal to the quest - sealing it off */
+    if (seal && !seal) {	/* remove the portal to the quest - sealing it off */
+		/* disabled by Amy because making the game unwinnable is just stupid */
 		int reexpelled = u.uevent.qexpelled;
 		u.uevent.qexpelled = 1;
 		remdun_mapseen(quest_dnum);
