@@ -1126,70 +1126,6 @@ mattacku(mtmp)
 			}
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-		case AD_DISN:
-		    You_feel("like a drill is tearing you apart!");
-
-				if (Disint_resistance) {
-					You("are not disintegrated.");
-					break;
-				} else if (uarms) {
-					/* destroy shield; other possessions are safe */
-					 for(i=d(1,4); i>0; i--){
-						if(uarms->spe > -1*objects[(uarms)->otyp].a_ac){
-							damage_item(uarms);
-							if(i==1) Your("%s damaged.", aobjnam(uarms, "seem"));
-						}
-						else {
-						 (void) destroy_arm(uarms);
-						 i = 0;
-						}
-					 }
-					break;
-				} else if (uarmc) {
-					/* destroy cloak */
-					 for(i=d(1,4); i>0; i--){
-						if(uarmc->spe > -1*objects[(uarmc)->otyp].a_ac){
-							damage_item(uarmc);
-							if(i==1) Your("%s damaged.", aobjnam(uarmc, "seem"));
-						}
-						else {
-						 (void) destroy_arm(uarmc);
-						 i = 0;
-						}
-					 }
-					break;
-				} else if (uarm) {
-					/* destroy suit */
-					 for(i=d(1,4); i>0; i--){
-						if(uarm->spe > -1*objects[(uarm)->otyp].a_ac){
-							damage_item(uarm);
-							if(i==1) Your("%s damaged.", aobjnam(uarm, "seem"));
-						}
-						else {
-						 (void) destroy_arm(uarm);
-						 i = 0;
-						}
-					 }
-					break;
-				} else if(uarmu && objects[uarmu->otyp].a_can > 0){
-					/* destroy underwear */
-					 for(i=d(1,4); i>0; i--){
-						if(uarmu->spe > -1*objects[(uarmu)->otyp].a_ac){
-							damage_item(uarmu);
-							if(i==1) Your("%s damaged.", aobjnam(uarmu, "seem"));
-						}
-						else {
-						 (void) destroy_arm(uarmu);
-						 i = 0;
-						}
-					 }
-					break;
-				}
-			    done(DIED); /* killed by a died */
-			    return 1; /* lifesaved */
-
-		    break;
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 		case AT_WEAP:
 		case AT_DEVA:
 			if(range2) {
@@ -2112,6 +2048,70 @@ hitmu(mtmp, mattk)
 			goto dopois;
 		break;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+		case AD_DISN:
+		    You_feel("like a drill is tearing you apart!");
+
+				if (Disint_resistance) {
+					You("are not disintegrated.");
+					break;
+				} else if (uarms) {
+					/* destroy shield; other possessions are safe */
+					 for(i=d(1,4); i>0; i--){
+						if(uarms->spe > -1*objects[(uarms)->otyp].a_ac){
+							damage_item(uarms);
+							if(i==1) Your("%s damaged.", aobjnam(uarms, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarms);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if (uarmc) {
+					/* destroy cloak */
+					 for(i=d(1,4); i>0; i--){
+						if(uarmc->spe > -1*objects[(uarmc)->otyp].a_ac){
+							damage_item(uarmc);
+							if(i==1) Your("%s damaged.", aobjnam(uarmc, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarmc);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if (uarm) {
+					/* destroy suit */
+					 for(i=d(1,4); i>0; i--){
+						if(uarm->spe > -1*objects[(uarm)->otyp].a_ac){
+							damage_item(uarm);
+							if(i==1) Your("%s damaged.", aobjnam(uarm, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarm);
+						 i = 0;
+						}
+					 }
+					break;
+				} else if(uarmu && objects[uarmu->otyp].a_can > 0){
+					/* destroy underwear */
+					 for(i=d(1,4); i>0; i--){
+						if(uarmu->spe > -1*objects[(uarmu)->otyp].a_ac){
+							damage_item(uarmu);
+							if(i==1) Your("%s damaged.", aobjnam(uarmu, "seem"));
+						}
+						else {
+						 (void) destroy_arm(uarmu);
+						 i = 0;
+						}
+					 }
+					break;
+				}
+			    done(DIED); /* killed by a died */
+			    return 1; /* lifesaved */
+
+		    break;
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 	    case AD_CHKH:
 			hitmsg(mtmp, mattk);
 			dmg += u.chokhmah*5;
