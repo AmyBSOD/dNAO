@@ -564,6 +564,55 @@ register struct monst *mtmp;
 				// otmp->quan = 3;
 				// (void) mpickobj(mtmp, otmp);
 			}
+			else if(mm == PM_BASTARD_OF_THE_BOREAL_VALLEY){
+				otmp = mksobj(ARMORED_BOOTS, FALSE, FALSE);
+				otmp->obj_material = METAL;
+				otmp->spe = 0;
+				otmp->blessed = FALSE;
+				otmp->cursed = FALSE;
+				fix_object(otmp);
+				(void) mpickobj(mtmp,otmp);
+
+				otmp = mksobj(GAUNTLETS, FALSE, FALSE);
+				otmp->obj_material = METAL;
+				otmp->spe = 0;
+				otmp->blessed = FALSE;
+				otmp->cursed = FALSE;
+				fix_object(otmp);
+				(void) mpickobj(mtmp,otmp);
+				
+				otmp = mksobj(PLATE_MAIL, FALSE, FALSE);
+				otmp->obj_material = METAL;
+				otmp->spe = 0;
+				otmp->blessed = FALSE;
+				otmp->cursed = FALSE;
+				fix_object(otmp);
+				(void) mpickobj(mtmp,otmp);
+				
+				otmp = mksobj(PONTIFF_S_CROWN, FALSE, FALSE);
+				otmp->obj_material = GOLD;
+				otmp->spe = 0;
+				otmp->blessed = FALSE;
+				otmp->cursed = FALSE;
+				fix_object(otmp);
+				(void) mpickobj(mtmp,otmp);
+
+				otmp = mksobj(SCYTHE, FALSE, FALSE);
+				otmp = oname(otmp, artiname(ART_FRIEDE_S_SCYTHE));
+				otmp->spe = 0;
+				otmp->blessed = FALSE;
+				otmp->cursed = FALSE;
+				fix_object(otmp);
+				(void) mpickobj(mtmp,otmp);
+				
+				otmp = mksobj(SCYTHE, FALSE, FALSE);
+				otmp = oname(otmp, artiname(ART_PROFANED_GREATSCYTHE));
+				otmp->spe = 0;
+				otmp->blessed = FALSE;
+				otmp->cursed = FALSE;
+				fix_object(otmp);
+				(void) mpickobj(mtmp,otmp);
+			}
 			else if(ptr == &mons[PM_SHATTERED_ZIGGURAT_CULTIST]) {
 			    otmp = mksobj(TORCH, FALSE, FALSE);
 				otmp->age = (long) rn1(500,1000);
@@ -3437,32 +3486,59 @@ register struct monst *mtmp;
 		(void)mongets(mtmp, LONG_SWORD);
 		break;
 	    case S_ZOMBIE:
-		if(mm == PM_SKELETAL_PIRATE){
-		    otmp = rn2(2) ? mksobj(SCIMITAR, FALSE, FALSE) : mksobj(KNIFE, FALSE, FALSE);
-		    // curse(otmp);
+		if(mm == PM_UNDEAD_KNIGHT){
+			otmp = mksobj(LONG_SWORD, FALSE, FALSE);
 			otmp->oeroded = 1;
-		    (void) mpickobj(mtmp, otmp);
-			
-		    otmp = rn2(2) ? mksobj(HIGH_BOOTS, FALSE, FALSE) : mksobj(LEATHER_JACKET, FALSE, FALSE);
-		    // curse(otmp);
-			otmp->oeroded2 = 1;
-		    (void) mpickobj(mtmp, otmp);
-			
-		    otmp = rn2(2) ? mksobj(FLINTLOCK, FALSE, FALSE) : mksobj(KNIFE, FALSE, FALSE);
-		    // curse(otmp);
-			otmp->oeroded = 1;
-		    (void) mpickobj(mtmp, otmp);
-			
-			otmp = mksobj(BULLET, FALSE, FALSE);
-			otmp->quan += rnd(10);
-			otmp->oeroded = 1;
-			otmp->owt = weight(otmp);
 			(void) mpickobj(mtmp, otmp);
-			break;
+
+			otmp = mksobj(KITE_SHIELD, FALSE, FALSE);
+			otmp->oeroded = 1;
+			(void) mpickobj(mtmp, otmp);
+
+			otmp = mksobj(ARMORED_BOOTS, FALSE, FALSE);
+			otmp->obj_material = IRON;
+			otmp->oeroded = 1;
+			fix_object(otmp);
+			(void) mpickobj(mtmp,otmp);
+
+			otmp = mksobj(SCALE_MAIL, FALSE, FALSE);
+			otmp->oeroded = 2;
+			(void) mpickobj(mtmp, otmp);
+
+			otmp = mksobj(GAUNTLETS, FALSE, FALSE);
+			otmp->obj_material = IRON;
+			otmp->oeroded = 1;
+			fix_object(otmp);
+			(void) mpickobj(mtmp,otmp);
+				
+		} else {
+			if(mm == PM_SKELETAL_PIRATE){
+				otmp = rn2(2) ? mksobj(SCIMITAR, FALSE, FALSE) : mksobj(KNIFE, FALSE, FALSE);
+				// curse(otmp);
+				otmp->oeroded = 1;
+				(void) mpickobj(mtmp, otmp);
+				
+				otmp = rn2(2) ? mksobj(HIGH_BOOTS, FALSE, FALSE) : mksobj(LEATHER_JACKET, FALSE, FALSE);
+				// curse(otmp);
+				otmp->oeroded2 = 1;
+				(void) mpickobj(mtmp, otmp);
+				
+				otmp = rn2(2) ? mksobj(FLINTLOCK, FALSE, FALSE) : mksobj(KNIFE, FALSE, FALSE);
+				// curse(otmp);
+				otmp->oeroded = 1;
+				(void) mpickobj(mtmp, otmp);
+				
+				otmp = mksobj(BULLET, FALSE, FALSE);
+				otmp->quan += rnd(10);
+				otmp->oeroded = 1;
+				otmp->owt = weight(otmp);
+				(void) mpickobj(mtmp, otmp);
+				break;
+			}
+			if (!rn2(4)) (void)mongets(mtmp, LEATHER_ARMOR);
+			if (!rn2(4))
+				(void)mongets(mtmp, (rn2(3) ? KNIFE : SHORT_SWORD));
 		}
-		if (!rn2(4)) (void)mongets(mtmp, LEATHER_ARMOR);
-		if (!rn2(4))
-			(void)mongets(mtmp, (rn2(3) ? KNIFE : SHORT_SWORD));
 		break;
 	    case S_LIZARD:
 		if (mm == PM_SALAMANDER)
@@ -7009,7 +7085,10 @@ struct monst *mtmp, *victim;
 	if (mtmp->mhpmax <= hp_threshold)
 	    return ptr;		/* doesn't gain a level */
 
-	if (is_mplayer(ptr) || ptr == &mons[PM_BYAKHEE] || ptr == &mons[PM_LILLEND] || ptr == &mons[PM_MAID]) lev_limit = 30;	/* same as player */
+	if (is_mplayer(ptr) || ptr == &mons[PM_BYAKHEE] || ptr == &mons[PM_LILLEND] || ptr == &mons[PM_MAID]
+	|| ptr == &mons[PM_CROW_WINGED_HALF_DRAGON] || ptr == &mons[PM_BASTARD_OF_THE_BOREAL_VALLEY]
+	|| ptr == &mons[PM_UNDEAD_KNIGHT]
+	) lev_limit = 30;	/* same as player */
 	else if (is_eladrin(ptr) && ptr->mlevel <= 20) lev_limit = 30;
 	else if (ptr == &mons[PM_ANCIENT_OF_ICE] || ptr == &mons[PM_ANCIENT_OF_DEATH]) lev_limit = 45;
 	else if (lev_limit < 5) lev_limit = 5;	/* arbitrary */

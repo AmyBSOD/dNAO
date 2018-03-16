@@ -806,6 +806,7 @@ register struct monst *mtmp2;
 boolean ranged;
 {
 	if(mtmp2->moccupation) return FALSE;
+	
     return !((!ranged &&
 #ifdef BARD
                 (int)mtmp2->m_lev >= (int)mtmp->m_lev+2 + (mtmp->encouraged)*2 &&
@@ -1028,7 +1029,7 @@ register int after;	/* this is extra fast monster movement */
 	      select_rwep(mtmp))) &&
 	    mtmp->mlstmv != monstermoves)
 	{
-	    struct monst *mon = mfind_target(mtmp);
+	    struct monst *mon = mfind_target(mtmp, FALSE);
 	    if (mon && (mon != &youmonst) &&
 	        acceptable_pet_target(mtmp, mon, TRUE))
 	    {
@@ -1137,7 +1138,7 @@ register int after;	/* this is extra fast monster movement */
 			     && edog->hungrytime < monstermoves + DOG_SATIATED
 #endif /* PET_SATIATION */
 				 && !((mtmp->misc_worn_check & W_ARMH) && which_armor(mtmp, W_ARMH) && 
-					(((which_armor(mtmp, W_ARMH))->otyp) == PLASTEEL_HELM || ((which_armor(mtmp, W_ARMH))->otyp) == CRYSTAL_HELM) &&
+					(((which_armor(mtmp, W_ARMH))->otyp) == PLASTEEL_HELM || ((which_armor(mtmp, W_ARMH))->otyp) == CRYSTAL_HELM || ((which_armor(mtmp, W_ARMH))->otyp) == PONTIFF_S_CROWN) &&
 					(which_armor(mtmp, W_ARMH))->cursed)
 				 && !((mtmp->misc_worn_check & W_ARMC) && which_armor(mtmp, W_ARMC) && 
 					(((which_armor(mtmp, W_ARMC))->otyp) == WHITE_FACELESS_ROBE || ((which_armor(mtmp, W_ARMC))->otyp) == BLACK_FACELESS_ROBE || ((which_armor(mtmp, W_ARMC))->otyp) == SMOKY_VIOLET_FACELESS_ROBE) &&

@@ -409,7 +409,7 @@ mattackm(magr, mdef)
 	
 	/*Plasteel helms cover the face and prevent bite attacks*/
 	if((magr->misc_worn_check & W_ARMH) && which_armor(magr, W_ARMH) &&
-		(((which_armor(magr, W_ARMH))->otyp) == PLASTEEL_HELM || ((which_armor(magr, W_ARMH))->otyp) == CRYSTAL_HELM) && 
+		(((which_armor(magr, W_ARMH))->otyp) == PLASTEEL_HELM || ((which_armor(magr, W_ARMH))->otyp) == CRYSTAL_HELM || ((which_armor(magr, W_ARMH))->otyp) == PONTIFF_S_CROWN) && 
 		(mattk->aatyp == AT_BITE || mattk->aatyp == AT_LNCK || (mattk->aatyp == AT_TENT && is_mind_flayer(magr->data)))
 	) continue;
 	if((magr->misc_worn_check & W_ARMC) && which_armor(magr, W_ARMC) &&
@@ -610,9 +610,11 @@ meleeattack:
 			}
 		} else
 		    missmm(magr, mdef, mattk);
-		if(mattk->aatyp == AT_MARI && i == 5 && res[0] && res[1]){
-			struct attack rend = {AT_HUGS, AD_WRAP, magr->data == &mons[PM_SHAKTARI] ? 8 : 4, 6};
-			res[i] = hitmm(magr, mdef, &rend);
+		if(mattk->aatyp == AT_MARI && i == 5){
+			if(tmp > rnd(20 + i*2)){
+				struct attack rend = {AT_HUGS, AD_WRAP, magr->data == &mons[PM_SHAKTARI] ? 8 : 4, 6};
+				// res[i] = hitmm(magr, mdef, &rend);
+			}
 		}
 		break;
 
@@ -1243,13 +1245,15 @@ mdamagem(magr, mdef, mattk)
 	struct obj *obj;
 	char buf[BUFSZ];
 	struct permonst *pa = magr->data, *pd = mdef->data;
-	int armpro, num, tmp = d((int)mattk->damn, (int)mattk->damd);
+	int armpro, num, tmp;
 	boolean cancelled;
 	boolean phasearmor = FALSE;
 	boolean weaponhit = (mattk->aatyp == AT_WEAP || mattk->aatyp == AT_XWEP || mattk->aatyp == AT_DEVA || mattk->aatyp == AT_MARI);
 	struct attack alt_attk;
-
-	if(magr->mflee && pa == &mons[PM_BANDERSNATCH]) tmp = d((int)mattk->damn, 2*(int)mattk->damd);
+	
+	if(weaponhit && mattk->adtyp != AD_PHYS) tmp = 0;
+	else if(magr->mflee && pa == &mons[PM_BANDERSNATCH]) tmp = d((int)mattk->damn, 2*(int)mattk->damd);
+	else  tmp = d((int)mattk->damn, (int)mattk->damd);
 
 //ifdef BARD
 	if(tmp > 0){
@@ -1473,7 +1477,21 @@ physical:{
 			// tack on bonus elemental damage, if applicable
 			if (mattk->adtyp != AD_PHYS){
 				alt_attk.aatyp = AT_NONE;
-				alt_attk.adtyp = mattk->adtyp;
+				if(mattk->adtyp == AD_OONA)
+					alt_attk.adtyp = u.oonaenergy;
+				else if(mattk->adtyp == AD_RBRE){
+					switch(rn2(3)){
+						case 0:
+							alt_attk.adtyp = AD_FIRE;
+						break;
+						case 1:
+							alt_attk.adtyp = AD_COLD;
+						break;
+						case 2:
+							alt_attk.adtyp = AD_ELEC;
+						break;
+					}
+				} else alt_attk.adtyp = mattk->adtyp;
 				switch (alt_attk.adtyp)
 				{
 				case AD_FIRE:
@@ -2177,8 +2195,8 @@ physical:{
 		    tmp = 0;
 		    break;
 		}
-		if ((mdef->misc_worn_check & W_ARMH) && which_armor(mdef, W_ARMH) && /*Armor going missing? sligh performance hit worth not crashing*/
-			(rn2(8) || ((which_armor(mdef, W_ARMH))->otyp) == PLASTEEL_HELM || ((which_armor(mdef, W_ARMH))->otyp) == CRYSTAL_HELM )
+		if ((mdef->misc_worn_check & W_ARMH) && which_armor(mdef, W_ARMH) && /*Armor going missing? slight performance hit worth not crashing*/
+			(rn2(8) || ((which_armor(mdef, W_ARMH))->otyp) == PLASTEEL_HELM || ((which_armor(mdef, W_ARMH))->otyp) == CRYSTAL_HELM || ((which_armor(mdef, W_ARMH))->otyp) == PONTIFF_S_CROWN )
 		) {
 		    if (vis) {
 			Strcpy(buf, s_suffix(Monnam(mdef)));
@@ -2394,6 +2412,10 @@ physical:{
 	}
 	
 	if((magr->mfaction == ZOMBIFIED || (magr->mfaction == SKELIFIED && !rn2(20))) && can_undead_mon(mdef)){
+		mdef->zombify = 1;
+	}
+	
+	if((magr->data == &mons[PM_UNDEAD_KNIGHT] || magr->data == &mons[PM_DREAD_SERAPH]) && can_undead_mon(mdef)){
 		mdef->zombify = 1;
 	}
 	

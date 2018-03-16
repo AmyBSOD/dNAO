@@ -985,8 +985,21 @@ register struct monst *mtmp;
 				((rn2(3) < magic_negation(gazemon))))
 			) continue;
 			
+			if(gazemon->data == &mons[PM_UVUUDAUM] &&
+				(rn2(3) < magic_negation(gazemon))
+			) continue;
+			
+			if((is_angel(gazemon->data) || is_auton(gazemon->data))
+			&& (gazemon->mpeaceful == mtmp->mpeaceful || gazemon->mtame == mtmp->mtame)
+			) continue;
+			
 			for(i = 0; i < NATTK; i++)
 				 if(gazemon->data->mattk[i].aatyp == AT_WDGZ) {
+					if((gazemon->data->mattk[i].adtyp ==  AD_CONF 
+						|| gazemon->data->mattk[i].adtyp ==  AD_WISD 
+					) && (dmgtype_fromattack(mtmp->data, AD_CONF, AT_WDGZ)
+						|| dmgtype_fromattack(mtmp->data, AD_WISD, AT_WDGZ)
+					)) continue;
 					if(canseemon(mtmp) && canseemon(gazemon)){
 						Sprintf(buf,"%s can see", Monnam(mtmp));
 						pline("%s %s...", buf, mon_nam(gazemon));
@@ -1026,10 +1039,10 @@ register struct monst *mtmp;
 		&& !(mtmp->mpeaceful && !mtmp->mtame) /*Don't telespam the player if peaceful*/
 	) (void) tactics(mtmp);
 	
-	if(mdat == &mons[PM_GREAT_CTHULHU] && !rn2(20)){
-		(void) tactics(mtmp);
-		return 0;
-	}
+	// if(mdat == &mons[PM_GREAT_CTHULHU] && !rn2(20)){
+		// (void) tactics(mtmp);
+		// return 0;
+	// }
 	
 	/* check distance and scariness of attacks */
 	distfleeck(mtmp,&inrange,&nearby,&scared);
@@ -1268,7 +1281,7 @@ toofar:
 	      find_offensive(mtmp)) && 
 	    mtmp->mlstmv != monstermoves)
 	{
-	    register struct monst *mtmp2 = mfind_target(mtmp);
+	    register struct monst *mtmp2 = mfind_target(mtmp, FALSE);
 	    if (mtmp2 && 
 	        (mtmp2 != &youmonst || 
 				dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) > 2) &&

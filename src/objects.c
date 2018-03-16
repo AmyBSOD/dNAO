@@ -440,6 +440,8 @@ HELM("plasteel helm", "white skull helm", /*Needs encyc entry*//*Needs tile*/
 		0, 1,  INFRAVISION,   1, 2, 25,  50, 7, 2, PLASTIC, CLR_WHITE),
 HELM("crystal helm", "fish bowl", /*Needs encyc entry*//*Needs tile*/
 		0, 0,  0,   1, 2,150, 300, 5, 0, GLASS, CLR_CYAN),
+HELM("pontiff's crown", "filigreed faceless helm", /*Needs encyc entry*//*Needs tile*/
+		0, 0,  0,   1, 2,150, 300, 5, 0, METAL, HI_GOLD),
 /* With shuffled appearances... */
 HELM("helmet", "plumed helmet", /* circlet */
 		0, 0,  0,      8, 1, 30,  10, 9, 0, IRON, CLR_RED),
@@ -510,7 +512,7 @@ ARMOR("gentleman's suit", "expensive clothes", /*Needs encyc entry*/
 ARMOR("gentlewoman's dress", "expensive dress", /*Needs encyc entry*/
 	0, 0, 1, 0,	1, 6,150, 1000,   9, 3, ARM_SUIT, BONE, CLR_RED), /*Specifically, whale bone*/
 ARMOR("crystal plate mail", (char *)0, /*Needs encyc entry*/
-	1, 0, 1, 0,	10, 5, 250, 2000,  -6, 0, ARM_SUIT, GLASS, CLR_CYAN), /*Best armor, AC wise*/
+	1, 0, 1, 0,	10, 5, 250, 2000,  4, 0, ARM_SUIT, GLASS, CLR_CYAN), /*Best armor, AC wise*/
 #ifdef TOURIST
 ARMOR("bronze plate mail", (char *)0, /*Needs encyc entry*/
 	1, 0, 1, 0,	20, 5, 225, 400,  2, 3, ARM_SUIT, COPPER, HI_COPPER),
@@ -545,7 +547,7 @@ ARMOR("ring mail", (char *)0,
 ARMOR("orcish ring mail", "crude ring mail",
 	0, 0, 0, 0,	20, 5, 125,  80,  8, 1, ARM_SUIT, IRON, CLR_BLACK),
 ARMOR("leather armor", (char *)0,
-	1, 0, 0, 0,	72, 3, 75,   5,  8, 0, ARM_SUIT, LEATHER, HI_LEATHER),
+	1, 0, 0, 0,	71, 3, 75,   5,  8, 0, ARM_SUIT, LEATHER, HI_LEATHER),
 ARMOR("leather jacket", (char *)0,
 	1, 0, 0, 0,	12, 0,	30,  10,  9, 2, ARM_SUIT, LEATHER, CLR_BLACK),
 ARMOR("straitjacket", "long-sleeved jacket", /*Needs encyc entry*//*Needs tile*/
@@ -630,7 +632,7 @@ SHIELD("roundshield", "round shield",
 SHIELD("dwarvish roundshield", "round shield",
 		0, 0, 0, 0,	     4, 0, 80, 10,  7, 1, IRON, HI_METAL),
 SHIELD("crystal shield", "glass shield", /*Needs encyc entry*//*Needs tile*/
-		0, 0, 0, 0,	     1, 0,300,150,  4, 0, GLASS, CLR_CYAN),
+		0, 0, 0, 0,	     1, 0,300,150,  9, 0, GLASS, CLR_CYAN),
 SHIELD("shield of reflection", "polished silver shield",
 		0, 1, 0, REFLECTING, 3, 0, 50, 50,  8, 0, SILVER, HI_SILVER),
 /*#define SHIELD(name,desc,kn,mgc,blk,power,prob,delay,wt,cost,ac,can,metal,c) \
@@ -655,7 +657,7 @@ DRGN_SHIELD("yellow dragon scale shield", 1, ACID_RES,   900, 7, CLR_YELLOW),
  * CLR_BROWN (== HI_LEATHER)
  */
 GLOVES("crystal gauntlets", "glass gauntlets", /*Needs encyc entry*//*Needs tile*/
-		0, 0,  0,	   1, 2, 50, 400, 7, 0, GLASS, CLR_CYAN),
+		0, 0,  0,	   1, 2, 50, 400, 10, 0, GLASS, CLR_CYAN),
 GLOVES("gauntlets", "metal gauntlets", /*Needs encyc entry*//*Needs tile*/
 		0, 0,  0,	   4, 2, 25, 10, 8, 0, IRON, HI_METAL),
 GLOVES("bronze gauntlets", "metal gauntlets", /*Needs encyc entry*//*Needs tile*/
@@ -689,7 +691,7 @@ BOOTS("stilettos", "high-heeled shoes", /*Needs encyc entry*//*Needs tile*/
 BOOTS("high boots", "jackboots",
 		0, 0,  0,	  15, 2, 20, 12,  8, 0, LEATHER, HI_LEATHER),
 BOOTS("crystal boots", "glass boots", /*Needs encyc entry*//*Needs tile*/
-		0, 0,  0,	   1, 2,150,300,  6, 0, GLASS, CLR_CYAN),
+		0, 0,  0,	   1, 2,150,300,  10, 1, GLASS, CLR_CYAN),
 /* With shuffled appearances... */
 BOOTS("speed boots", "combat boots",
 		0, 1,  FAST,	  12, 2, 20, 50,  9, 0, LEATHER, HI_LEATHER),
