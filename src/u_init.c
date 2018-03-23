@@ -1412,6 +1412,7 @@ int randMeleeDamageTypes[] =
 						 AD_HALU,
 						 AD_LUCK,
 						 AD_DISN,
+						 AD_BLNK,
 						 AD_WEEP };
 
 int randBreathDamageTypes[] = 
@@ -1483,6 +1484,7 @@ int randBeamDamageTypes[] =
 						 AD_INSA,
 						 AD_LUCK,
 						 AD_DISN,
+						 AD_BLNK,
 						 AD_STTP };
 
 int randSpitDamageTypes[] = 
@@ -1517,6 +1519,7 @@ int randGazeDamageTypes[] =
 	 					 AD_PSI,
 						 AD_MANA,
 						 AD_DISP,
+						 AD_BLNK,
 						 AD_MIST };
  // AT_ARRW, 
  // AT_MAGC }

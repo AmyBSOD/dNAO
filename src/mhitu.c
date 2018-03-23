@@ -40,7 +40,7 @@ STATIC_DCL void FDECL(hitmsg,(struct monst *,struct attack *));
 static const int gazeattacks[] = {AD_DEAD, AD_CNCL, AD_PLYS, AD_DRLI, AD_ENCH, AD_STON, AD_LUCK, AD_DARK, AD_PSI, AD_MANA, AD_DISP, AD_ABDC,
 										AD_CONF, AD_SLOW, AD_STUN, AD_BLND, AD_FIRE, AD_FIRE, AD_DREN, AD_HODS, AD_DRST,
 										AD_DISE, AD_PEST, AD_TLPT, AD_PHYS, AD_SUCK, AD_DETH, AD_MALK, AD_WEEP,
-										AD_COLD, AD_COLD, AD_ELEC, AD_ELEC, AD_HALU, AD_SLEE };
+										AD_COLD, AD_COLD, AD_ELEC, AD_ELEC, AD_HALU, AD_SLEE, AD_BLNK };
 static const int elementalgaze[] = {AD_FIRE,AD_COLD,AD_ELEC};
 
 static const int meleedmgtypes[] = {AD_PHYS, AD_SHDW, AD_STAR, AD_BLUD, AD_FIRE, AD_COLD, AD_SLEE, AD_ELEC, AD_DRST, AD_ACID, AD_BLND, AD_STUN, AD_SLOW,
@@ -48,7 +48,7 @@ static const int meleedmgtypes[] = {AD_PHYS, AD_SHDW, AD_STAR, AD_BLUD, AD_FIRE,
 						 AD_DRCO, AD_DRIN, AD_NPDC, AD_DISE, AD_HALU, AD_DETH, AD_FAMN, AD_PEST, AD_SLIM, AD_ENCH, AD_CORR, AD_POSN, AD_WISD,
 						 AD_VORP, AD_SHRD, AD_TCKL, AD_WET, AD_LETHE, AD_SUCK, AD_MALK, AD_UVUU, AD_ABDC, AD_TELE, AD_CHRN, AD_LVLT, AD_GLIB,
 						 AD_DARK, AD_GRAV, AD_PSI, AD_MANA, AD_WTHR, AD_ICUR, AD_SOUN, AD_DEPR, AD_DFOO, AD_VENO, AD_PLAS, AD_DISP, AD_TIME,
-						 AD_WRAT, AD_NEXU, AD_INSA, AD_HALU, AD_LUCK, AD_WEEP, AD_DISN};
+						 AD_WRAT, AD_NEXU, AD_INSA, AD_HALU, AD_LUCK, AD_WEEP, AD_DISN, AD_BLNK};
 
 /* See comment in mhitm.c.  If we use this a lot it probably should be */
 /* changed to a parameter to mhitu. */
@@ -3653,6 +3653,15 @@ dopois:
 		}
 		break;
 
+///////////////////////////////////////////////////////////////////////////////////////////
+	    case AD_BLNK:
+		hitmsg(mtmp, mattk);
+		pline("Your contamination increases.");
+    		exercise(A_INT, TRUE);
+    		exercise(A_WIS, FALSE);
+		u.wimage += 1;
+		if(u.wimage>10) u.wimage = 10;
+		break;
 ///////////////////////////////////////////////////////////////////////////////////////////
 		case AD_TELE:
 			if (!tele_restrict(mtmp)) (void) rloc(mtmp, FALSE);
