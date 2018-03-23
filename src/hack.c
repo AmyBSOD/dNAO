@@ -321,7 +321,7 @@ moverock()
 #ifdef STEED
 		!u.usteed &&
 #endif	    
-		(((!invent || inv_weight() <= -850) &&
+		(((!invent || inv_weight() <= -1500) &&
 		 (!u.dx || !u.dy || (IS_ROCK(levl[u.ux][sy].typ)
 				     && IS_ROCK(levl[sx][u.uy].typ))))
 		|| verysmall(youracedata))) {
