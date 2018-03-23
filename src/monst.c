@@ -5421,7 +5421,7 @@ then fill new spaces with our spawn!
 	MB_NOLIMBS|MB_NOHEAD|MB_NEUTER /*MB*/, MG_VBLUNT|MG_NOPOLY /*MG*/,
 	MA_CLOCK|MA_UNLIVING /*MA*/,  MV_NORMAL /*MV*/, CLR_WHITE),
     MON("firework cart", S_GNOME,//3 /*Needs encyc entry*//*Needs tile*/
-	LVL(0, 18, 10, 4, 0), (0|G_NOCORPSE|G_NOGEN), /* disabled by Amy until Chris can fix the AD_FRWK segfault panics */
+	LVL(0, 18, 10, 4, 0), (1|G_NOCORPSE),
 	A(ATTK(AT_CLAW, AD_FRWK, 2, 6), ATTK(AT_BOOM, AD_FRWK, 2, 6),
 	  NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
 	SIZ(40, 0, 0, MS_SILENT, MZ_TINY), MR_DRAIN|MR_STONE|MR_POISON|MR_SICK|MR_SLEEP, 0,
