@@ -716,7 +716,7 @@ int mode;
 		Your("body is too large to fit through.");
 	    return FALSE;
 	}
-	if (invent && (inv_weight() + weight_cap() > 600) && !(u.sealsActive&SEAL_ANDREALPHUS)
+	if (invent && (inv_weight() + weight_cap() > 5000) && !(u.sealsActive&SEAL_ANDREALPHUS)
 		&& !(uarmc && (uarmc->otyp == OILSKIN_CLOAK || uarmc->greased))
 		&& !(!uarmc && uarm && uarm->greased)
 		&& !(!uarmc && !uarm && uarmu && uarmu->greased)
