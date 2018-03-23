@@ -2310,10 +2310,12 @@ uchar y;
 {
 	struct monst * mtmp = level.monsters[x][y];
 
-	if (opaque(mtmp->data))
-		unblock_point(mtmp->mx, mtmp->my);
-	mtmp = (struct monst *)0;
-	level.monsters[x][y] = (struct monst *)0;
+	if (mtmp) {
+		if (opaque(mtmp->data))
+			unblock_point(mtmp->mx, mtmp->my);
+		mtmp = (struct monst *)0;
+		level.monsters[x][y] = (struct monst *)0;
+	}
 	return;
 }
 
