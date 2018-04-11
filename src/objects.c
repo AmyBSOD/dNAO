@@ -816,7 +816,7 @@ CONTAINER("box", (char *)0,       1, 0, 0,  30,100,   8, WOOD, HI_WOOD),
 CONTAINER("massive stone crate", (char *)0,1, 0, 0,   0,6000,  8, MINERAL,HI_MINERAL),/*Needs tile*/
 CONTAINER("chest", (char *)0,           1, 0, 0,  30,200,  16, WOOD, HI_WOOD),
 CONTAINER("magic chest", "big chest with 10 keyholes",
-										0, 1, 0,  15,1001,25000, METAL, CLR_BRIGHT_MAGENTA),/*Needs tile*/
+										0, 1, 0,  15, 4001, 7000, METAL, CLR_BRIGHT_MAGENTA),/*Needs tile*/
 CONTAINER("ice box", (char *)0,         1, 0, 0,   5,250,  42, PLASTIC, CLR_WHITE),
 CONTAINER("sack", "bag",                0, 0, 0,  20,  5,   2, CLOTH, HI_CLOTH),
 CONTAINER("oilskin sack", "bag",        0, 0, 0,  20,  5, 100, CLOTH, HI_CLOTH),
