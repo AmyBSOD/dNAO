@@ -612,8 +612,7 @@ register struct monst *mtmp;
 				otmp->cursed = FALSE;
 				fix_object(otmp);
 				(void) mpickobj(mtmp,otmp);
-			}
-			else if(ptr == &mons[PM_SHATTERED_ZIGGURAT_CULTIST]) {
+			} else if(ptr == &mons[PM_SHATTERED_ZIGGURAT_CULTIST]) {
 			    otmp = mksobj(TORCH, FALSE, FALSE);
 				otmp->age = (long) rn1(500,1000);
 			    (void) mpickobj(mtmp, otmp);
@@ -3486,7 +3485,7 @@ register struct monst *mtmp;
 		(void)mongets(mtmp, LONG_SWORD);
 		break;
 	    case S_ZOMBIE:
-		if(mm == PM_UNDEAD_KNIGHT){
+		if(mm == PM_UNDEAD_KNIGHT || mm == PM_WARRIOR_OF_SUNLIGHT){
 			otmp = mksobj(LONG_SWORD, FALSE, FALSE);
 			otmp->oeroded = 1;
 			(void) mpickobj(mtmp, otmp);
@@ -6342,7 +6341,7 @@ rndmonst()
 	}
 
 	if (u.uz.dnum == quest_dnum && (ptr = qt_montype()) != 0){
-		if((int)ptr < 0) return (struct permonst *) 0;
+		if(ptr == &mons[PM_LONG_WORM_TAIL]) return (struct permonst *) 0;
 	    else if(Role_if(PM_ANACHRONONAUT) || rn2(7)) return ptr;
 		//else continue to random generation
 	}
@@ -7087,7 +7086,7 @@ struct monst *mtmp, *victim;
 
 	if (is_mplayer(ptr) || ptr == &mons[PM_BYAKHEE] || ptr == &mons[PM_LILLEND] || ptr == &mons[PM_MAID]
 	|| ptr == &mons[PM_CROW_WINGED_HALF_DRAGON] || ptr == &mons[PM_BASTARD_OF_THE_BOREAL_VALLEY]
-	|| ptr == &mons[PM_UNDEAD_KNIGHT]
+	|| ptr == &mons[PM_UNDEAD_KNIGHT] || ptr == &mons[PM_WARRIOR_OF_SUNLIGHT]
 	) lev_limit = 30;	/* same as player */
 	else if (is_eladrin(ptr) && ptr->mlevel <= 20) lev_limit = 30;
 	else if (ptr == &mons[PM_ANCIENT_OF_ICE] || ptr == &mons[PM_ANCIENT_OF_DEATH]) lev_limit = 45;

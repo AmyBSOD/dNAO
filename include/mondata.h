@@ -185,7 +185,7 @@
 #define can_teleport(ptr)	(((ptr)->mflagsm & MM_TPORT) != 0L)
 #define control_teleport(ptr)	(((ptr)->mflagsm & MM_TPORT_CNTRL) != 0L)
 #define telepathic(ptr)		(((ptr)->mflagsv & MV_TELEPATHIC) != 0L)
-#define is_armed(ptr)		attacktype(ptr, AT_WEAP)
+#define is_armed(ptr)		(attacktype(ptr, AT_WEAP) || attacktype(ptr, AT_XWEP) || attacktype(ptr, AT_MARI) || attacktype(ptr, AT_DEVA))
 #define crpsdanger(ptr)		(acidic(ptr) || poisonous(ptr) ||\
 							 freezing(ptr) || burning(ptr))
 #define acidic(ptr)			(((ptr)->mflagsb & MB_ACID) != 0L)
@@ -250,6 +250,7 @@
 							 (ptr) == &mons[PM_DEMONIC_BLACK_WIDOW])
 #define is_vampire(ptr)		(((ptr)->mflagsa & MA_VAMPIRE) != 0L)
 #define is_half_dragon(ptr)		attacktype_fordmg(ptr, AT_BREA, AD_HDRG)
+#define is_boreal_dragoon(ptr)		(attacktype_fordmg(ptr, AT_WEAP, AD_HDRG) || attacktype_fordmg(ptr, AT_XWEP, AD_HDRG))
 #define is_elf(ptr)			(((ptr)->mflagsa & MA_ELF) != 0L && !is_drow(ptr))
 #define is_drow(ptr)		(((ptr)->mflagsa & MA_DROW) != 0L)
 #define is_dwarf(ptr)		(((ptr)->mflagsa & MA_DWARF) != 0L)

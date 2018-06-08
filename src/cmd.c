@@ -1006,7 +1006,7 @@ dofightingform()
 			} else {
 				int nskill = P_SKILL(FFORM_NIMAN);
 				if(u.lastcast >= monstermoves && nskill >= P_BASIC){
-					Sprintf(buf,	"Niman (active; +%dd%d)", 
+					Sprintf(buf,	"Niman (active; +%dd%ld)", 
 						nskill == P_BASIC ? 3 : 
 						nskill == P_SKILLED ? 6 : 
 						nskill == P_EXPERT ? 9 : 0, 
@@ -1244,7 +1244,7 @@ wiz_genesis()
 STATIC_PTR int
 wiz_where()
 {
-	if (wizard) (void) print_dungeon(FALSE, (schar *)0, (xchar *)0);
+	if (wizard) (void) print_dungeon(FALSE, (schar *)0, (int *)0);
 	else	    pline("Unavailable command '^O'.");
 	return 0;
 }

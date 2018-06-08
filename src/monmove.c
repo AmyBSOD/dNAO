@@ -717,7 +717,7 @@ boolean fleemsg;
 	if(mtmp->data == &mons[PM_VROCK]){
 		struct monst *tmpm;
 		if(!(mtmp->mspec_used || mtmp->mcan)){
-			pline("%s screeches.", Monnam(mtmp), hisherits(mtmp));
+			pline("%s screeches.", Monnam(mtmp));
 			mtmp->mspec_used = 10;
 			for(tmpm = fmon; tmpm; tmpm = tmpm->nmon){
 				if(tmpm != mtmp && !DEADMONSTER(tmpm)){
@@ -2309,8 +2309,7 @@ uchar x;
 uchar y;
 {
 	struct monst * mtmp = level.monsters[x][y];
-
-	if (mtmp) {
+	if (mtmp){
 		if (((x != (mtmp)->mx) || (y != (mtmp)->my)) && opaque(mtmp->data))
 			unblock_point(mtmp->mx, mtmp->my);
 		mtmp = (struct monst *)0;

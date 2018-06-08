@@ -1479,6 +1479,8 @@ physical:{
 				alt_attk.aatyp = AT_NONE;
 				if(mattk->adtyp == AD_OONA)
 					alt_attk.adtyp = u.oonaenergy;
+				else if(mattk->adtyp == AD_HDRG)
+					alt_attk.adtyp = magr->mvar1;
 				else if(mattk->adtyp == AD_RBRE){
 					switch(rn2(3)){
 						case 0:
@@ -1492,31 +1494,33 @@ physical:{
 						break;
 					}
 				} else alt_attk.adtyp = mattk->adtyp;
-				switch (alt_attk.adtyp)
-				{
-				case AD_FIRE:
-				case AD_COLD:
-				case AD_ELEC:
-				case AD_ACID:
-					alt_attk.damn = 4;
-					alt_attk.damd = 6;
-					break;
-				case AD_EFIR:
-				case AD_ECLD:
-				case AD_EELC:
-				case AD_EACD:
-					alt_attk.damn = 3;
-					alt_attk.damd = 7;
-					break;
-				case AD_STUN:
-					alt_attk.damn = 1;
-					alt_attk.damd = 4;
-					break;
-				default:
-					alt_attk.damn = 0;
-					alt_attk.damd = 0;
-					break;
-				}
+				alt_attk.damn = mattk->damn;
+				alt_attk.damd = mattk->damd;
+				// switch (alt_attk.adtyp)
+				// {
+				// case AD_FIRE:
+				// case AD_COLD:
+				// case AD_ELEC:
+				// case AD_ACID:
+					// alt_attk.damn = 4;
+					// alt_attk.damd = 6;
+					// break;
+				// case AD_EFIR:
+				// case AD_ECLD:
+				// case AD_EELC:
+				// case AD_EACD:
+					// alt_attk.damn = 3;
+					// alt_attk.damd = 7;
+					// break;
+				// case AD_STUN:
+					// alt_attk.damn = 1;
+					// alt_attk.damd = 4;
+					// break;
+				// default:
+					// alt_attk.damn = 0;
+					// alt_attk.damd = 0;
+					// break;
+				// }
 				mdamagem(magr, mdef, &alt_attk);
 				if (DEADMONSTER(mdef))
 					return (MM_DEF_DIED | (grow_up(magr, mdef) ? 0 : MM_AGR_DIED));
@@ -2343,6 +2347,8 @@ physical:{
 				y = rn2(3)-1;
 				explode(magr->mx+x, magr->my+y, 8, tmp, -1, rn2(EXPL_MAX));		//-1 is unspecified source. 8 is physical
 			}
+			if(DEADMONSTER(magr))
+				return MM_AGR_DIED;
 			tmp=0;
 		} break;
 /*		case AD_VMSL:	//vorlon missile.  triple damage
@@ -2415,7 +2421,10 @@ physical:{
 		mdef->zombify = 1;
 	}
 	
-	if((magr->data == &mons[PM_UNDEAD_KNIGHT] || magr->data == &mons[PM_DREAD_SERAPH]) && can_undead_mon(mdef)){
+	if((magr->data == &mons[PM_UNDEAD_KNIGHT]
+		|| magr->data == &mons[PM_WARRIOR_OF_SUNLIGHT]
+		|| magr->data == &mons[PM_DREAD_SERAPH]
+	) && can_undead_mon(mdef)){
 		mdef->zombify = 1;
 	}
 	

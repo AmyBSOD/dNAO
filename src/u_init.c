@@ -317,7 +317,6 @@ static struct trobj HDNoble[] = {
 	{ BUCKLER, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ LEATHER_ARMOR, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ GLOVES, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
-	{ HIGH_BOOTS, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ LEATHER_CLOAK, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ APPLE, 0, FOOD_CLASS, 3, 0 },
 	{ FOOD_RATION, 0, FOOD_CLASS, 3, 0 },
@@ -2027,7 +2026,7 @@ u_init()
 			otmp = mksobj(CROSSBOW_BOLT, TRUE, FALSE);
 			otmp->quan = rn1(12, 16);
 			otmp->spe = otmp->cursed = otmp->blessed = 0;
-			otmp->dknown = otmp->bknown = otmp->rknown = otmp->sknown = 1;
+			otmp->known = otmp->dknown = otmp->bknown = otmp->rknown = otmp->sknown = 1;
 			addinv(otmp);
 			ini_inv(BlackTorches);
 		}
@@ -2292,12 +2291,12 @@ u_init()
 		otmp = mksobj(CLUB, TRUE, FALSE);
 		otmp->spe = otmp->cursed = otmp->blessed = 0;
 		if(Role_if(PM_EXILE)) otmp->dknown = otmp->rknown = otmp->sknown = 1;
-		else otmp->dknown = otmp->bknown = otmp->rknown = otmp->sknown = 1;
+		else otmp->known = otmp->dknown = otmp->bknown = otmp->rknown = otmp->sknown = 1;
 		addinv(otmp);
 		otmp = mksobj(KNIFE, TRUE, FALSE);
 		otmp->spe = otmp->cursed = otmp->blessed = 0;
 		if(Role_if(PM_EXILE)) otmp->dknown = otmp->rknown = otmp->sknown = 1;
-		else otmp->dknown = otmp->bknown = otmp->rknown = otmp->sknown = 1;
+		else otmp->known = otmp->dknown = otmp->bknown = otmp->rknown = otmp->sknown = 1;
 		addinv(otmp);
 		u.wardsknown |= WARD_TOUSTEFNA;
 		u.wardsknown |= WARD_DREPRUN;
@@ -2719,7 +2718,7 @@ register struct trobj *trop;
 				fix_object(obj);
 			}
 			if(obj->otyp == SCALE_MAIL && Role_if(PM_ANACHRONONAUT)){
-				obj->obj_material = COPPER; // which is actually bronze nice one Chris
+				obj->obj_material = COPPER;
 				fix_object(obj);
 			}
 			if(obj->otyp == GAUNTLETS && Role_if(PM_ANACHRONONAUT)){

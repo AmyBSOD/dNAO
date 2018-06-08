@@ -4717,6 +4717,7 @@ int spell;
 		if(uwep->oartifact == ART_TENTACLE_ROD
 			|| uwep->oartifact == ART_ARYFAERN_KERYM
 			|| uwep->oartifact == ART_INFINITY_S_MIRRORED_ARC
+			|| uwep->oartifact == ART_PROFANED_GREATSCYTHE
 			|| uwep->oartifact == ART_GARNET_ROD
 		) splcaster -= urole.spelarmr;
 		else if(uwep->otyp == KHAKKHARA) splcaster -= uwep->oartifact ? 2*urole.spelarmr : urole.spelarmr;
@@ -4995,14 +4996,14 @@ set_spirit_powers(spirits_seal)
 	}
 }
 
-void
+int
 reorder_spirit_powers()
 {
 	int power_indx = -1;
 	char swaplet;
 	if(!u.sealsActive && !u.specialSealsActive){
 		You("don't have any spirits bound.");
-		return;
+		return 0;
 	}
 	if (flags.menu_style == MENU_TRADITIONAL) {
 		char ilet, lets[BUFSZ], qbuf[QBUFSZ];
@@ -5015,7 +5016,7 @@ reorder_spirit_powers()
 		ilet = yn_function(qbuf, (char *)0, '\0');
 
 		if (index(quitchars, ilet))
-		    return;
+		    return 0;
 		
 		if(check_spirit_let(ilet)){
 			if(ilet >= 'a' && ilet <= 'z'){
@@ -5025,7 +5026,7 @@ reorder_spirit_powers()
 			}
 		} else {
 			You("don't know that power.");
-			return;
+			return 0;
 		}
 	} else {
 		int power_no;
@@ -5035,7 +5036,7 @@ reorder_spirit_powers()
 					break;
 			}
 	}
-	if(power_indx == -1) return;
+	if(power_indx == -1) return 0;
 	pline("Move power to what letter? (a-z, A-Z)");
 	swaplet = readchar();
 	if(swaplet >= 'a' && swaplet <= 'z'){
@@ -5043,16 +5044,16 @@ reorder_spirit_powers()
 		u.spiritPOrder[power_indx] = u.spiritPOrder[(int)swaplet-'a'];
 		u.spiritPOrder[(int)swaplet-'a'] = power;
 		pline("Power reordered.");
-		return;
+		return 0;
 	} else if(swaplet >= 'A' && swaplet <= 'Z'){
 		int power = u.spiritPOrder[power_indx];
 		u.spiritPOrder[power_indx] = u.spiritPOrder[swaplet-'A'+26];
 		u.spiritPOrder[swaplet-'A'+26] = power;
 		pline("Power reordered.");
-		return;
+		return 0;
 	} else {
 		pline("Invalid letter.");
-		return;
+		return 0;
 	}
 }
 /*spell.c*/

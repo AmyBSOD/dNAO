@@ -87,14 +87,14 @@ register struct obj *otmp;
 	if (!obj->owornmask) continue;
 
 	if (best &&
-	     (ARM_BONUS(obj) +  extra_pref(mtmp,obj) >=
-	      ARM_BONUS(best) + extra_pref(mtmp,best)))
+	     (arm_bonus(obj) +  extra_pref(mtmp,obj) >=
+	      arm_bonus(best) + extra_pref(mtmp,best)))
 	     best = obj;
     }
     
     return ((best == (struct obj *)0) ||
-	    (ARM_BONUS(otmp) + extra_pref(mtmp,otmp) >
-	     ARM_BONUS(best) + extra_pref(mtmp,best)));
+	    (arm_bonus(otmp) + extra_pref(mtmp,otmp) >
+	     arm_bonus(best) + extra_pref(mtmp,best)));
 }
 
 /*
@@ -119,7 +119,7 @@ boolean check_if_better;
 	    /* chains for some */
 		 ((mtmp->data == &mons[PM_CATHEZAR]) && otmp->otyp == IRON_CHAIN) ||
 	    /* better weapons */
-	     (attacktype(mtmp->data, AT_WEAP) &&
+	     (is_armed(mtmp->data) &&
 	      (otmp->oclass == WEAPON_CLASS || is_weptool(otmp)) && 
 		   (!check_if_better ||
 		    mtmp->data == &mons[PM_MARILITH] ||

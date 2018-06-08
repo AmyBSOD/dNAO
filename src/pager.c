@@ -1902,7 +1902,6 @@ get_description_of_attack(struct attack *mattk, char * main_temp_buf)
 char *
 get_description_of_monster_type(struct monst * mtmp, char * description)
 {
-	/*int monsternumber;*/
 	/*
 	pline("%d<><><>", plined_length("12345678901234567890123456789012345678901234567890123456789012345678901234567890"));//0 passed
 	pline("%d<><><>", plined_length("1234567890123456789012345678901234567890123456789012345678901234567890123456789"));
@@ -1910,6 +1909,7 @@ get_description_of_monster_type(struct monst * mtmp, char * description)
 	char temp_buf[BUFSZ] = "";
 	char main_temp_buf[BUFSZ] = "";
 	struct permonst * ptr = mtmp->data;
+	int monsternumber = monsndx(ptr);
 
 	char name[BUFSZ] = "";
 	Strcat(name, ptr->mname);
@@ -1918,7 +1918,7 @@ get_description_of_monster_type(struct monst * mtmp, char * description)
 	else if (mtmp->mfaction == CRYSTALFIED) Strcat(name, " vitrean");
 
 	temp_buf[0] = '\0';
-	sprintf(temp_buf, "Accessing Pokedex entry for %s... ", (!Upolyd || ((int)ptr < NUMMONS)) ? name : "this weird creature");
+	sprintf(temp_buf, "Accessing Pokedex entry for %s... ", (!Upolyd || (monsternumber < NUMMONS)) ? name : "this weird creature");
 	strcat(description, temp_buf);
 
 	strcat(description, "\n");

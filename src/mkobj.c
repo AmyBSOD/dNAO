@@ -406,9 +406,9 @@ boolean artif;
 	else if(otyp == BAR) otmp->obj_material = IRON;
 	else if(otyp == VIPERWHIP) otmp->obj_material = SILVER;
 	else if(otyp == find_gcirclet()) otmp->obj_material = GOLD;
-	else if(otyp == SPEAR){if(!rn2(25)) otmp->obj_material = SILVER;}
-	else if(otyp == DAGGER){if(!rn2(12)) otmp->obj_material = SILVER;}
-	else if(otyp == STILETTOS){if(!rn2(12)) otmp->obj_material = SILVER;}
+	else if(otyp == SPEAR && !rn2(25)) otmp->obj_material = SILVER;
+	else if(otyp == DAGGER && !rn2(12)) otmp->obj_material = SILVER;
+	else if(otyp == STILETTOS && !rn2(12)) otmp->obj_material = SILVER;
 	else if(otyp == ARMORED_BOOTS) otmp->obj_material = COPPER;
 	else if(otyp == ROUNDSHIELD) otmp->obj_material = COPPER;
 	else if(otyp == LIGHTSABER) otmp->obj_material = SILVER;
@@ -1174,7 +1174,10 @@ start_corpse_timeout(body)
 		for (when = 12L; when < 500L; when++)
 		    if (!rn2(3)) break;
 
-	} else if (attchmon && attchmon->mfaction == ZOMBIFIED && !body->norevive) {
+	} else if (attchmon && attchmon->mfaction == ZOMBIFIED
+	&& attchmon->data == &mons[PM_UNDEAD_KNIGHT] && attchmon->data == &mons[PM_WARRIOR_OF_SUNLIGHT] 
+	&& !body->norevive
+	) {
 //		pline("setting up zombie revival for %s", xname(body));
 		attchmon->mclone = 1;
 		for (age = 2; age <= TAINT_AGE; age++)
@@ -1629,6 +1632,7 @@ register struct obj *obj;
 	else if(obj->oartifact == ART_SCEPTRE_OF_LOLTH) wt = 3*objects[MACE].oc_weight;
 	else if(obj->oartifact == ART_ROD_OF_THE_ELVISH_LORDS) wt = objects[ELVEN_MACE].oc_weight;
 	else if(obj->oartifact == ART_VAMPIRE_KILLER) wt = 2*objects[BULLWHIP].oc_weight;
+	else if(obj->oartifact == ART_GOLDEN_SWORD_OF_Y_HA_TALLA) wt = 2*objects[SCIMITAR].oc_weight;
 	else if(obj->oartifact == ART_EARTH_CRYSTAL){
 		wt = 160;
 	}

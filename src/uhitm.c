@@ -1258,11 +1258,11 @@ int thrown;
 		    /* then do only 1-2 points of damage */
 		    if (insubstantial(mdat) && !insubstantial_aware(mon, obj, TRUE))
 				tmp = 0;
-		    else if(obj->oartifact == ART_LIECLEAVER) tmp = 2*(rnd(12) + rnd(10) + obj->spe);
-		    else if(obj->oartifact == ART_ROGUE_GEAR_SPIRITS) tmp = 2*(rnd(bigmonst(mon->data) ? 2 : 4) + obj->spe);
+		    else if(obj->oartifact == ART_LIECLEAVER) tmp = 2*(rnd(12) + rnd(10) + obj->spe) + skill_dam_bonus(P_SCIMITAR);
+		    else if(obj->oartifact == ART_ROGUE_GEAR_SPIRITS) tmp = 2*(rnd(bigmonst(mon->data) ? 2 : 4) + obj->spe) + skill_dam_bonus(P_PICK_AXE);
 			
 		    else if((obj->oartifact == ART_INFINITY_S_MIRRORED_ARC && !litsaber(obj))) tmp = d(1,6) + obj->spe + weapon_dam_bonus(0); //martial arts aid
-		    else if((obj->otyp == KAMEREL_VAJRA && !litsaber(obj))) tmp = d(1,4) + (bigmonst(mdat) ? 0 : 1) + obj->spe + weapon_dam_bonus(0); //small mace
+		    else if((obj->otyp == KAMEREL_VAJRA && !litsaber(obj))) tmp = d(1,4) + (bigmonst(mdat) ? 0 : 1) + obj->spe + skill_dam_bonus(P_MACE); //small mace
 		    else if((is_lightsaber(obj) && !litsaber(obj))) tmp = d(1,4) + obj->spe + weapon_dam_bonus(0); //martial arts aid
 
 			else tmp = rnd(2);
@@ -1298,6 +1298,18 @@ int thrown;
 			} else {
 				if(warnedptr != mdat){
 					warnedptr = 0;
+				}
+			}
+			
+			if(tmp > 1){
+				if(obj->oartifact == ART_LIECLEAVER){
+					use_skill(P_SCIMITAR,1);
+				} else if(obj->oartifact == ART_ROGUE_GEAR_SPIRITS){
+					use_skill(P_PICK_AXE,1);
+				} else if(obj->otyp == KAMEREL_VAJRA && !litsaber(obj)){
+					use_skill(P_MACE,1);
+				} else if(is_lightsaber(obj) && !litsaber(obj)){
+					use_skill(P_BARE_HANDED_COMBAT,1);
 				}
 			}
 		    // if (tmp && obj->oartifact &&
@@ -2795,6 +2807,8 @@ register struct attack *mattk;
 				alt_attk.aatyp = AT_NONE;
 				if(mattk->adtyp == AD_OONA)
 					alt_attk.adtyp = u.oonaenergy;
+				else if(mattk->adtyp == AD_HDRG)
+					alt_attk.adtyp = AD_COLD; //Go with the classic
 				else if(mattk->adtyp == AD_RBRE){
 					switch(rn2(3)){
 						case 0:
@@ -2808,31 +2822,33 @@ register struct attack *mattk;
 						break;
 					}
 				} else alt_attk.adtyp = mattk->adtyp;
-				switch (alt_attk.adtyp)
-				{
-				case AD_FIRE:
-				case AD_COLD:
-				case AD_ELEC:
-				case AD_ACID:
-					alt_attk.damn = 4;
-					alt_attk.damd = 6;
-					break;
-				case AD_EFIR:
-				case AD_ECLD:
-				case AD_EELC:
-				case AD_EACD:
-					alt_attk.damn = 3;
-					alt_attk.damd = 7;
-					break;
-				case AD_STUN:
-					alt_attk.damn = 1;
-					alt_attk.damd = 4;
-					break;
-				default:
-					alt_attk.damn = 0;
-					alt_attk.damd = 0;
-					break;
-				}
+				alt_attk.damn = mattk->damn;
+				alt_attk.damd = mattk->damd;
+				// switch (alt_attk.adtyp)
+				// {
+				// case AD_FIRE:
+				// case AD_COLD:
+				// case AD_ELEC:
+				// case AD_ACID:
+					// alt_attk.damn = 4;
+					// alt_attk.damd = 6;
+					// break;
+				// case AD_EFIR:
+				// case AD_ECLD:
+				// case AD_EELC:
+				// case AD_EACD:
+					// alt_attk.damn = 3;
+					// alt_attk.damd = 7;
+					// break;
+				// case AD_STUN:
+					// alt_attk.damn = 1;
+					// alt_attk.damd = 4;
+					// break;
+				// default:
+					// alt_attk.damn = 0;
+					// alt_attk.damd = 0;
+					// break;
+				// }
 				damageum(mdef, &alt_attk);
 				if (DEADMONSTER(mdef))
 					return 2;
