@@ -1416,6 +1416,10 @@ dodiscovered()				/* free after Robert Viduya */
     winid tmpwin;
 	char buf[BUFSZ];
 
+    /* sadly, it still crashes if you are a chiropteran samurai... */
+    pline("Chris screwed it up and it will crash, so I disabled it. Sorry. --Amy");
+    return 0;
+
     tmpwin = create_nhwindow(NHW_MENU);
     putstr(tmpwin, 0, "Discoveries");
     putstr(tmpwin, 0, "");
