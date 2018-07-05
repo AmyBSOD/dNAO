@@ -885,7 +885,7 @@ TOOL("leash", (char *)0,        1, 0, 0, 0,  70,  0,  20, LEATHER, HI_LEATHER),
 TOOL("stethoscope", (char *)0,  1, 0, 0, 0,  25,  0,  75, IRON, HI_METAL),
 TOOL("tinning kit", (char *)0,  1, 0, 0, 1,  15,  0,  30, IRON, HI_METAL),
 TOOL("bullet fabber", "white box with a yellow fiddly bit",/*Needs tile*/
-								0, 0, 1, 0,   0, 20,  30, PLASTIC, CLR_WHITE),
+								0, 0, 1, 0,   1,  0,  30, PLASTIC, CLR_WHITE),
 TOOL("upgrade kit", (char *)0,  1, 0, 0, 0,  38,  0,  30, COPPER, HI_COPPER),/*Needs encyc entry*//*Needs tile*/
 TOOL("power pack", "little white cube", /*Needs encyc entry*//*Needs tile*/
 								0, 1, 1, 0,   1,  0,  300, PLASTIC, CLR_WHITE),
