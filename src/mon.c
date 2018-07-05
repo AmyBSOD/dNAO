@@ -7,13 +7,15 @@
 #define MKROOM_H
 #endif
 
+ //Note: math.h must be included before hack.h bc it contains a yn() macro that is incompatible with the one in hack
+#include <math.h>
+
 #include "hack.h"
 #include "mfndpos.h"
 #include "edog.h"
 #include "artifact.h"
 #include <ctype.h>
 #include <stdlib.h>
-//include <math.h> //Incompatible with nethack!
 
 
 STATIC_DCL boolean FDECL(restrap,(struct monst *));
@@ -60,21 +62,7 @@ STATIC_DCL struct obj *FDECL(make_corpse,(struct monst *));
 STATIC_DCL void FDECL(m_detach, (struct monst *, struct permonst *));
 STATIC_DCL void FDECL(lifesaved_monster, (struct monst *));
 
-STATIC_DCL double FDECL(pow, (double x, size_t n));
 STATIC_DCL double FDECL(atanGerald, (double x));
-
-STATIC_OVL double 
-pow(x, n)
-double x;
-size_t n;
-{
-	if (n == 0)
-		return 1;
-	else if (n % 2 == 0)
-		return pow(x * x, n >> 1);
-	else
-	return x * pow(x * x, n >> 1);
-}
 
 STATIC_OVL double 
 atanGerald(x)
@@ -2531,11 +2519,6 @@ mfndpos(mon, poss, info, flag)
 			if(madjacent->data == &mons[PM_SURYA_DEVA] && madjacent->m_id == mon->mvar1)
 				break;
 	}
-	if(mdat == &mons[PM_SURYA_DEVA]){
-		for(madjacent = fmon; madjacent; madjacent = madjacent->nmon)
-			if(madjacent->data == &mons[PM_DANCING_BLADE] && madjacent->mvar1 == mon->m_id)
-				break;
-	}
 	
 	x = mon->mx;
 	y = mon->my;
@@ -2900,11 +2883,13 @@ struct monst *magr,	/* monster that is currently deciding where to move */
 		return ALLOW_M|ALLOW_TM;
 
 	/* undead vs civs */
-	if(is_undead_mon(magr) && (!always_hostile_mon(mdef) && !is_undead_mon(mdef) && !(is_animal(md) && !is_domestic(md)) && !mindless_mon(mdef)))
-		return ALLOW_M|ALLOW_TM;
-	if((!always_hostile_mon(magr) && !is_undead_mon(magr) && !(is_animal(ma) && !is_domestic(ma)) && !mindless_mon(magr)) && is_undead_mon(mdef))
-		return ALLOW_M|ALLOW_TM;
-
+	if(!(In_quest(&u.uz) || u.uz.dnum == temple_dnum || u.uz.dnum == tower_dnum || In_cha(&u.uz) || Is_rogue_level(&u.uz) || Inhell)){
+		if(is_undead_mon(magr) && (!always_hostile_mon(mdef) && !is_undead_mon(mdef) && !(is_animal(md) && !is_domestic(md)) && !mindless_mon(mdef)))
+			return ALLOW_M|ALLOW_TM;
+		if((!always_hostile_mon(magr) && !is_undead_mon(magr) && !(is_animal(ma) && !is_domestic(ma)) && !mindless_mon(magr)) && is_undead_mon(mdef))
+			return ALLOW_M|ALLOW_TM;
+	}
+	
 	/* drow vs. other drow */
 	/* Note that factions may be different than the displayed house name, 
 		as faction is set during generation and displayed house name goes by equipment! */
@@ -3270,7 +3255,7 @@ struct monst *mtmp;
 		if (cansee(mtmp->mx, mtmp->my)) {
 			pline("But wait...");
 			if(canseemon(mtmp))
-				pline("%s fractures further%s, but now looks uninjured!", Monnam(mtmp), !is_silent(mtmp->data) ? " with an unearthly scream" : "");
+				pline("%s fractures%s, but now looks uninjured!", Monnam(mtmp), !is_silent(mtmp->data) ? " with an unearthly scream" : "");
 			else
 				You_hear("something crack%s!", !is_silent(mtmp->data) ? " with an unearthly scream" : "");
 		}
@@ -3968,6 +3953,9 @@ boolean was_swallowed;			/* digestion */
 	if (is_golem(mdat)
 		   || is_mplayer(mdat)
 		   || is_rider(mdat)
+		   || mdat == &mons[PM_UNDEAD_KNIGHT]
+		   || mdat == &mons[PM_WARRIOR_OF_SUNLIGHT]
+		   || mdat == &mons[PM_CROW_WINGED_HALF_DRAGON]
 		   || mdat == &mons[PM_SEYLL_AUZKOVYN]
 		   || mdat == &mons[PM_DARUTH_XAXOX]
 		   || mdat == &mons[PM_ORION]
@@ -4889,43 +4877,42 @@ int  typ, fatal, opoistype;
 		if(Poison_resistance) {
 			if(!strcmp(string, "blast")) shieldeff(u.ux, u.uy);
 			pline_The("poison doesn't seem to affect you.");
-			return;
-		}
-		/* suppress killer prefix if it already has one */
-		if ((i = name_to_mon(pname)) >= LOW_PM && mons[i].geno & G_UNIQ) {
-			kprefix = KILLED_BY;
-			if (!type_is_pname(&mons[i])) pname = the(pname);
-		} else if (!strncmpi(pname, "the ", 4) ||
-			!strncmpi(pname, "an ", 3) ||
-			!strncmpi(pname, "a ", 2)) {
-			/*[ does this need a plural check too? ]*/
-			kprefix = KILLED_BY;
-		}
-		i = rn2(fatal + 20*thrown_weapon);
-		if(i == 0 && typ != A_CHA) {
-			if (adjattrib(A_CON, typ==A_CON ? -2 : -rn1(3,3), 1))
-				pline_The("poison was quite debilitating...");
-		} else if(i <= 5) {
-			/* Check that a stat change was made */
-			if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3,3), 1))
-				pline("You%s!", poiseff[typ]);
 		} else {
-			i = thrown_weapon ? rnd(6) : rn1(10,6);
-			if(Half_physical_damage) i = (i+1) / 2;
-			losehp(i, pname, kprefix);
+			/* suppress killer prefix if it already has one */
+			if ((i = name_to_mon(pname)) >= LOW_PM && mons[i].geno & G_UNIQ) {
+				kprefix = KILLED_BY;
+				if (!type_is_pname(&mons[i])) pname = the(pname);
+			} else if (!strncmpi(pname, "the ", 4) ||
+				!strncmpi(pname, "an ", 3) ||
+				!strncmpi(pname, "a ", 2)) {
+				/*[ does this need a plural check too? ]*/
+				kprefix = KILLED_BY;
+			}
+			i = rn2(fatal + 20*thrown_weapon);
+			if(i == 0 && typ != A_CHA) {
+				if (adjattrib(A_CON, typ==A_CON ? -2 : -rn1(3,3), 1))
+					pline_The("poison was quite debilitating...");
+			} else if(i <= 5) {
+				/* Check that a stat change was made */
+				if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3,3), 1))
+					pline("You%s!", poiseff[typ]);
+			} else {
+				i = thrown_weapon ? rnd(6) : rn1(10,6);
+				if(Half_physical_damage) i = (i+1) / 2;
+				losehp(i, pname, kprefix);
+			}
+			if(u.uhp < 1) {
+				killer_format = kprefix;
+				killer = pname;
+				/* "Poisoned by a poisoned ___" is redundant */
+				done(strstri(pname, "poison") ? DIED : POISONING);
+			}
+			(void) encumber_msg();
 		}
-		if(u.uhp < 1) {
-			killer_format = kprefix;
-			killer = pname;
-			/* "Poisoned by a poisoned ___" is redundant */
-			done(strstri(pname, "poison") ? DIED : POISONING);
-		}
-		(void) encumber_msg();
 	}
-	else if(opoistype & OPOISON_FILTH){
+	if(opoistype & OPOISON_FILTH){
 		if(Sick_resistance) {
 			pline_The("tainted filth doesn't seem to affect you.");
-			return;
 		} else {
 			long sick_time;
 
@@ -4936,19 +4923,17 @@ int  typ, fatal, opoistype;
 			make_sick(sick_time, string, TRUE, SICK_NONVOMITABLE);
 		}
 	}
-	else if(opoistype & OPOISON_SLEEP){
-		if(Poison_resistance || Sleep_resistance) {
+	if(opoistype & OPOISON_SLEEP){
+		if(Sleep_resistance) {
 			pline_The("drug doesn't seem to affect you.");
-			return;
 		} else if(!rn2(20*thrown_weapon)){
 			You("suddenly fall asleep!");
 			fall_asleep(-rn1(2, 6), TRUE);
 		}
 	}
-	else if(opoistype & OPOISON_BLIND){
+	if(opoistype & OPOISON_BLIND){
 		if(Poison_resistance) {
 			pline_The("poison doesn't seem to affect you.");
-			return;
 		} else if(!rn2(20*thrown_weapon)){
 			i = thrown_weapon ? 3 : 8;
 			if(Half_physical_damage) i = (i+1) / 2;
@@ -4961,10 +4946,9 @@ int  typ, fatal, opoistype;
 			losehp(i, pname, kprefix);
 		}
 	}
-	else if(opoistype & OPOISON_PARAL){
-		if(Poison_resistance || Free_action) {
+	if(opoistype & OPOISON_PARAL){
+		if(Free_action) {
 			pline_The("poison doesn't seem to affect you.");
-			return;
 		} else if(!rn2(20*thrown_weapon)){
 			i = thrown_weapon ? 6 : 16;
 			if(Half_physical_damage) i = (i+1) / 2;
@@ -4976,12 +4960,35 @@ int  typ, fatal, opoistype;
 			losehp(i, pname, kprefix);
 		}
 	}
-	else if(opoistype & OPOISON_AMNES){
+	if(opoistype & OPOISON_AMNES){
 		if(u.sealsActive&SEAL_HUGINN_MUNINN){
 			unbind(SEAL_HUGINN_MUNINN,TRUE);
 		} else {
 			forget(1);	/* lose 1% of memory per point lost*/
 			forget_traps();		/* lose memory of all traps*/
+		}
+	}
+	if(opoistype & OPOISON_ACID){
+		if(Poison_resistance) {
+			pline_The("acidic coating doesn't seem to affect you.");
+		} else {
+			/* suppress killer prefix if it already has one */
+			if ((i = name_to_mon(pname)) >= LOW_PM && mons[i].geno & G_UNIQ) {
+				kprefix = KILLED_BY;
+				if (!type_is_pname(&mons[i])) pname = the(pname);
+			} else if (!strncmpi(pname, "the ", 4) ||
+				!strncmpi(pname, "an ", 3) ||
+				!strncmpi(pname, "a ", 2)) {
+				/*[ does this need a plural check too? ]*/
+				kprefix = KILLED_BY;
+			}
+			i = thrown_weapon ? rnd(10) : rn1(10,10);
+			losehp(i, pname, kprefix);
+			if(u.uhp < 1) {
+				killer_format = kprefix;
+				killer = pname;
+				done(DIED);
+			}
 		}
 	}
 }

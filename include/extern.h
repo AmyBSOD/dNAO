@@ -1318,6 +1318,7 @@ E void NDECL(mksepulcher);
 E void NDECL(mkmivault);
 E void FDECL(mkmivaultitem,(struct obj *));
 E void NDECL(place_lolth_vaults);
+E void NDECL(place_law_features);
 E void NDECL(place_neutral_features);
 E struct mkroom * FDECL(pick_room,(BOOLEAN_P));
 E void FDECL(mkroom, (int));
@@ -1640,8 +1641,12 @@ E void NDECL(synch_cursor);
 
 E void NDECL(init_objects);
 E int NDECL(find_sawant);
+E int NDECL(find_gawant);
+E int NDECL(find_pawant);
+E int NDECL(find_riwant);
 E int NDECL(find_gcirclet);
 E int NDECL(find_sring);
+E int NDECL(find_iring);
 E int NDECL(find_vhelm);
 E int NDECL(find_skates);
 E int NDECL(find_cboots);
@@ -2258,6 +2263,7 @@ E int FDECL(countCloseSigns, (struct monst *));
 
 E void FDECL(stock_room, (int,struct mkroom *));
 E boolean FDECL(saleable, (struct monst *,struct obj *));
+E int FDECL(get_special_shop_item, (int));
 E int FDECL(get_shop_item, (int));
 
 /* ### sit.c ### */
@@ -2742,7 +2748,8 @@ E int NDECL(dowield);
 E int NDECL(doswapweapon);
 E int NDECL(dowieldquiver);
 E boolean FDECL(wield_tool, (struct obj *,const char *));
-E int NDECL(can_twoweapon);
+E int NDECL(test_twoweapon);
+E int NDECL(starting_twoweapon);
 E void NDECL(drop_uswapwep);
 E int NDECL(dotwoweapon);
 E void NDECL(uwepgone);

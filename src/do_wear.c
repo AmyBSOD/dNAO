@@ -1959,7 +1959,7 @@ int base_uac()
 
 	if(uwep){
 		if((uwep->otyp == RAPIER && arti_shining(uwep)) || 
-			(uwep->otyp == LIGHTSABER && uwep->lamplit && uwep->oartifact != ART_ANNULUS && uwep->ovar1 == 0)
+			(uwep->otyp == LIGHTSABER && litsaber(uwep) && uwep->oartifact != ART_ANNULUS && uwep->ovar1 == 0)
 				) uac -= max(
 					min(
 					(ACURR(A_DEX)-13)/4,
@@ -2083,7 +2083,7 @@ find_ac()
 
 	if(uwep){
 		if(uwep->otyp == RAPIER || 
-			(uwep->otyp == LIGHTSABER && uwep->lamplit && uwep->oartifact != ART_ANNULUS && uwep->ovar1 == 0) //ovar1 being 0 means dueling hilt
+			(uwep->otyp == LIGHTSABER && litsaber(uwep) && uwep->oartifact != ART_ANNULUS && uwep->ovar1 == 0) //ovar1 being 0 means dueling hilt
 				) uac -= max(
 					min(
 					(ACURR(A_DEX)-13)/4,
@@ -2457,13 +2457,13 @@ do_takeoff()
 	  if(!cursed(uwep)) {
 	    setuwep((struct obj *) 0);
 	    You("are empty %s.", body_part(HANDED));
-		if(u.twoweap && !can_twoweapon())
+		if(u.twoweap && !test_twoweapon())
 			untwoweapon();
 	  }
 	} else if (taking_off == W_SWAPWEP) {
 		setuswapwep((struct obj *) 0);
 		You("no longer have a second weapon readied.");
-		if(u.twoweap && !can_twoweapon())
+		if(u.twoweap && !test_twoweapon())
 			untwoweapon();
 	} else if (taking_off == W_QUIVER) {
 	  setuqwep((struct obj *) 0);

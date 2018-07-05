@@ -2554,6 +2554,79 @@ register struct obj *otmp;
 		}
 		if(!otmp->cursed) heal_legs();
 		break;
+	    case LUMP_OF_SOLDIER_S_JELLY:
+		/* This stuff seems to be VERY healthy! */
+		adjattrib(A_CON, 1, 0);
+		if (Upolyd) {
+		    u.mh += otmp->cursed ? -d(4,10) : d(4,10);
+		    if (u.mh > u.mhmax) {
+			u.mh = u.mhmax;
+		    } else if (u.mh <= 0) {
+			rehumanize();
+		    }
+		} else {
+		    u.uhp += otmp->cursed ? -d(4,10) : d(4,10);
+		    if (u.uhp > u.uhpmax) {
+			u.uhp = u.uhpmax;
+		    } else if (u.uhp <= 0) {
+			killer_format = KILLED_BY_AN;
+			killer = "rotten lump of soldier's jelly";
+			done(POISONING);
+		    }
+		}
+		if(!otmp->cursed) heal_legs();
+		break;
+	    case LUMP_OF_DANCER_S_JELLY:
+		/* This stuff seems to be VERY healthy! */
+		adjattrib(A_DEX, 1, 0);
+		if(!otmp->cursed){
+			if (!(HFast & INTRINSIC)) {
+				if (!Fast) You("speed up.");
+				else Your("quickness feels more natural.");
+				HFast |= FROMOUTSIDE;
+			}
+		} else {
+			if ((HFast & FROMOUTSIDE)) {
+				HFast &= ~FROMOUTSIDE;
+				if (!Fast) You("slow down.");
+				else Your("quickness feels less natural.");
+			}
+		}
+		if(!otmp->cursed) heal_legs();
+		break;
+	    case LUMP_OF_PHILOSOPHER_S_JELLY:
+		/* This stuff seems to be VERY healthy! */
+		adjattrib(A_INT, 1, 0);
+		if(!otmp->cursed){
+			if (HStun > 2)  make_stunned(2L,FALSE);
+			if (HConfusion > 2)  make_confused(2L,FALSE);
+		} else {
+			make_stunned(HStun + rnd(20),FALSE);
+			make_confused(HConfusion + d(10, 20),FALSE);
+		}
+		break;
+	    case LUMP_OF_PRIESTESS_S_JELLY:
+		/* This stuff seems to be VERY healthy! */
+		adjattrib(A_WIS, 1, 0);
+		if(!otmp->cursed){
+			if (HStun > 2)  make_stunned(2L,FALSE);
+			if (HConfusion > 2)  make_confused(2L,FALSE);
+		} else {
+			make_stunned(HStun + rnd(20),FALSE);
+			make_confused(HConfusion + d(10, 20),FALSE);
+		}
+		break;
+	    case LUMP_OF_RHETOR_S_JELLY:
+		/* This stuff seems to be VERY healthy! */
+		adjattrib(A_CHA, 1, 0);
+		if(!otmp->cursed){
+			if (HStun > 2)  make_stunned(2L,FALSE);
+			if (HConfusion > 2)  make_confused(2L,FALSE);
+		} else {
+			make_stunned(HStun + rnd(20),FALSE);
+			make_confused(HConfusion + d(10, 20),FALSE);
+		}
+		break;
 	    case EGG:
 		if (touch_petrifies(&mons[otmp->corpsenm])) {
 		    if (!Stone_resistance &&
@@ -3498,7 +3571,7 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 				} else
 					You("seem unaffected by the poison.");
 			}
-			else if(otmp->opoisoned & OPOISON_FILTH){
+			if(otmp->opoisoned & OPOISON_FILTH){
 				pline("Ulch - that was tainted with filth!");
 				if (Sick_resistance) {
 					pline("It doesn't seem at all sickening, though...");
@@ -3514,7 +3587,7 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 					make_sick(sick_time, buf, TRUE, SICK_VOMITABLE);
 				}
 			}
-			else if(otmp->opoisoned & OPOISON_SLEEP){
+			if(otmp->opoisoned & OPOISON_SLEEP){
 				pline("Ecch - that must have been drugged!");
 				if(Poison_resistance || Sleep_resistance) {
 					You("suddenly fall asleep!");
@@ -3522,12 +3595,12 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 				} else
 					You("seem unaffected by the drugs.");
 			}
-			else if(otmp->opoisoned & OPOISON_BLIND){
+			if(otmp->opoisoned & OPOISON_BLIND){
 				pline("Ecch - that must have been poisoned!");
 				make_blinded(rn1(200, 250 - 125 * bcsign(otmp)),
 						 (boolean)!Blind);
 			}
-			else if(otmp->opoisoned & OPOISON_PARAL){
+			if(otmp->opoisoned & OPOISON_PARAL){
 				if (Free_action)
 					You("stiffen momentarily.");
 				else {
@@ -3545,7 +3618,7 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 					exercise(A_DEX, FALSE);
 				}
 			}
-			else if(otmp->opoisoned & OPOISON_AMNES){
+			if(otmp->opoisoned & OPOISON_AMNES){
 				forget(otmp->cursed ? 25 : otmp->blessed ? 0 : 10);
 				if (Hallucination)
 					pline("Hakuna matata!");
@@ -3571,6 +3644,9 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 					newuhs(FALSE);
 				} else
 					exercise(A_WIS, FALSE);
+			} else if((otmp->opoisoned & OPOISON_ACID) && !Acid_resistance){
+				You("have a very bad case of stomach acid."); /* not body_part() */
+				losehp(rnd(15), "acidic corpse", KILLED_BY_AN);
 			}
 		} else if (!otmp->cursed)
 		pline("This %s is delicious!",
@@ -3673,8 +3749,14 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 		    otmp->otyp == FORTUNE_COOKIE || /* eggs */
 		    otmp->otyp == CREAM_PIE ||
 		    otmp->otyp == CANDY_BAR || /* milk */
-		    otmp->otyp == LUMP_OF_ROYAL_JELLY)
-		    u.uconduct.unvegan++;
+		    otmp->otyp == HONEYCOMB ||
+		    otmp->otyp == LUMP_OF_ROYAL_JELLY ||
+		    otmp->otyp == LUMP_OF_SOLDIER_S_JELLY ||
+		    otmp->otyp == LUMP_OF_DANCER_S_JELLY ||
+		    otmp->otyp == LUMP_OF_PHILOSOPHER_S_JELLY ||
+		    otmp->otyp == LUMP_OF_PRIESTESS_S_JELLY ||
+		    otmp->otyp == LUMP_OF_RHETOR_S_JELLY
+		) u.uconduct.unvegan++;
 		break;
 	    }
 

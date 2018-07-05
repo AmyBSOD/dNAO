@@ -1261,9 +1261,18 @@ god_priest(gptr, sx, sy, sanctum)
 			return priest;
 		}
 		
-		if(gptr == ElfRangerLgod) 
-		if(gptr == ElfRangerNgod) 
-		if(gptr == ElfRangerCgod) 
+		if(gptr == ElfRangerLgod){
+			priest->female = FALSE;
+			return priest;
+		}
+		if(gptr == ElfRangerNgod){
+			priest->female = TRUE;
+			return priest;
+		}
+		if(gptr == ElfRangerCgod){
+			priest->female = FALSE;
+			return priest;
+		} 
 		
 		if(gptr == ElfPriestessLgod){
 			priest->female = TRUE;
@@ -1294,29 +1303,42 @@ god_priest(gptr, sx, sy, sanctum)
 		
 		if(gptr == DrowMaleLgodKnown || gptr == DrowMaleLgodUknwn){
 			priest->female = FALSE;
-			if(!sanctum) newcham(priest,&mons[PM_DROW_ALIENIST],FALSE,FALSE);
+			if(!sanctum){
+				newcham(priest,&mons[PM_DROW_ALIENIST],FALSE,FALSE);
+				priest->mfaction = XAXOX;
+			}
 			return priest;
 		}
 		if(gptr == DrowMaleNgod){
 			priest->female = FALSE;
-			if(!sanctum) newcham(priest,&mons[PM_HEDROW_BLADEMASTER],FALSE,FALSE);
+			if(!sanctum){
+				newcham(priest,&mons[PM_HEDROW_BLADEMASTER],FALSE,FALSE);
+				priest->mfaction = LOLTH_SYMBOL;
+			}
 			return priest;
 		}
 		if(gptr == DrowMaleCgod){
 			priest->female = FALSE;
-			if(!sanctum) newcham(priest,&mons[PM_DROW_MATRON],FALSE,FALSE);
+			if(!sanctum){
+				newcham(priest,&mons[PM_DROW_MATRON],FALSE,FALSE);
+				priest->mfaction = LOLTH_SYMBOL;
+			}
 			return priest;
 		}
 		
 		if(gptr == DrowNobMaleNgod){
 			priest->female = FALSE;
-			if(!sanctum) newcham(priest,&mons[PM_HEDROW_WIZARD],FALSE,FALSE);
+			if(!sanctum){
+				newcham(priest,&mons[PM_HEDROW_WIZARD],FALSE,FALSE);
+				priest->mfaction = LOLTH_SYMBOL;
+			}
 			return priest;
 		}
 		if(gptr == DrowNobMaleCgod){
 			if(!sanctum){
 				if(priest->female) newcham(priest,&mons[PM_PRIESTESS_OF_GHAUNADAUR],FALSE,FALSE);
 				else newcham(priest,&mons[PM_PRIEST_OF_GHAUNADAUR],FALSE,FALSE);
+				priest->mfaction = GHAUNADAUR_SYMBOL;
 			}
 			return priest;
 		}

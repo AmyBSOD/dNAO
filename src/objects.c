@@ -120,7 +120,7 @@ WEAPON("boomerang", (char *)0,
 WEAPON("chakram", "circular blade", /*Needs encyc entry*//*Needs tile*/
 	1, 1, 0,  6,  0, 20,  9,  9, 0, S,   -P_BOOMERANG, IRON, HI_SILVER),
 WEAPON("spike", (char *)0, /*Needs encyc entry*/
-	1, 1, 0,  1,  0,  2,  3,  2, 0, P,   -P_DART, BONE, CLR_WHITE),
+	1, 1, 0,  1,  0,  2,  3,  1, 0, P,   -P_DART, WOOD, CLR_WHITE),
 
 /* spears */
 WEAPON("spear", (char *)0,
@@ -178,7 +178,7 @@ WEAPON("moon axe", "two-handed axe", /*Needs encyc entry*//*Needs tile*/
 WEAPON("short sword", (char *)0,
 	1, 0, 0, 12, 30, 10,  6,  8, 0, P,   P_SHORT_SWORD, IRON, HI_METAL),
 WEAPON("vibroblade", "gray short sword", /*Needs encyc entry*//*Needs tile*/
-	1, 0, 0,  1, 20, 10,  6,  8, 0, P,   P_SHORT_SWORD, PLASTIC, CLR_GRAY),
+	1, 0, 0,  1,  5, 10,  6,  8, 0, P,   P_SHORT_SWORD, PLASTIC, CLR_GRAY),
 WEAPON("elven short sword", "runed short sword",
 	0, 0, 0,  2,  2, 10,  7,  7, 2, P,   P_SHORT_SWORD, WOOD, HI_WOOD),
 WEAPON("droven short sword", "short sword", /*Needs encyc entry*/
@@ -236,11 +236,13 @@ WEAPON("spetum", "forked polearm",
 	0, 0, 1,  5, 50,  5,  6,  6, 0, P,   P_POLEARMS, IRON, HI_METAL),
 						/* +1 small, +d6 large */
 WEAPON("glaive", "single-edged polearm",
-	0, 0, 1,  5, 75,  6,  6, 10, 0, S,   P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  4, 75,  6,  6, 10, 0, S,   P_POLEARMS, IRON, HI_METAL),
+WEAPON("naginata", "samurai-sword polearm",
+	0, 0, 1,  1, 75, 90,  8, 10, 1, S,   P_POLEARMS, IRON, HI_METAL),
 WEAPON("lance", (char *)0,
 	1, 0, 0,  4,180, 10,  6,  8, 0, P,   P_LANCE, IRON, HI_METAL),
 WEAPON("force pike", "long gray spear",/*Needs tile*/
-	0, 0, 0,  1,180, 10,  6,  8, 2, P|S,   P_LANCE, PLASTIC, CLR_GRAY),
+	0, 0, 0,  1, 30, 10,  6,  8, 2, P|S,   P_LANCE, PLASTIC, CLR_GRAY),
 WEAPON("elven lance", "runed lance", /*Needs encyc entry*//*Needs tile*/
 	0, 0, 0,  1, 11, 10,  8,  8, 2, P,   P_LANCE, WOOD, HI_WOOD),
 WEAPON("droven lance", "lance", /*Needs encyc entry*//*Needs tile*/
@@ -295,9 +297,9 @@ WEAPON("club", (char *)0,
 WEAPON("quarterstaff", "staff",
 	0, 0, 1, 10, 40,  5,  6,  6, 0, B,   P_QUARTERSTAFF, WOOD, HI_WOOD),
 WEAPON("khakkhara", "monk's staff", /*Needs encyc entry*//*Needs tile*/
-	0, 1, 1,  2, 120,  50,  6,  4, 0, B|P,   P_QUARTERSTAFF, METAL, HI_SILVER),
+	0, 0, 1,  2, 120,  50,  6,  4, 0, B|P,   P_QUARTERSTAFF, METAL, HI_SILVER),
 WEAPON("kamerel vajra", "short mace", /*Needs encyc entry*/
-	0, 1, 0,  1,  10,800, 6, 6, 1, S|E, P_MACE, METAL, HI_GOLD),
+	0, 0, 0,  1,  10,800, 6, 6, 1, S|E, P_MACE, METAL, HI_GOLD),
 WEAPON("bar", (char *)0,
 	1, 0, 1, 1, 400,  10,  8,  6, -10, B,   P_QUARTERSTAFF, METAL, HI_METAL),
 /* two-piece */
@@ -336,18 +338,18 @@ GUN("gun", "unfamiliar gun",					0,  0, 1,  25,  250, 10,  3, -1, WP_BULLET, IRO
 GUN("long gun", "unfamiliar long gun",			0,  1, 1,  30,  150, 22, -1,  1, WP_BULLET, IRON, P_FIREARM, HI_METAL),/*Needs tile*/
 GUN("heavy gun", "unfamiliar heavy gun",		0,  1, 1, 100, 2000, 20,  8, -4, WP_BULLET, IRON, P_FIREARM, HI_METAL),/*Needs tile*/
  /*Needs encyc entry*/
-GUN("hand blaster", "hard black handmirror",		0,  0, 1,  12, 1000, 10,  1,  0,WP_BLASTER, PLASTIC, P_FIREARM, CLR_BLACK), /*Needs tile*/
-GUN("arm blaster",  "hard white bracer", 	   		0,  0, 1,  45, 4500, 15,  6,  0,WP_BLASTER, PLASTIC, P_FIREARM, CLR_WHITE), /*Needs tile*/
-GUN("mass-shadow pistol",  "rectangular device",	0,  0, 1,  25, 4500, 10,  1,  0,WP_BLASTER, PLASTIC, P_FIREARM, CLR_GRAY), /*Needs tile*/
-GUN("cutting laser","hard tan lozenge",    			0,  0, 1,  10, 1000,  3, -1,  3,WP_BLASTER, PLASTIC, P_FIREARM, CLR_YELLOW), /*Needs tile*/
+GUN("hand blaster", "hard black handmirror",		0,  0, 1,   2, 1000, 10,  1,  0,WP_BLASTER, PLASTIC, P_FIREARM, CLR_BLACK), /*Needs tile*/
+GUN("arm blaster",  "hard white bracer", 	   		0,  0, 1,   8, 4500, 15,  6,  0,WP_BLASTER, PLASTIC, P_FIREARM, CLR_WHITE), /*Needs tile*/
+GUN("mass-shadow pistol",  "rectangular device",	0,  0, 1,   4, 4500, 10,  1,  0,WP_BLASTER, PLASTIC, P_FIREARM, CLR_GRAY), /*Needs tile*/
+GUN("cutting laser","hard tan lozenge",    			0,  0, 1,   1, 1000,  3, -1,  3,WP_BLASTER, PLASTIC, P_FIREARM, CLR_YELLOW), /*Needs tile*/
 
-GUN("raygun", "hard handle ending in glassy disks",	0,  0, 1,  45, 3000, 15,  1,  0,WP_BLASTER, PLASTIC, P_FIREARM, CLR_BRIGHT_CYAN), /*Needs tile*/
+GUN("raygun", "hard handle ending in glassy disks",	0,  0, 1,   8, 3000, 15,  1,  0,WP_BLASTER, PLASTIC, P_FIREARM, CLR_BRIGHT_CYAN), /*Needs tile*/
 BULLET("bullet", "pellet",
 	0,  5,   0,   5, 8, 6, 0, WP_BULLET,   P,   METAL, -P_FIREARM, HI_METAL),/*Needs tile*/
 BULLET("silver bullet", "silver pellet",
 	0,  5,   0,  15, 8, 6, 0, WP_BULLET,   P, SILVER, -P_FIREARM, HI_SILVER),/*Needs tile*/
 BULLET("shotgun shell", "red tube",
-	0,  5,   0,  10,12, 6, 0,  WP_SHELL,   P,   METAL, -P_FIREARM, CLR_RED),/*Needs tile*/
+	0,  5,   1,  10,12, 6,10,  WP_SHELL,   P,   METAL, -P_FIREARM, CLR_RED),/*Needs tile*/
 BULLET("frag grenade", "green spheriod",
 	0,  1,   0, 350, 2, 2, 0,  WP_GRENADE, B,   IRON, -P_FIREARM, CLR_GREEN),/*Needs tile*/
 BULLET("gas grenade", "lime spheriod",
@@ -816,8 +818,8 @@ CONTAINER("box", (char *)0,       1, 0, 0,  30,100,   8, WOOD, HI_WOOD),
 CONTAINER("massive stone crate", (char *)0,1, 0, 0,   0,6000,  8, MINERAL,HI_MINERAL),/*Needs tile*/
 CONTAINER("chest", (char *)0,           1, 0, 0,  30,200,  16, WOOD, HI_WOOD),
 CONTAINER("magic chest", "big chest with 10 keyholes",
-										0, 1, 0,  15, 4001, 7000, METAL, CLR_BRIGHT_MAGENTA),/*Needs tile*/
-CONTAINER("ice box", (char *)0,         1, 0, 0,   5,250,  42, PLASTIC, CLR_WHITE),
+										0, 1, 0,  15,4001,7000, METAL, CLR_BRIGHT_MAGENTA),/*Needs tile*/
+CONTAINER("ice box", (char *)0,         1, 0, 0,   5, 250,  42, PLASTIC, CLR_WHITE),
 CONTAINER("sack", "bag",                0, 0, 0,  20,  5,   2, CLOTH, HI_CLOTH),
 CONTAINER("oilskin sack", "bag",        0, 0, 0,  20,  5, 100, CLOTH, HI_CLOTH),
 CONTAINER("bag of holding", "bag",      0, 1, 0,  20,  5, 100, CLOTH, HI_CLOTH),
@@ -883,7 +885,7 @@ TOOL("leash", (char *)0,        1, 0, 0, 0,  70,  0,  20, LEATHER, HI_LEATHER),
 TOOL("stethoscope", (char *)0,  1, 0, 0, 0,  25,  0,  75, IRON, HI_METAL),
 TOOL("tinning kit", (char *)0,  1, 0, 0, 1,  15,  0,  30, IRON, HI_METAL),
 TOOL("bullet fabber", "white box with a yellow fiddly bit",/*Needs tile*/
-								0, 0, 1, 0,   1,  0,  30, PLASTIC, CLR_WHITE),
+								0, 0, 1, 0,   0, 20,  30, PLASTIC, CLR_WHITE),
 TOOL("upgrade kit", (char *)0,  1, 0, 0, 0,  38,  0,  30, COPPER, HI_COPPER),/*Needs encyc entry*//*Needs tile*/
 TOOL("power pack", "little white cube", /*Needs encyc entry*//*Needs tile*/
 								0, 1, 1, 0,   1,  0,  300, PLASTIC, CLR_WHITE),
@@ -938,7 +940,9 @@ WEPTOOL("beamsword",  "broadsword hilt", /*Needs encyc entry*/
 WEPTOOL("double lightsaber",  "long grip", /*Needs encyc entry*//*Needs tile*/
 	0, 1, 1, 1,  1, 30,1000, 10,10, -6, SLASH|E, P_QUARTERSTAFF, METAL, HI_METAL),
 WEPTOOL("grappling hook", "iron hook",
-	0, 0, 0, 0,  5,  30,  50,  2,  6, 0, WHACK,  P_FLAIL, IRON, HI_METAL),
+	0, 0, 0, 0,  4,  30,  50,  2,  6, 0, WHACK,  P_FLAIL, IRON, HI_METAL),
+WEPTOOL("shepherd's crook", "bent staff",
+	0, 0, 0, 1,  1,  30,   5,  6,  4, 0, WHACK, P_QUARTERSTAFF, WOOD, HI_WOOD),
 /* 3.4.1: unicorn horn left classified as "magic" */
 WEPTOOL("unicorn horn", (char *)0,
 	1, 1, 0, 0,  1,  20, 100, 12, 12, 0, PIERCE, P_UNICORN_HORN, BONE, CLR_WHITE),
@@ -1003,13 +1007,23 @@ FOOD("slime mold",          75, 1,  0, 0, VEGGY, 250, HI_ORGANIC),
 
 /* people food */
 FOOD("lump of royal jelly",  1, 1,  0, 0, VEGGY, 200, CLR_YELLOW),
+FOOD("lump of soldier's jelly",  
+							1, 1,  2, 0, VEGGY, 200, CLR_YELLOW),
+FOOD("lump of dancer's jelly",
+							1, 1,  2, 0, VEGGY, 200, CLR_YELLOW),
+FOOD("lump of philosopher's jelly",
+							1, 1,  2, 0, VEGGY, 200, CLR_YELLOW),
+FOOD("lump of priestess's jelly",
+							1, 1,  2, 0, VEGGY, 200, CLR_YELLOW),
+FOOD("lump of rhetor's jelly",
+							1,  1,  2, 0, VEGGY, 200, CLR_YELLOW),
 FOOD("cream pie",           25, 1,  0, 0, VEGGY, 100, CLR_WHITE),
 FOOD("candy bar",           13, 1,  0, 0, VEGGY, 100, CLR_BROWN),
 FOOD("fortune cookie",      55, 1,  0, 0, VEGGY,  40, CLR_YELLOW),
 FOOD("pancake",             25, 2,  0, 0, VEGGY, 200, CLR_YELLOW),
 FOOD("lembas wafer",        20, 2,  0, 0, VEGGY, 800, CLR_WHITE),
 FOOD("cram ration",         20, 3,  0, 0, VEGGY, 600, HI_ORGANIC),
-FOOD("food ration",        362, 5,  0, 0, VEGGY, 800, HI_ORGANIC),
+FOOD("food ration",        357, 5,  0, 0, VEGGY, 800, HI_ORGANIC),
 FOOD("protein pill",         1, 1,  0, 0, VEGGY, 800, HI_ORGANIC), /*Needs encyc entry*//*Needs tile*/
 FOOD("K-ration",             1, 1,  0, 0, VEGGY, 400, HI_ORGANIC),
 FOOD("C-ration",             1, 1,  0, 0, VEGGY, 300, HI_ORGANIC),
@@ -1223,14 +1237,18 @@ WAND((char *)0,        "jeweled",   0, 150, 1, 0,         IRON,     HI_MINERAL),
 GEM("magicite crystal","brilliant blue",1, 1, 9999, 15, 11, GEMSTONE, CLR_BRIGHT_BLUE),/*Needs tile*/
 GEM("dilithium crystal", "white",      2,  1, 4500, 15,  5, GEMSTONE, CLR_WHITE),
 GEM("diamond", "white",                3,  1, 4000, 15, 10, GEMSTONE, CLR_WHITE),
+//3
 GEM("star sapphire", "blue",           2,  1, 3750, 15,  9, GEMSTONE, CLR_BLUE),/*Needs tile*/
 GEM("ruby", "red",                     4,  1, 3500, 15,  9, GEMSTONE, CLR_RED),
 GEM("jacinth", "orange",               3,  1, 3250, 15,  9, GEMSTONE, CLR_ORANGE),
+//6
 GEM("sapphire", "blue",                4,  1, 3000, 15,  9, GEMSTONE, CLR_BLUE),
 GEM("black opal", "black",             3,  1, 2500, 15,  8, GEMSTONE, CLR_BLACK),
 GEM("emerald", "green",                3,  1, 2500, 15,  8, GEMSTONE, CLR_GREEN),
+//9
 GEM("turquoise", "green",              4,  1, 2000, 15,  6, GEMSTONE, CLR_GREEN),
 GEM("morganite", "pink",               4,  1, 2000, 15,  6, GEMSTONE, CLR_ORANGE),
+//11 Note: Only first 11 gems are affected by dungeon level
 GEM("citrine", "yellow",               4,  1, 1500, 15,  6, GEMSTONE, CLR_YELLOW),
 GEM("aquamarine", "green",             6,  1, 1500, 15,  8, GEMSTONE, CLR_GREEN),
 GEM("amber", "yellowish brown",        8,  1, 1000, 15,  2, GEMSTONE, CLR_BROWN),

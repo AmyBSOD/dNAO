@@ -474,7 +474,11 @@ register struct monst *mtmp;
 {
 	const char *ret;
 
-	switch (is_silent_mon(mtmp) ? MS_SILENT : mtmp->data->msound) {
+	switch (is_silent_mon(mtmp) ? MS_SILENT : 
+			mtmp->ispriest ? MS_PRIEST : 
+			mtmp->isshk ? MS_SELL : 
+			mtmp->data->msound
+	) {
 	case MS_MEW:
 	case MS_HISS:
 	    ret = "hiss";
@@ -483,6 +487,9 @@ register struct monst *mtmp;
 	case MS_GROWL:
 	    ret = "growl";
 	    break;
+	case MS_SHEEP:
+		ret = "snort";
+		break;
 	case MS_ROAR:
 	    ret = "roar";
 	    break;
@@ -549,6 +556,9 @@ register struct monst *mtmp;
 	case MS_MEW:
 	    yelp_verb = "yowl";
 	    break;
+	case MS_SHEEP:
+		yelp_verb = "bleat";
+		break;
 	case MS_BARK:
 	case MS_GROWL:
 	    yelp_verb = "yelp";
@@ -591,6 +601,9 @@ register struct monst *mtmp;
 	case MS_GROWL:
 	    whimper_verb = "whimper";
 	    break;
+	case MS_SHEEP:
+		whimper_verb = "bleat";
+		break;
 	case MS_BARK:
 	    whimper_verb = "whine";
 	    break;
@@ -681,7 +694,13 @@ boolean chatting;
 			}
 		}
 	}
-	switch ((mtmp->mfaction == SKELIFIED && ptr != &mons[PM_ECHO]) ? MS_BONES : is_silent_mon(mtmp) ? MS_SILENT : ptr->msound) {
+	switch (
+		(mtmp->mfaction == SKELIFIED && ptr != &mons[PM_ECHO]) ? MS_BONES : 
+		is_silent_mon(mtmp) ? MS_SILENT : 
+		mtmp->ispriest ? MS_PRIEST : 
+		mtmp->isshk ? MS_SELL : 
+		ptr->msound
+	) {
 	case MS_ORACLE:
 	    return doconsult(mtmp);
 	case MS_PRIEST: /*Most (all?) things with this will have ispriest set*/
@@ -830,6 +849,9 @@ asGuardian:
 		    pline_msg = "mews.";
 		break;
 	    } /* else FALLTHRU */
+	case MS_SHEEP:
+		pline_msg = "baaaas.";
+		break;
 	case MS_GROWL:
 	    pline_msg = mtmp->mpeaceful ? "snarls." : "growls!";
 	    break;
@@ -4904,7 +4926,7 @@ boolean
 roleSkill(p_skill)
 int p_skill;
 {
-	if(p_skill == P_POLEARMS) return (Role_if(PM_SAMURAI) && uwep && uwep->otyp == GLAIVE);
+	if(p_skill == P_POLEARMS) return (Role_if(PM_SAMURAI) && uwep && uwep->otyp == NAGINATA);
 	else return FALSE;
 }
 

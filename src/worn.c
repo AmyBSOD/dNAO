@@ -26,6 +26,11 @@ const static int EREBOR_RES[] = {FIRE_RES, COLD_RES};
 const static int DURIN_RES[] = {FIRE_RES, ACID_RES, POISON_RES};
 const static int REV_PROPS[] = {COLD_RES, REGENERATION, FIXED_ABIL, POISON_RES, SEE_INVIS};
 
+const static int FLY_PROPS[] = {DETECT_MONSTERS};
+
+const static int FIRE_PROP[] = {FIRE_RES};
+const static int COLD_PROP[] = {COLD_RES};
+
 const struct worn {
 	long w_mask;
 	struct obj **w_obj;
@@ -99,7 +104,7 @@ long mask;
 		if(oobj && !(oobj->owornmask & wp->w_mask))
 			impossible("Setworn: mask = %ld.", wp->w_mask);
 		if(oobj) {
-		    if (u.twoweap && (oobj->owornmask & (W_WEP|W_SWAPWEP)) && !can_twoweapon())
+		    if (u.twoweap && (oobj->owornmask & (W_WEP|W_SWAPWEP)) && !test_twoweapon())
 				u.twoweap = 0;
 		    oobj->owornmask &= ~wp->w_mask;
 		    if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER)) {
@@ -127,6 +132,13 @@ long mask;
 				for(p = 0; p < SIZE(SHIM_RES); p++) u.uprops[SHIM_RES[p]].extrinsic = u.uprops[SHIM_RES[p]].extrinsic & ~wp->w_mask;
 			}
 			
+			if(oobj->oproperties&OPROP_FIRE){
+				for(p = 0; p < SIZE(FIRE_PROP); p++) u.uprops[FIRE_PROP[p]].extrinsic = u.uprops[FIRE_PROP[p]].extrinsic & ~wp->w_mask;
+			}
+			if(oobj->oproperties&OPROP_COLD){
+				for(p = 0; p < SIZE(COLD_PROP); p++) u.uprops[COLD_PROP[p]].extrinsic = u.uprops[COLD_PROP[p]].extrinsic & ~wp->w_mask;
+			}
+			
 			if(oobj->oartifact == ART_CHROMATIC_DRAGON_SCALES){
 				for(p = 0; p < SIZE(CHROMATIC_RES); p++) u.uprops[CHROMATIC_RES[p]].extrinsic = u.uprops[CHROMATIC_RES[p]].extrinsic & ~wp->w_mask;
 			} else if(oobj->oartifact == ART_DRAGON_PLATE){
@@ -139,6 +151,8 @@ long mask;
 				for(p = 0; p < SIZE(EREBOR_RES); p++) u.uprops[EREBOR_RES[p]].extrinsic = u.uprops[EREBOR_RES[p]].extrinsic & ~wp->w_mask;
 			} else if(oobj->oartifact == ART_CLAWS_OF_THE_REVENANCER){
 				for(p = 0; p < SIZE(REV_PROPS); p++) u.uprops[REV_PROPS[p]].extrinsic = u.uprops[REV_PROPS[p]].extrinsic & ~wp->w_mask;
+			} else if(oobj->oartifact == ART_ALL_SEEING_EYE_OF_THE_FLY){
+				for(p = 0; p < SIZE(FLY_PROPS); p++) u.uprops[FLY_PROPS[p]].extrinsic = u.uprops[FLY_PROPS[p]].extrinsic & ~wp->w_mask;
 			}
 			
 			if ((p = w_blocks(oobj,mask)) != 0)
@@ -180,6 +194,13 @@ long mask;
 					for(p = 0; p < SIZE(SHIM_RES); p++) u.uprops[SHIM_RES[p]].extrinsic = u.uprops[SHIM_RES[p]].extrinsic | wp->w_mask;
 				}
 				
+				if(obj->oproperties&OPROP_FIRE){
+					for(p = 0; p < SIZE(FIRE_PROP); p++) u.uprops[FIRE_PROP[p]].extrinsic = u.uprops[FIRE_PROP[p]].extrinsic | wp->w_mask;
+				}
+				if(obj->oproperties&OPROP_COLD){
+					for(p = 0; p < SIZE(COLD_PROP); p++) u.uprops[COLD_PROP[p]].extrinsic = u.uprops[COLD_PROP[p]].extrinsic | wp->w_mask;
+				}
+				
 				if(obj->oartifact == ART_CHROMATIC_DRAGON_SCALES){
 					for(p = 0; p < SIZE(CHROMATIC_RES); p++) u.uprops[CHROMATIC_RES[p]].extrinsic = u.uprops[CHROMATIC_RES[p]].extrinsic | wp->w_mask;
 				} else if(obj->oartifact == ART_DRAGON_PLATE){
@@ -192,6 +213,8 @@ long mask;
 					for(p = 0; p < SIZE(EREBOR_RES); p++) u.uprops[EREBOR_RES[p]].extrinsic = u.uprops[EREBOR_RES[p]].extrinsic | wp->w_mask;
 				} else if(obj->oartifact == ART_CLAWS_OF_THE_REVENANCER){
 					for(p = 0; p < SIZE(REV_PROPS); p++) u.uprops[REV_PROPS[p]].extrinsic = u.uprops[REV_PROPS[p]].extrinsic | wp->w_mask;
+				} else if(obj->oartifact == ART_ALL_SEEING_EYE_OF_THE_FLY){
+					for(p = 0; p < SIZE(FLY_PROPS); p++) u.uprops[FLY_PROPS[p]].extrinsic = u.uprops[FLY_PROPS[p]].extrinsic | wp->w_mask;
 				}
 				
 			    if ((p = w_blocks(obj, mask)) != 0)
@@ -248,6 +271,13 @@ register struct obj *obj;
 			for(p = 0; p < SIZE(SHIM_RES); p++) u.uprops[SHIM_RES[p]].extrinsic = u.uprops[SHIM_RES[p]].extrinsic & ~wp->w_mask;
 		}
 		
+		if(obj->oproperties&OPROP_FIRE){
+			for(p = 0; p < SIZE(FIRE_PROP); p++) u.uprops[FIRE_PROP[p]].extrinsic = u.uprops[FIRE_PROP[p]].extrinsic & ~wp->w_mask;
+		}
+		if(obj->oproperties&OPROP_COLD){
+			for(p = 0; p < SIZE(COLD_PROP); p++) u.uprops[COLD_PROP[p]].extrinsic = u.uprops[COLD_PROP[p]].extrinsic & ~wp->w_mask;
+		}
+		
 		if(obj->oartifact == ART_CHROMATIC_DRAGON_SCALES){
 			for(p = 0; p < SIZE(CHROMATIC_RES); p++) u.uprops[CHROMATIC_RES[p]].extrinsic = u.uprops[CHROMATIC_RES[p]].extrinsic & ~wp->w_mask;
 		} else if(obj->oartifact == ART_DRAGON_PLATE){
@@ -260,6 +290,8 @@ register struct obj *obj;
 			for(p = 0; p < SIZE(EREBOR_RES); p++) u.uprops[EREBOR_RES[p]].extrinsic = u.uprops[EREBOR_RES[p]].extrinsic & ~wp->w_mask;
 		} else if(obj->oartifact == ART_CLAWS_OF_THE_REVENANCER){
 			for(p = 0; p < SIZE(REV_PROPS); p++) u.uprops[REV_PROPS[p]].extrinsic = u.uprops[REV_PROPS[p]].extrinsic & ~wp->w_mask;
+		} else if(obj->oartifact == ART_ALL_SEEING_EYE_OF_THE_FLY){
+			for(p = 0; p < SIZE(FLY_PROPS); p++) u.uprops[FLY_PROPS[p]].extrinsic = u.uprops[FLY_PROPS[p]].extrinsic & ~wp->w_mask;
 		}
 		
 		if(obj->oartifact == ART_GAUNTLETS_OF_THE_BERSERKER){
@@ -273,7 +305,7 @@ register struct obj *obj;
 		    u.uprops[p].blocked &= ~wp->w_mask;
 	    }
 	update_inventory();
-	if ((obj == uwep || obj == uswapwep) && !can_twoweapon()) u.twoweap = 0;
+	if ((obj == uwep || obj == uswapwep) && !test_twoweapon()) u.twoweap = 0;
 }
 
 void
@@ -284,7 +316,7 @@ struct monst *mon;
 	if (!mon->invis_blkd) {
 	    mon->minvis = 1;
 	    if (opaque(mon->data) && !See_invisible(mon->mx, mon->my))
-		unblock_point(mon->mx, mon->my);
+			unblock_point(mon->mx, mon->my);
 	    newsym(mon->mx, mon->my);		/* make it disappear */
 	    if (mon->wormno) see_wsegs(mon);	/* and any tail too */
 	}
@@ -480,6 +512,13 @@ boolean on, silently;
 		for(which = 0; which < SIZE(SHIM_RES); which++) update_mon_intrinsic(mon, obj, SHIM_RES[which], on, silently);
 	}
 	
+	if(obj->oproperties&OPROP_FIRE){
+		for(which = 0; which < SIZE(FIRE_PROP); which++) update_mon_intrinsic(mon, obj, FIRE_PROP[which], on, silently);
+	}
+	if(obj->oproperties&OPROP_COLD){
+		for(which = 0; which < SIZE(COLD_PROP); which++) update_mon_intrinsic(mon, obj, COLD_PROP[which], on, silently);
+	}
+	
 	if(obj->oartifact == ART_CHROMATIC_DRAGON_SCALES){
 		for(which = 0; which < SIZE(CHROMATIC_RES); which++) update_mon_intrinsic(mon, obj, CHROMATIC_RES[which], on, silently);
 	} else if(obj->oartifact == ART_DRAGON_PLATE){
@@ -492,6 +531,8 @@ boolean on, silently;
 		for(which = 0; which < SIZE(EREBOR_RES); which++) update_mon_intrinsic(mon, obj, EREBOR_RES[which], on, silently);
 	} else if(obj->oartifact == ART_CLAWS_OF_THE_REVENANCER){
 		for(which = 0; which < SIZE(REV_PROPS); which++) update_mon_intrinsic(mon, obj, REV_PROPS[which], on, silently);
+	} else if(obj->oartifact == ART_ALL_SEEING_EYE_OF_THE_FLY){
+		for(which = 0; which < SIZE(FLY_PROPS); which++) update_mon_intrinsic(mon, obj, FLY_PROPS[which], on, silently);
 	}
 
  maybe_blocks:

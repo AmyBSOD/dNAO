@@ -1289,6 +1289,8 @@ struct monst *mtmp;
 			return TRUE;
 		} else if (weap->mflagsg != 0L && ((ptr->mflagsg & weap->mflagsg) != 0L)) {
 			return TRUE;
+			if(yours && Role_if(PM_NOBLEMAN) && ((weap->mflagsg & MG_PRINCE|MG_LORD) != 0))
+				return TRUE;
 		} else if (weap->mflagsv != 0L && ((ptr->mflagsv & weap->mflagsv) != 0L)) {
 			return TRUE;
 		} else if (weap->mflagsa != 0L){
@@ -1319,7 +1321,9 @@ struct monst *mtmp;
 			return FALSE;
 		} else if (weap->mflagsb != 0L && !((ptr->mflagsb & weap->mflagsb) != 0L)) {
 			return FALSE;
-		} else if (weap->mflagsg != 0L && !((ptr->mflagsg & weap->mflagsg) != 0L)) {
+		} else if (weap->mflagsg != 0L && !(((ptr->mflagsg & weap->mflagsg) != 0L)
+			|| (yours && Role_if(PM_NOBLEMAN) && ((weap->mflagsg & MG_PRINCE|MG_LORD) != 0)))
+		) {
 			return FALSE;
 		} else if (weap->mflagsv != 0L && !((ptr->mflagsv & weap->mflagsv) != 0L)) {
 			return FALSE;
@@ -1425,6 +1429,8 @@ struct monst *mtmp;
 			return TRUE;
 		} else if (weap->mflagsg != 0L && ((ptr->mflagsg & weap->mflagsg) != 0L)) {
 			return TRUE;
+			if(yours && Role_if(PM_NOBLEMAN) && ((weap->mflagsg & MG_PRINCE|MG_LORD) != 0))
+				return TRUE;
 		} else if (weap->mflagsv != 0L && ((ptr->mflagsv & weap->mflagsv) != 0L)) {
 			return TRUE;
 		} else if (weap->mflagsa != 0L){
@@ -1454,7 +1460,9 @@ struct monst *mtmp;
 			return FALSE;
 		} else if (weap->mflagsb != 0L && !((ptr->mflagsb & weap->mflagsb) != 0L)) {
 			return FALSE;
-		} else if (weap->mflagsg != 0L && !((ptr->mflagsg & weap->mflagsg) != 0L)) {
+		} else if (weap->mflagsg != 0L && !(((ptr->mflagsg & weap->mflagsg) != 0L)
+			|| (yours && Role_if(PM_NOBLEMAN) && ((weap->mflagsg & MG_PRINCE|MG_LORD) != 0)))
+		) {
 			return FALSE;
 		} else if (weap->mflagsv != 0L && !((ptr->mflagsv & weap->mflagsv) != 0L)) {
 			return FALSE;
@@ -4734,13 +4742,20 @@ arti_invoke(obj)
 	break;
 	case FALLING_STARS:{
 		int starfall = rnd(u.ulevel/10+1), x, y, n;
+		int tries = 0;
 		coord cc;
 		verbalize("Even Stars Fall");
 		for (; starfall > 0; starfall--){
 			x = rn2(COLNO-2)+1;
 			y = rn2(ROWNO-2)+1;
+			if(!isok(x,y) || !ACCESSIBLE(levl[x][y].typ)){
+				if(tries++ < 1000){
+					starfall++;
+					continue;
+				}
+			}
 			cc.x=x;cc.y=y;
-			n=rnd(4)+1;
+			n=rnd(8)+1;
 			explode(x, y,
 				8, //8 = AD_PHYS, explode uses nonstandard damage type flags...
 				d(6,6), 0,
@@ -7245,8 +7260,10 @@ read_necro(VOID_ARGS)
 				if(u.uen > 30){
 					pm = &mons[PM_SHOGGOTH];
 					mtmp = makemon(pm, u.ux+d(1,5)-3, u.uy+d(1,5)-3, MM_ADJACENTOK);
-					mtmp->mcrazed = 1;
-					mtmp->msleeping = 1;
+					if(mtmp){
+						mtmp->mcrazed = 1;
+						mtmp->msleeping = 1;
+					}
 				}
 			break;
 			case SELECT_OOZE:

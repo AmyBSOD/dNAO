@@ -663,8 +663,18 @@ unsigned int type;
 		return SOLID_FOG;
 	break;
 	case PM_FERRUMACH_RILMANI:
-		if(rn2(4)) return ICE_STORM;
+		if(rn2(4)) return HAIL_FLURY;
 		return SOLID_FOG;
+	break;
+	case PM_STANNUMACH_RILMANI:
+		switch(rn2(6)){
+			case 0: return ICE_STORM;
+			case 1: return SOLID_FOG;
+			case 2: return DISAPPEAR;
+			case 3: return MAKE_VISIBLE;
+			case 4: return MASS_CURE_FAR;
+			case 5: return MON_PROTECTION;
+		}
 	break;
 	case PM_CUPRILACH_RILMANI:
 		switch(rn2(6)){
@@ -1140,7 +1150,7 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 				break;
 	}
 	
-	if(is_kamerel(mtmp->data) || !mirror){
+	if(!is_kamerel(mtmp->data) || !mirror){
 		chance = 2;
 		if(mtmp->mconf) chance += 8;
 		if(u.uz.dnum == neutral_dnum && u.uz.dlevel <= sum_of_all_level.dlevel){
@@ -1609,8 +1619,10 @@ int spellnum;
 	pline("Chunks of ice pummel you from all sides!");
 	dmg = d(4, 8);
 	
-	if(u.sealsActive&SEAL_BALAM) dmg -= min_ints(rnd(-u.uac),rnd(-u.uac));
-	else dmg -= rnd(-u.uac);
+	if(u.uac < 0){
+		if(u.sealsActive&SEAL_BALAM) dmg -= min_ints(rnd(-u.uac),rnd(-u.uac));
+		else dmg -= rnd(-u.uac);
+	}
 	
 	if (dmg < 1) dmg = 1;
 	
@@ -1626,35 +1638,62 @@ int spellnum;
 	}
 	stop_occupation();
 	break;
+    case HAIL_FLURY:{
+		int hfdmg;
+		pline("Hailstones pummel you from all sides!");
+		if(dmg > 60)
+			dmg = 60;
+		hfdmg = dmg;
+		dmg = hfdmg;
+		
+		if(u.uac < 0){
+			if(u.sealsActive&SEAL_BALAM) dmg -= min_ints(rnd(-u.uac),rnd(-u.uac));
+			else dmg -= rnd(-u.uac);
+		}
+		
+		if (dmg < 1) dmg = 1;
+		
+		if (Half_physical_damage) dmg = (dmg + 1) / 2;
+			
+		if (Cold_resistance) {
+			shieldeff(u.ux, u.uy);
+		} else {
+			dmg += Half_spell_damage ? (hfdmg+1)/2 : hfdmg;
+		}
+		if (!ECold_resistance) {
+			if(hfdmg > rnd(20)) destroy_item(POTION_CLASS, AD_COLD);
+		}
+		stop_occupation();
+	}break;
     case LIGHTNING:
-    if (mtmp && !dmgtype(mtmp->data, AD_CLRC)) {
-       zap = AD_ELEC;
-       goto ray;
-    } else {
-	boolean reflects;
+		if (mtmp && !dmgtype(mtmp->data, AD_CLRC)) {
+		   zap = AD_ELEC;
+		   goto ray;
+		} else {
+			boolean reflects;
 
-	pline("A bolt of lightning strikes down at you from above!");
-	reflects = ureflects("It bounces off your %s%s.", "");
-	if (reflects || Shock_resistance) {
-	    shieldeff(u.ux, u.uy);
-	    dmg = 0;
-	    if (reflects) break;
-	} else {
-	    dmg = d(8, 6);
-	}
-	if (!(reflects || EShock_resistance)) {
-		destroy_item(WAND_CLASS, AD_ELEC);
-		destroy_item(RING_CLASS, AD_ELEC);
-	}
-	if (Half_spell_damage) dmg = (dmg + 1) / 2;
-       if (!resists_blnd(&youmonst)) {
-           You("are blinded by the flash!");
-           make_blinded((long)rnd(100),FALSE);
-           if (!Blind) Your1(vision_clears);
-        }
-	   stop_occupation();
-       break;
-    }
+			pline("A bolt of lightning strikes down at you from above!");
+			reflects = ureflects("It bounces off your %s%s.", "");
+			if (reflects || Shock_resistance) {
+				shieldeff(u.ux, u.uy);
+				dmg = 0;
+				if (reflects) break;
+			} else {
+				dmg = d(8, 6);
+			}
+			if (!(reflects || EShock_resistance)) {
+				destroy_item(WAND_CLASS, AD_ELEC);
+				destroy_item(RING_CLASS, AD_ELEC);
+			}
+			if (Half_spell_damage) dmg = (dmg + 1) / 2;
+			if (!resists_blnd(&youmonst)) {
+			   You("are blinded by the flash!");
+			   make_blinded((long)rnd(100),FALSE);
+			   if (!Blind) Your1(vision_clears);
+			}
+			stop_occupation();
+			break;
+		}
 	case SILVER_RAYS:{
 		int n = 0;
 		char * rays;
@@ -1989,6 +2028,10 @@ summon_alien:
     {
 	int count;
 	if(!mtmp || u.summonMonster) goto psibolt;
+	
+	if(Role_if(PM_ANACHRONONAUT) && In_quest(&u.uz))
+		break;
+	
 	u.summonMonster = TRUE;
 	count = nasty(mtmp);	/* summon something nasty */
 	if (mtmp->iswiz)
@@ -2861,6 +2904,12 @@ int spellnum;
 	if(spellnum == DEATH_TOUCH && (wardAt == CIRCLE_OF_ACHERON || wardAt == HEPTAGRAM || wardAt == HEXAGRAM))
 		return TRUE;
 	
+	//Nothing to come
+	if((Role_if(PM_ANACHRONONAUT) && In_quest(&u.uz)) 
+		&& (spellnum == SUMMON_MONS || spellnum == SUMMON_ALIEN || spellnum == SUMMON_ANGEL || spellnum == SUMMON_DEVIL)
+	) return TRUE;
+		
+	
 	if(is_drow(mtmp->data) && !(Role_if(PM_ANACHRONONAUT) && In_quest(&u.uz))){
 		if(!Race_if(PM_DROW)){
 			if(sengr_at("Elbereth", mtmp->mux, mtmp->muy)) return TRUE;
@@ -3328,7 +3377,7 @@ int spellnum;
 		return TRUE;
 	}
 #ifndef TAME_SUMMONING
-        if (spellnum == SUMMON_MONS)
+	if (spellnum == SUMMON_MONS)
 	    return TRUE;
 #endif
     return FALSE;
@@ -3853,7 +3902,10 @@ int spellnum;
     {
 	int count = 0;
         register struct monst *mpet;
-
+		
+		if(Role_if(PM_ANACHRONONAUT) && In_quest(&u.uz))
+			break;
+		
         if (!rn2(10) && Inhell) {
 			if (yours) demonpet();
 			else msummon(mattk);
@@ -4227,6 +4279,9 @@ uspsibolt:
 	    impossible("psibolt spell with no mtmp");
 	    return;
 	}
+	
+	if(dmg > 50) dmg = 50;
+	
 	if (resists_magm(mtmp) || resist(mtmp, 0, 0, FALSE)) { 
 	    shieldeff(mtmp->mx, mtmp->my);
 	    dmg = (dmg + 1) / 2;
@@ -4772,6 +4827,7 @@ uspsibolt:
 	    impossible("wound spell with no mtmp");
 	    return;
 	}
+	if( dmg > 60) dmg = 60;
 	if (resists_magm(mtmp) || resist(mtmp, 0, 0, FALSE)) { 
 	    shieldeff(mtmp->mx, mtmp->my);
 	    dmg = (dmg + 1) / 2;

@@ -699,7 +699,7 @@ register int x, y;
 	register struct obj *otmp;
 
 	for(otmp = level.objects[x][y]; otmp; otmp = otmp->nexthere)
-		if(otmp->oclass == WEAPON_CLASS && (otmp)->obj_material == WOOD && otmp->otyp != MOON_AXE && (otmp->ovar1 & WARD_TOUSTEFNA))
+		if(otmp->oclass == WEAPON_CLASS && (otmp)->obj_material == WOOD && (otmp->oward & WARD_TOUSTEFNA))
 		    return(otmp);
 	return((struct obj *)0);
 }
@@ -711,7 +711,7 @@ register int x, y;
 	register struct obj *otmp;
 
 	for(otmp = level.objects[x][y]; otmp; otmp = otmp->nexthere)
-		if(otmp->oclass == WEAPON_CLASS && (otmp)->obj_material == WOOD && otmp->otyp != MOON_AXE && (otmp->ovar1 & WARD_DREPRUN))
+		if(otmp->oclass == WEAPON_CLASS && (otmp)->obj_material == WOOD && (otmp->oward & WARD_DREPRUN))
 		    return(otmp);
 	return((struct obj *)0);
 }
@@ -723,7 +723,7 @@ register int x, y;
 	register struct obj *otmp;
 
 	for(otmp = level.objects[x][y]; otmp; otmp = otmp->nexthere)
-		if(otmp->oclass == WEAPON_CLASS && (otmp)->obj_material == WOOD && otmp->otyp != MOON_AXE && (otmp->ovar1 & WARD_VEIOISTAFUR))
+		if(otmp->oclass == WEAPON_CLASS && (otmp)->obj_material == WOOD && (otmp->oward & WARD_VEIOISTAFUR))
 		    return(otmp);
 	return((struct obj *)0);
 }
@@ -735,7 +735,7 @@ register int x, y;
 	register struct obj *otmp;
 
 	for(otmp = level.objects[x][y]; otmp; otmp = otmp->nexthere)
-		if(otmp->oclass == WEAPON_CLASS && (otmp)->obj_material == WOOD && otmp->otyp != MOON_AXE && (otmp->ovar1 & WARD_THJOFASTAFUR))
+		if(otmp->oclass == WEAPON_CLASS && (otmp)->obj_material == WOOD && (otmp->oward & WARD_THJOFASTAFUR))
 		    return(otmp);
 	return((struct obj *)0);
 }
@@ -1168,6 +1168,7 @@ register const char *let,*word;
 		if (otmp->oartifact && 
 			(otmp->oartifact == ART_EXCALIBUR || 
 			 otmp->oartifact == ART_GLAMDRING || 
+			 otmp->oartifact == ART_ITLACHIAYAQUE || 
 			 otmp->oartifact == ART_ROD_OF_SEVEN_PARTS ||
 			 otmp->oartifact == ART_BOW_OF_SKADI ||
 			 otmp->oartifact == ART_PEN_OF_THE_VOID
@@ -1177,24 +1178,24 @@ register const char *let,*word;
 			allowall = TRUE;//for whatever reason, must allow all in order to get message other than "silly"
 		}
 		//Make exceptions for wooden weapons that have been engraved
-		if(otmp->oclass == WEAPON_CLASS && (otmp)->obj_material == WOOD && otmp->otyp != MOON_AXE && otmp->ovar1 && !strcmp(word, "read")){
+		if(otmp->oclass == WEAPON_CLASS && (otmp)->obj_material == WOOD && otmp->oward && !strcmp(word, "read")){
 			bp[foo++] = otmp->invlet;
 			allowall = TRUE;
 		}
 		//Make exceptions for armors that have been engraved
 		if(otmp->oclass == ARMOR_CLASS
 			&& otmp->ohaluengr
-			&& otmp->ovar1
+			&& otmp->oward
 			&& (   otmp->otyp == DROVEN_PLATE_MAIL 
 				|| otmp->otyp == DROVEN_CHAIN_MAIL
 				|| otmp->otyp == CONSORT_S_SUIT)
-			&& otmp->ovar1 && !strcmp(word, "read")
+			&& !strcmp(word, "read")
 		){
 			bp[foo++] = otmp->invlet;
 			allowall = TRUE;
 		}
 		//Make exceptions for rings that have been engraved
-		if(otmp->oclass == RING_CLASS && (isEngrRing((otmp)->otyp) || isSignetRing((otmp)->otyp)) && otmp->ovar1 && (!strcmp(word, "read") || !strcmp(word, "use or apply"))){
+		if(otmp->oclass == RING_CLASS && (isEngrRing((otmp)->otyp) || isSignetRing((otmp)->otyp)) && otmp->oward && (!strcmp(word, "read") || !strcmp(word, "use or apply"))){
 			bp[foo++] = otmp->invlet;
 			allowall = TRUE;
 		}
@@ -3164,6 +3165,7 @@ mergable(otmp, obj)	/* returns TRUE if obj  & otmp can be merged */
 		obj->ostolen != otmp->ostolen ||
 		(obj->ostolen && obj->sknown != otmp->sknown) ||
 		(obj->ovar1 != otmp->ovar1 && obj->otyp != CORPSE) ||
+		(obj->oward != otmp->oward) ||
 	    obj->spe != otmp->spe || obj->dknown != otmp->dknown ||
 	    (obj->bknown != otmp->bknown && !Role_if(PM_PRIEST)) ||
 	    obj->cursed != otmp->cursed || obj->blessed != otmp->blessed ||
@@ -3816,16 +3818,16 @@ u_healing_penalty()
 {
 	int penalty = 0;
 	if(hates_silver(youracedata)){
-		penalty += (20*u_material_next_to_skin(SILVER))/2;
+		penalty += (20*u_material_next_to_skin(SILVER)+1)/2;
 	}
 	if(hates_iron(youracedata)){
-		penalty += (u.ulevel * u_material_next_to_skin(IRON))/2;
+		penalty += (u.ulevel * u_material_next_to_skin(IRON)+1)/2;
 	}
 	if(hates_unholy(youracedata)){
-		penalty += (9*u_bcu_next_to_skin(-1))/2;
+		penalty += (9*u_bcu_next_to_skin(-1)+1)/2;
 	}
 	if(is_demon(youracedata) || is_undead(youracedata)){
-		penalty += (4*u_bcu_next_to_skin(1))/2;
+		penalty += (4*u_bcu_next_to_skin(1)+1)/2;
 	}
 	return penalty;
 }

@@ -385,6 +385,18 @@ boolean verbose;  /* give message(s) even when you can't see what happened */
 					else otmp->opoisoned &= ~OPOISON_AMNES;
 				}
 			}
+			if(otmp->opoisoned & OPOISON_ACID){
+				if (resists_acid(mtmp)) {
+					if (vis) pline_The("acid coating doesn't seem to affect %s.",
+						   mon_nam(mtmp));
+				} else {
+					damage += rnd(10);
+				}
+				if(!rn2(20)){
+					if(otmp->otyp == VIPERWHIP && otmp->opoisonchrgs) otmp->opoisonchrgs--;
+					else otmp->opoisoned &= ~OPOISON_ACID;
+				}
+			}
 	    }
 	    if ( (otmp->obj_material == SILVER || arti_silvered(otmp)) &&
 			!(is_lightsaber(otmp) && litsaber(otmp)) &&
@@ -1655,10 +1667,12 @@ register struct attack *mattk;
 		    case AD_PLYS:
 				ammo_type = SPIKE;
 				qvr = mksobj(ammo_type, TRUE, FALSE);
+			    qvr->obj_material = BONE;
 			    qvr->blessed = 0;
 			    qvr->cursed = 0;
 			    qvr->quan = 1;
 				qvr->opoisoned = (OPOISON_PARAL);
+				fix_object(qvr);
 			break;
 		    case AD_SOLR:
 				ammo_type = SILVER_ARROW;

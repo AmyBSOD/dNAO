@@ -232,7 +232,7 @@ struct monst *mon;
 
 	/* weapons with the veioistafur stave are highly effective against sea monsters */
 	if(otmp->oclass == WEAPON_CLASS && otmp->obj_material == WOOD && otmp->otyp != MOON_AXE
-		&& (otmp->ovar1 & WARD_VEIOISTAFUR) && mon->data->mlet == S_EEL) tmp += 4;
+		&& (otmp->oward & WARD_VEIOISTAFUR) && mon->data->mlet == S_EEL) tmp += 4;
 	
 	/* Picks used against xorns and earth elementals */
 	if (is_pick(otmp) &&
@@ -856,17 +856,22 @@ lightsaber_form_ldie:
 		break;
 		case LIGHTSABER:
 		case BEAMSWORD:
-			tmp += d(2, sdie);
-			otmp->age -= 100;
-			if(otmp->oartifact == ART_ATMA_WEAPON &&
-				otmp == uwep &&
-				!Drain_resistance
-			){
-				otmp->age += 100;
-				tmp += rnd(u.ulevel);
-				tmp *= Upolyd ?
-						((float)u.mh)/u.mhmax  :
-						((float)u.uhp)/u.uhpmax;
+			if(otmp->oartifact == ART_ATMA_WEAPON){
+				if(otmp == uwep &&
+					!Drain_resistance
+				){
+					tmp += d(2, sdie);
+					tmp += rnd(u.ulevel);
+					tmp *= Upolyd ?
+							((float)u.mh)/u.mhmax  :
+							((float)u.uhp)/u.uhpmax;
+				} else {
+					tmp += d(1, sdie);
+					otmp->age -= 100;
+				}
+			} else {
+				tmp += d(2, sdie);
+				otmp->age -= 100;
 			}
 			if(otmp->altmode){ //Probably just the Annulus
 				tmp += d(3, 3+2*dmod);
@@ -1278,7 +1283,7 @@ lightsaber_form_sdie:
 		}
 		
 		if(otmp->oclass == WEAPON_CLASS && otmp->obj_material == WOOD && otmp->otyp != MOON_AXE
-			&& (otmp->ovar1 & WARD_VEIOISTAFUR) && ptr->mlet == S_EEL) bonus += rnd(20);
+			&& (otmp->oward & WARD_VEIOISTAFUR) && ptr->mlet == S_EEL) bonus += rnd(20);
 		
 
 	    /* if the weapon is going to get a double damage bonus, adjust
@@ -1556,6 +1561,7 @@ static NEARDATA const int pwep[] =
 	DROVEN_LANCE,
 	RANSEUR, 
 	GUISARME,
+	NAGINATA, 
 	GLAIVE, 
 	LUCERN_HAMMER, 
 	BEC_DE_CORBIN, 
@@ -1790,6 +1796,7 @@ static const NEARDATA short hwep[] = {
 	  TRIDENT/*1d6+1/3d4*/, 
 	  LONG_SWORD/*1d8/1d12*/,
 	  FLAIL/*1d6+1/2d4*/, 
+	  NAGINATA/*1d6+1/2d4*/, 
 	  SCIMITAR/*1d8/1d8*/,
 	  DWARVISH_SHORT_SWORD/*1d8/1d7*/, 
 	  DROVEN_DAGGER/*1d8/1d6*/, 
@@ -2020,7 +2027,7 @@ boolean polyspot;
 	 * polymorphed into little monster.  But it's not quite clear how to
 	 * handle this anyway....
 	 */
-	if (!(mw_tmp->cursed && mon->weapon_check == NO_WEAPON_WANTED))
+	if (!(mw_tmp && mw_tmp->cursed && mon->weapon_check == NO_WEAPON_WANTED))
 	    mon->weapon_check = NEED_WEAPON;
 	return;
 }
@@ -2355,17 +2362,17 @@ struct obj *otmp;
 	
 	if(otmp){
 		if((bimanual(otmp,youracedata) ||
-		(otmp->oartifact==ART_PEN_OF_THE_VOID && otmp->ovar1&SEAL_MARIONETTE && mvitals[PM_ACERERAK].died > 0)
+			(otmp->oartifact==ART_PEN_OF_THE_VOID && otmp->ovar1&SEAL_MARIONETTE && mvitals[PM_ACERERAK].died > 0)
 		)) bonus *= 2;
-	
+		
 		if(otmp==uwep 
 		&& (otmp->otyp==RAPIER 
 			|| (otmp->otyp == LIGHTSABER && otmp->oartifact != ART_ANNULUS && otmp->ovar1 == 0)
 			|| otmp->oartifact == ART_LIFEHUNT_SCYTHE
 			|| otmp->oartifact == ART_FRIEDE_S_SCYTHE
 		)){
-		bonus/=2; /*Half strength bonus/penalty*/
-		
+			bonus/=2; /*Half strength bonus/penalty*/
+			
 			if(ACURR(A_DEX)) bonus += 8;
 			else bonus += (ACURR(A_DEX)-10)/2;
 		}
@@ -2901,8 +2908,8 @@ struct obj *obj;
 		return (P_NONE);
 	if(obj){
 		if(obj->oartifact == ART_SUNSWORD){
-		if(P_SKILL(P_LONG_SWORD) > P_SKILL(P_SHORT_SWORD))
-			type = P_LONG_SWORD;
+			if(P_SKILL(P_LONG_SWORD) > P_SKILL(P_SHORT_SWORD))
+				type = P_LONG_SWORD;
 			else if(P_MAX_SKILL(P_LONG_SWORD) > P_MAX_SKILL(P_SHORT_SWORD))
 				type = P_LONG_SWORD;
 			else type = P_SHORT_SWORD;
@@ -2915,11 +2922,11 @@ struct obj *obj;
 			else type = P_SPEAR;
 		}
 		else if(obj->otyp == DOUBLE_LIGHTSABER && !obj->altmode){
-		if(P_SKILL(P_BROAD_SWORD) > P_SKILL(P_QUARTERSTAFF))
-			type = P_BROAD_SWORD;
-		else if(P_MAX_SKILL(P_BROAD_SWORD) > P_MAX_SKILL(P_QUARTERSTAFF))
-			type = P_BROAD_SWORD;
-		else type = P_QUARTERSTAFF;
+			if(P_SKILL(P_BROAD_SWORD) > P_SKILL(P_QUARTERSTAFF))
+				type = P_BROAD_SWORD;
+			else if(P_MAX_SKILL(P_BROAD_SWORD) > P_MAX_SKILL(P_QUARTERSTAFF))
+				type = P_BROAD_SWORD;
+			else type = P_QUARTERSTAFF;
 		}
 		else if(obj->oartifact == ART_TORCH_OF_ORIGINS){
 			type = P_CLUB;

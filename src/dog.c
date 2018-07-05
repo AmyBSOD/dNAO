@@ -600,22 +600,26 @@ long nmv;		/* number of moves */
 	 * of dying the next time we call dog_move()
 	 */
 	if (mtmp->mtame && !mtmp->isminion &&
-		(carnivorous(mtmp->data) || herbivorous(mtmp->data)) && !(
-		 In_quest(&u.uz) && 
-			((Is_qstart(&u.uz) && !flags.stag) || 
-			 (Is_nemesis(&u.uz) && flags.stag)) &&
-		 !(Race_if(PM_DROW) && Role_if(PM_NOBLEMAN) && !flags.initgend) &&
-		 !(Role_if(PM_ANACHRONONAUT) && quest_status.leader_is_dead) &&
-		 !(Role_if(PM_EXILE))
-	) && !In_sokoban(&u.uz)
-	) {
+		(carnivorous(mtmp->data) || herbivorous(mtmp->data))
+	){
 	    struct edog *edog = EDOG(mtmp);
-
-	    if ((monstermoves > edog->hungrytime + 500 && mtmp->mhp < 3) ||
-		    (monstermoves > edog->hungrytime + 750)
-		){
-			mtmp->mtame = mtmp->mpeaceful = 0;		/* hostile! */
-			mtmp->mferal = 1;
+		if(!(In_quest(&u.uz) && 
+			 ((Is_qstart(&u.uz) && !flags.stag) || 
+				(Is_nemesis(&u.uz) && flags.stag)) &&
+			 !(Race_if(PM_DROW) && Role_if(PM_NOBLEMAN) && !flags.initgend) &&
+			 !(Role_if(PM_ANACHRONONAUT) && quest_status.leader_is_dead) &&
+			 !(Role_if(PM_EXILE))
+			) && !In_sokoban(&u.uz)
+		) {
+			if ((monstermoves > edog->hungrytime + 500 && mtmp->mhp < 3) ||
+				(monstermoves > edog->hungrytime + 750)
+			){
+				mtmp->mtame = mtmp->mpeaceful = 0;		/* hostile! */
+				mtmp->mferal = 1;
+			}
+		} else {
+			if(edog->hungrytime < monstermoves + 500)
+				edog->hungrytime = monstermoves + 500;
 		}
 	}
 
@@ -653,6 +657,11 @@ boolean pets_only;	/* true for ascension or final escape */
 	int num_segs;
 	boolean stay_behind;
 	boolean all_pets = FALSE;
+	int pet_dist = P_SKILL(P_BEAST_MASTERY);
+	if(pet_dist < 1)
+		pet_dist = 1;
+	if(uwep && uwep->otyp == SHEPHERD_S_CROOK)
+		pet_dist++;
 	if(u.specialSealsActive&SEAL_COSMOS ||
 		(uarmh && uarmh->oartifact == ART_CROWN_OF_THE_SAINT_KING) ||
 		(uarmh && uarmh->oartifact == ART_HELM_OF_THE_DARK_LORD)
@@ -671,7 +680,7 @@ boolean pets_only;	/* true for ascension or final escape */
 	    if (((monnear(mtmp, u.ux, u.uy) && levl_follower(mtmp)) || 
 			(mtmp->mtame && (all_pets ||
 							// (u.sealsActive&SEAL_MALPHAS && mtmp->data == &mons[PM_CROW]) || //Allow distant crows to get left behind.
-							(P_SKILL(P_BEAST_MASTERY) > 1 && distmin(mtmp->mx, mtmp->my, u.ux, u.uy) <= P_SKILL(P_BEAST_MASTERY))
+							(distmin(mtmp->mx, mtmp->my, u.ux, u.uy) <= pet_dist)
 							)
 			) ||
 #ifdef STEED

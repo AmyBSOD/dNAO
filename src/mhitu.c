@@ -745,6 +745,9 @@ mattacku(mtmp)
 
 	for(i = 0; i < NATTK; i++) {
 
+		if(DEADMONSTER(mtmp))
+			break;
+		
 	    sum[i] = 0;
 	    mattk = getmattk(mdat, i, sum, &alt_attk);
 	    if (u.uswallow && (mattk->aatyp != AT_ENGL && mattk->aatyp != AT_ILUR))
@@ -1382,15 +1385,15 @@ mattacku(mtmp)
 	    if(flags.botl) bot();
 	/* give player a chance of waking up before dying -kaa */
 	    if(sum[i] == 1) {	    /* successful attack */
-		if (u.usleep && u.usleep < monstermoves && rn2(20) < ACURR(A_WIS)) {
-		    multi = -1;
-		    nomovemsg = "The combat suddenly awakens you.";
-		}
+			if (u.usleep && u.usleep < monstermoves && rn2(20) < ACURR(A_WIS)) {
+				multi = -1;
+				nomovemsg = "The combat suddenly awakens you.";
+			}
 	    }
 	    if(sum[i] == 2) return 1;		/* attacker dead */
 	    if(sum[i] == 3) break;  /* attacker teleported, no more attacks */
 		
-		if(uwep && is_lightsaber(uwep) && litsaber(uwep)){
+		if(uwep && is_lightsaber(uwep) && litsaber(uwep) && !DEADMONSTER(mtmp)){
 			if(u.fightingForm == FFORM_SHIEN && multi >= 0 && distmin(u.ux, u.uy, mtmp->mx, mtmp->my) == 1 && (!uarm || is_light_armor(uarm))){
 				switch(min(P_SKILL(FFORM_SHIEN), P_SKILL(weapon_type(uwep)))){
 					case P_BASIC:
@@ -1398,6 +1401,8 @@ mattacku(mtmp)
 							You("counterattack!");
 							use_skill(FFORM_SHIEN,1);
 							flags.forcefight = TRUE;
+							u.dy = sgn(mtmp->my - u.uy);
+							u.dx = sgn(mtmp->mx - u.ux);
 							attack(mtmp);
 							flags.forcefight = FALSE;
 							if(DEADMONSTER(mtmp)) return 1;		/* attacker dead */
@@ -1408,6 +1413,8 @@ mattacku(mtmp)
 							You("counterattack!");
 							use_skill(FFORM_SHIEN,1);
 							flags.forcefight = TRUE;
+							u.dy = sgn(mtmp->my - u.uy);
+							u.dx = sgn(mtmp->mx - u.ux);
 							attack(mtmp);
 							flags.forcefight = FALSE;
 							if(DEADMONSTER(mtmp)) return 1;		/* attacker dead */
@@ -1418,6 +1425,8 @@ mattacku(mtmp)
 							You("counterattack!");
 							use_skill(FFORM_SHIEN,1);
 							flags.forcefight = TRUE;
+							u.dy = sgn(mtmp->my - u.uy);
+							u.dx = sgn(mtmp->mx - u.ux);
 							attack(mtmp);
 							flags.forcefight = FALSE;
 							if(DEADMONSTER(mtmp)) return 1;		/* attacker dead */
@@ -1432,6 +1441,8 @@ mattacku(mtmp)
 						if(rn2(100) < 10){
 							You("counterattack!");
 							flags.forcefight = TRUE;
+							u.dy = sgn(mtmp->my - u.uy);
+							u.dx = sgn(mtmp->mx - u.ux);
 							attack(mtmp);
 							flags.forcefight = FALSE;
 							use_skill(FFORM_SORESU,1);
@@ -1442,6 +1453,8 @@ mattacku(mtmp)
 						if(rn2(100) < 15){
 							You("counterattack!");
 							flags.forcefight = TRUE;
+							u.dy = sgn(mtmp->my - u.uy);
+							u.dx = sgn(mtmp->mx - u.ux);
 							attack(mtmp);
 							flags.forcefight = FALSE;
 							use_skill(FFORM_SORESU,1);
@@ -1452,6 +1465,8 @@ mattacku(mtmp)
 						if(rn2(100) < 25){
 							You("counterattack!");
 							flags.forcefight = TRUE;
+							u.dy = sgn(mtmp->my - u.uy);
+							u.dx = sgn(mtmp->mx - u.ux);
 							attack(mtmp);
 							flags.forcefight = FALSE;
 							use_skill(FFORM_SORESU,1);
@@ -1762,7 +1777,9 @@ hitmu(mtmp, mattk)
 				(is_pole(uwep) && 
 					uwep->otyp != AKLYS && 
 					uwep->otyp != FORCE_PIKE && 
+					uwep->otyp != NAGINATA && 
 					uwep->oartifact != ART_WEBWEAVER_S_CROOK && 
+					uwep->oartifact != ART_SILENCE_GLAIVE && 
 					uwep->oartifact != ART_HEARTCLEAVER && 
 					uwep->oartifact != ART_SOL_VALTIVA && 
 					uwep->oartifact != ART_SHADOWLOCK && 
@@ -1965,12 +1982,16 @@ hitmu(mtmp, mattk)
 			    You("divide as %s hits you!",mon_nam(mtmp));
 			}
 			urustm(mtmp, otmp);
-		    } else if (mattk->aatyp != AT_TUCH || dmg != 0 ||
+		    } else if (mattk->aatyp != AT_TUCH && dmg != 0 &&
 				mtmp != u.ustuck
 			){
 				if(oarm && dmg && oarm->otyp == GAUNTLETS_OF_POWER) dmg += 8;
 				hitmsg(mtmp, mattk);
 			}
+			
+		    if(mtmp->data == &mons[PM_FORMIAN_CRUSHER] && weaponhit && !otmp)
+				dmg += d(3*((int)mattk->damn), (int)mattk->damd);
+			
 			// tack on bonus elemental damage, if applicable
 			if (mattk->adtyp != AD_PHYS){
 				alt_attk.aatyp = AT_NONE;
@@ -8996,7 +9017,10 @@ register struct monst *mtmp;
 register struct attack *mattk;
 {
 	int i, tmp;
-
+	
+	if(DEADMONSTER(mtmp))
+		return 1;
+	
 	for (i = 0; ; i++) {
 	    if (i >= NATTK) return 1;
 	    if (olduasmon->mattk[i].aatyp == AT_NONE ||
@@ -9256,13 +9280,6 @@ register struct attack *mattk;
       }
     }
 	
-	if(uwep && uwep->oartifact == ART_SANSARA_MIRROR && multi >= 0 && rn2(2)){
-		You("counterattack!");
-		flags.forcefight = TRUE;
-		attack(mtmp);
-		flags.forcefight = FALSE;
-		if(DEADMONSTER(mtmp)) return 2;
-	}
 	if(u.specialSealsActive&SEAL_BLACK_WEB && u.spiritPColdowns[PWR_WEAVE_BLACK_WEB] > moves+20){
 		static struct attack webattack[] = 
 		{
@@ -9302,6 +9319,8 @@ register struct attack *mattk;
 		if(u.sealsActive&SEAL_EURYNOME && multi >= 0 && !rn2(5)){
 			You("counterattack!");
 			flags.forcefight = TRUE;
+			u.dy = sgn(mtmp->my - u.uy);
+			u.dx = sgn(mtmp->mx - u.ux);
 			attack(mtmp);
 			flags.forcefight = FALSE;
 			if(DEADMONSTER(mtmp)) return 2;
@@ -9322,6 +9341,8 @@ register struct attack *mattk;
 						You("counterattack!");
 						use_skill(FFORM_DJEM_SO,1);
 						flags.forcefight = TRUE;
+						u.dy = sgn(mtmp->my - u.uy);
+						u.dx = sgn(mtmp->mx - u.ux);
 						attack(mtmp);
 						flags.forcefight = FALSE;
 						if(DEADMONSTER(mtmp)) return 2;
@@ -9332,6 +9353,8 @@ register struct attack *mattk;
 						You("counterattack!");
 						use_skill(FFORM_DJEM_SO,1);
 						flags.forcefight = TRUE;
+						u.dy = sgn(mtmp->my - u.uy);
+						u.dx = sgn(mtmp->mx - u.ux);
 						attack(mtmp);
 						flags.forcefight = FALSE;
 						if(DEADMONSTER(mtmp)) return 2;
@@ -9342,6 +9365,8 @@ register struct attack *mattk;
 						You("counterattack!");
 						use_skill(FFORM_DJEM_SO,1);
 						flags.forcefight = TRUE;
+						u.dy = sgn(mtmp->my - u.uy);
+						u.dx = sgn(mtmp->mx - u.ux);
 						attack(mtmp);
 						flags.forcefight = FALSE;
 						if(DEADMONSTER(mtmp)) return 2;
@@ -9350,12 +9375,23 @@ register struct attack *mattk;
 			}
 		}
 	}
+	if(uwep && uwep->oartifact == ART_SANSARA_MIRROR && multi >= 0 && rn2(2)){
+		You("counterattack!");
+		flags.forcefight = TRUE;
+		u.dy = sgn(mtmp->my - u.uy);
+		u.dx = sgn(mtmp->mx - u.ux);
+		attack(mtmp);
+		flags.forcefight = FALSE;
+		if(DEADMONSTER(mtmp)) return 2;
+	}
 	if( uwep && uwep->oartifact == ART_PEN_OF_THE_VOID && 
 		uwep->ovar1&SEAL_EURYNOME && multi >= 0 && 
 		!rn2((quest_status.killed_nemesis && Role_if(PM_EXILE)) ? 10 : 20)
 	){
 		You("counterattack!");
 		flags.forcefight = TRUE;
+		u.dy = sgn(mtmp->my - u.uy);
+		u.dx = sgn(mtmp->mx - u.ux);
 		attack(mtmp);
 		flags.forcefight = FALSE;
 		if(DEADMONSTER(mtmp)) return 2;

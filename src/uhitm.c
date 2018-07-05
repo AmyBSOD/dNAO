@@ -559,7 +559,7 @@ register struct monst *mtmp;
 	if(check_capacity("You cannot fight while so heavily loaded."))
 	    goto atk_done;
 
-	if (u.twoweap && !can_twoweapon())
+	if (u.twoweap && !test_twoweapon())
 		untwoweapon();
 
 	if(unweapon) {
@@ -832,8 +832,10 @@ struct attack *uattk;
 	    malive = hmon(mon, uwep, 0);
 	    /* this assumes that Stormbringer was uwep not uswapwep */ 
 	    if (malive && (u.twoweap && !(uwep && uwep->otyp == STILETTOS)) && !override_confirmation &&
-		    m_at(x, y) == mon)
-		malive = hmon(mon, uswapwep, 0);
+		    m_at(x, y) == mon
+		) {
+			malive = hmon(mon, uswapwep, 0);
+		}
 	    if (malive) {
 		/* monster still alive */
 		if(((!rn2(25) && mon->mhp < mon->mhpmax/2) || mon->data == &mons[PM_QUIVERING_BLOB])
@@ -930,7 +932,8 @@ int thrown;
 	boolean hittxt = FALSE, destroyed = FALSE, already_killed = FALSE;
 	boolean get_dmg_bonus = TRUE;
 	int ispoisoned = 0;
-	boolean needpoismsg = FALSE, needfilthmsg = FALSE, needdrugmsg = FALSE, needsamnesiamsg = FALSE, poiskilled = FALSE, 
+	boolean needpoismsg = FALSE, needfilthmsg = FALSE, needdrugmsg = FALSE, needsamnesiamsg = FALSE, 
+			needacidmsg = FALSE, poiskilled = FALSE, 
 			filthkilled = FALSE, druggedmon = FALSE, poisblindmon = FALSE, amnesiamon = FALSE;
 	boolean silvermsg = FALSE,  ironmsg = FALSE,  unholymsg = FALSE, sunmsg = FALSE,
 	silverobj = FALSE, ironobj = FALSE, unholyobj = FALSE, lightmsg = FALSE;
@@ -1025,7 +1028,7 @@ int thrown;
 					|| arti_silvered(uleft) 
 					|| (uleft->ohaluengr
 						&& (isEngrRing(uleft->otyp) || isSignetRing(uleft->otyp))
-						&& uleft->ovar1 >= LOLTH_SYMBOL && uleft->ovar1 <= LOST_HOUSE
+						&& uleft->oward >= LOLTH_SYMBOL && uleft->oward <= LOST_HOUSE
 					   )
 				)
 			) barehand_silver_rings++;
@@ -1035,7 +1038,7 @@ int thrown;
 					|| arti_silvered(uright)
 					|| (uright->ohaluengr
 						&& (isEngrRing(uright->otyp) || isSignetRing(uright->otyp))
-						&& uright->ovar1 >= LOLTH_SYMBOL && uright->ovar1 <= LOST_HOUSE
+						&& uright->oward >= LOLTH_SYMBOL && uright->oward <= LOST_HOUSE
 					   )
 				)
 			) barehand_silver_rings++;
@@ -1078,12 +1081,12 @@ int thrown;
 			if (uleft 
 				&& uleft->ohaluengr
 				&& (isEngrRing(uleft->otyp) || isSignetRing(uleft->otyp))
-				&& uleft->ovar1 == EDDER_SYMBOL
+				&& uleft->oward == EDDER_SYMBOL
 			) tmp += 5;
 			if (uright 
 				&& uright->ohaluengr
 				&& (isEngrRing(uright->otyp) || isSignetRing(uright->otyp))
-				&& uright->ovar1 == EDDER_SYMBOL
+				&& uright->oward == EDDER_SYMBOL
 			) tmp += 5;
 			
 			if (uleft && uleft->otyp == jadeRing)
@@ -1111,9 +1114,9 @@ int thrown;
 					if(uright->opoisonchrgs-- <= 0) uright->opoisoned = OPOISON_NONE;
 				}
 				if(uright->opoisoned & OPOISON_SLEEP && !rn2(5)){
-					if (resists_poison(mon) || resists_sleep(mon))
+					if (resists_sleep(mon))
 						needdrugmsg = TRUE;
-					else if(!rn2(5) && sleep_monst(mon, rnd(12), POTION_CLASS)) druggedmon = TRUE;
+					else if(sleep_monst(mon, rnd(12), POTION_CLASS)) druggedmon = TRUE;
 					
 					if(uright->opoisonchrgs-- <= 0) uright->opoisoned = OPOISON_NONE;
 				}
@@ -1127,20 +1130,22 @@ int thrown;
 					if(uright->opoisonchrgs-- <= 0) uright->opoisoned = OPOISON_NONE;
 				}
 				if(uright->opoisoned & OPOISON_PARAL && !rn2(8)){
-					if (resists_poison(mon))
-						needpoismsg = TRUE;
-					 else {
 						if (mon->mcanmove) {
 							mon->mcanmove = 0;
 							mon->mfrozen = rnd(25);
 						}
-					}
 					
 					if(uright->opoisonchrgs-- <= 0) uright->opoisoned = OPOISON_NONE;
 				}
 				if(uright->opoisoned & OPOISON_AMNES && !rn2(10)){
 					if(mindless_mon(mon)) needsamnesiamsg = TRUE;
 					else amnesiamon = TRUE;
+					
+					if(uright->opoisonchrgs-- <= 0) uright->opoisoned = OPOISON_NONE;
+				}
+				if(uright->opoisoned & OPOISON_ACID){
+					if(resists_acid(mon)) needacidmsg = TRUE;
+					else tmp += rnd(10);
 					
 					if(uright->opoisonchrgs-- <= 0) uright->opoisoned = OPOISON_NONE;
 				}
@@ -1161,9 +1166,9 @@ int thrown;
 					if(uleft->opoisonchrgs-- <= 0) uleft->opoisoned = OPOISON_NONE;
 				}
 				if(uleft->opoisoned & OPOISON_SLEEP && !rn2(5)){
-					if (resists_poison(mon) || resists_sleep(mon))
+					if (resists_sleep(mon))
 						needdrugmsg = TRUE;
-					else if(!rn2(5) && sleep_monst(mon, rnd(12), POTION_CLASS)) druggedmon = TRUE;
+					else if(sleep_monst(mon, rnd(12), POTION_CLASS)) druggedmon = TRUE;
 					
 					if(uleft->opoisonchrgs-- <= 0) uleft->opoisoned = OPOISON_NONE;
 				}
@@ -1177,20 +1182,22 @@ int thrown;
 					if(uleft->opoisonchrgs-- <= 0) uleft->opoisoned = OPOISON_NONE;
 				}
 				if(uleft->opoisoned & OPOISON_PARAL && !rn2(8)){
-					if (resists_poison(mon))
-						needpoismsg = TRUE;
-					 else {
 						if (mon->mcanmove) {
 							mon->mcanmove = 0;
 							mon->mfrozen = rnd(25);
 						}
-					}
 					
 					if(uleft->opoisonchrgs-- <= 0) uleft->opoisoned = OPOISON_NONE;
 				}
 				if(uleft->opoisoned & OPOISON_AMNES && !rn2(10)){
 					if(mindless_mon(mon)) needsamnesiamsg = TRUE;
 					else amnesiamon = TRUE;
+					
+					if(uleft->opoisonchrgs-- <= 0) uleft->opoisoned = OPOISON_NONE;
+				}
+				if(uleft->opoisoned & OPOISON_ACID){
+					if(resists_acid(mon)) needacidmsg = TRUE;
+					else tmp += rnd(10);
 					
 					if(uleft->opoisonchrgs-- <= 0) uleft->opoisoned = OPOISON_NONE;
 				}
@@ -1238,7 +1245,9 @@ int thrown;
 				is_pole(obj) && 
 				obj->otyp != AKLYS && 
 				obj->otyp != FORCE_PIKE && 
+				obj->otyp != NAGINATA && 
 				obj->oartifact != ART_WEBWEAVER_S_CROOK && 
+				obj->oartifact != ART_SILENCE_GLAIVE && 
 				obj->oartifact != ART_HEARTCLEAVER && 
 				obj->oartifact != ART_SOL_VALTIVA && 
 				obj->oartifact != ART_SHADOWLOCK && 
@@ -1296,9 +1305,7 @@ int thrown;
 					warnedptr = mdat;
 				}
 			} else {
-				if(warnedptr != mdat){
-					warnedptr = 0;
-				}
+				warnedptr = 0;
 			}
 			
 			if(tmp > 1){
@@ -2061,7 +2068,7 @@ defaultvalue:
 				else filthkilled = TRUE;
 			}
 			if(obj && (obj->opoisoned & OPOISON_SLEEP || obj->oartifact == ART_WEBWEAVER_S_CROOK || obj->oartifact == ART_MOONBEAM)){
-				if (resists_poison(mon) || resists_sleep(mon))
+				if (resists_sleep(mon))
 					needdrugmsg = TRUE;
 				else if((obj->oartifact == ART_MOONBEAM || !rn2(5)) && 
 					sleep_monst(mon, rnd(12), POTION_CLASS)) druggedmon = TRUE;
@@ -2077,9 +2084,7 @@ defaultvalue:
 				}
 			}
 			if(obj && (obj->opoisoned & OPOISON_PARAL || obj->oartifact == ART_WEBWEAVER_S_CROOK)){
-				if (resists_poison(mon))
-					needpoismsg = TRUE;
-				else if (rn2(8))
+				if (rn2(8))
 					tmp += rnd(6);
 				else {
 					tmp += 6;
@@ -2092,6 +2097,11 @@ defaultvalue:
 			if(obj && obj->opoisoned & OPOISON_AMNES){
 				if(mindless_mon(mon)) needsamnesiamsg = TRUE;
 				else if(!rn2(10)) amnesiamon = TRUE;
+			}
+			if(obj && (obj->opoisoned & OPOISON_ACID)){
+				if (resists_acid(mon))
+					needacidmsg = TRUE;
+				else tmp += rnd(10);
 			}
 			
 			if (obj && !rn2(20) && obj->opoisoned) {
@@ -2140,18 +2150,41 @@ defaultvalue:
 	    }
 	}
 
-	if (unarmed && !thrown && !obj && !Upolyd) {
+	if (unarmed && !thrown && !obj && !Upolyd && !(u.sealsActive&SEAL_EURYNOME)) {//Eurynome makes your attacks monster attacks!
+		int resistmask = 0;
+		int weaponmask = 0;
+		static int warnedotyp = 0;
 		static struct permonst *warnedptr = 0;
-		if((resist_blunt(mdat) || (mon->mfaction == ZOMBIFIED)) && !(uarmg && narrow_spec_applies(uarmg, mon))){
+		if(uarmg && (uarmg->oartifact == ART_GREAT_CLAWS_OF_URDLEN || uarmg->oartifact == ART_SHIELD_OF_THE_RESOLUTE_HEA || uarmg->oartifact == ART_PREMIUM_HEART)){
+			//Digging claws, or heart-shaped bit
+			weaponmask |= PIERCE;
+		}
+		if(uarmg && (uarmg->oartifact == ART_GREAT_CLAWS_OF_URDLEN || uarmg->oartifact == ART_CLAWS_OF_THE_REVENANCER)){
+			weaponmask |= SLASH;
+		} else if(!Upolyd && Race_if(PM_HALF_DRAGON)){
+			weaponmask |= SLASH;
+		}
+		//Can always whack someone
+		weaponmask |= WHACK;
+		
+		if(resist_blunt(mdat) || (mon->mfaction == ZOMBIFIED)){
+			resistmask |= WHACK;
+		}
+		if(resist_pierce(mdat) || (mon->mfaction == ZOMBIFIED || mon->mfaction == SKELIFIED || mon->mfaction == CRYSTALFIED)){
+			resistmask |= PIERCE;
+		}
+		if(resist_slash(mdat) || (mon->mfaction == SKELIFIED || mon->mfaction == CRYSTALFIED)){
+			resistmask |= SLASH;
+		}
+		
+		if((weaponmask & ~(resistmask)) == 0L && !(uarmg && narrow_spec_applies(uarmg, mon))){
 			tmp /= 4;
 			if(warnedptr != mdat){
 				Your("%s are ineffective against %s.", makeplural(body_part(HAND)), mon_nam(mon));
 				warnedptr = mdat;
 			}
 		} else {
-			if(warnedptr != mdat){
-				warnedptr = 0;
-			}
+			warnedptr = 0;
 		}
 	}
 	
@@ -2434,6 +2467,8 @@ defaultvalue:
 		pline_The("drug doesn't seem to affect %s.", mon_nam(mon));
 	if (needsamnesiamsg)
 		pline_The("lethe-rust doesn't seem to affect %s.", mon_nam(mon));
+	if (needacidmsg)
+		pline_The("acid-coating doesn't seem to affect %s.", mon_nam(mon));
 	if (druggedmon){
 		pline("%s falls asleep.", Monnam(mon));
 		slept_monst(mon);
@@ -3554,6 +3589,12 @@ register struct attack *mattk;
 		if(mac < 0){
 			tmp += MONSTER_AC_VALUE(mac);
 			if(tmp < 1) tmp = 1;
+		}
+	}
+	
+	if(tmp > 1){
+		if(mattk->adtyp == AD_SHDW){
+			use_skill(P_BARE_HANDED_COMBAT,1);
 		}
 	}
 	

@@ -508,6 +508,30 @@ moveloop()
 				u.usubwater = 1;
 			}
 ////////////////////////////////////////////////////////////////////////////////////////////////
+			switch (((u_healing_penalty() - healing_penalty) > 0) - ((u_healing_penalty() - healing_penalty) < 0))
+			{
+			case 0:
+					break;
+			case 1:
+					if (!Hallucination) {
+						You_feel("%s.", (healing_penalty) ? "itchier" : "itchy");
+					}
+					else {
+						You_feel("%s.", (healing_penalty) ? "uglier" : "ugly");
+					}
+					healing_penalty = u_healing_penalty();
+					break;
+			case -1:
+					if (!Hallucination) {
+						You_feel("%s.", (u_healing_penalty()) ? "some relief" : "relieved");
+					}
+					else {
+						You_feel("%s.", (u_healing_penalty()) ? "pretty" : "beautiful");
+					}
+					healing_penalty = u_healing_penalty();
+					break;
+			}
+			/*
 			if (healing_penalty != u_healing_penalty()) {
 				if (!Hallucination){
 					You_feel("%s.", (!healing_penalty) ? "itchy" : "relief");
@@ -515,8 +539,10 @@ moveloop()
 					You_feel("%s.", (!healing_penalty) ? (hates_silver(youracedata) ? "tarnished" :
 						hates_iron(youracedata) ? "magnetic" : "like you are failing Organic Chemistry") : "like you are no longer failing Organic Chemistry");
 				}
-				healing_penalty = u_healing_penalty();
+				
+				
 			}
+			*/
 ////////////////////////////////////////////////////////////////////////////////////////////////
 			if (!oldBlind ^ !Blind) {  /* one or the other but not both */
 				see_monsters();
@@ -855,7 +881,7 @@ karemade:
 			
 		    if(!(Is_illregrd(&u.uz) && u.ualign.type == A_LAWFUL && !u.uevent.uaxus_foe) && /*Turn off random generation on axus's level if lawful*/
 				!rn2(u.uevent.udemigod ? 25 :
-				(Role_if(PM_ANACHRONONAUT) && In_quest(&u.uz)) ? 35 :
+				(Role_if(PM_ANACHRONONAUT) && In_quest(&u.uz) && !Is_qstart(&u.uz)) ? 35 :
 			    (depth(&u.uz) > depth(&stronghold_level)) ? 50 : 70)
 			){
 				if (u.uevent.udemigod && xupstair && rn2(10)) {
@@ -864,6 +890,9 @@ karemade:
 				if(In_sokoban(&u.uz)){
 					if(u.uz.dlevel != 1 && u.uz.dlevel != 4) makemon((struct permonst *)0, xupstair, yupstair, MM_ADJACENTSTRICT|MM_ADJACENTOK);
 				} else if(Role_if(PM_ANACHRONONAUT) && In_quest(&u.uz) && Is_qstart(&u.uz)){
+					(void) makemon((struct permonst *)0, xdnstair, ydnstair, MM_ADJACENTOK);
+					(void) makemon((struct permonst *)0, xdnstair, ydnstair, MM_ADJACENTOK);
+					(void) makemon((struct permonst *)0, xdnstair, ydnstair, MM_ADJACENTOK);
 					(void) makemon((struct permonst *)0, xdnstair, ydnstair, MM_ADJACENTOK);
 				}
 				else (void) makemon((struct permonst *)0, 0, 0, NO_MM_FLAGS);
@@ -1587,14 +1616,28 @@ karemade:
 	    } else if (Warning || Warn_of_mon)
 	     	see_monsters();
 
-		if (healing_penalty != u_healing_penalty()) {
-			if (!Hallucination){
-				You_feel("%s.", (u_healing_penalty()) ? "itchy" : "relief");
-			} else {
-				You_feel("%s.", (u_healing_penalty()) ? (hates_silver(youracedata) ? "tarnished" :
-					hates_iron(youracedata) ? "magnetic" : "like you are failing Organic Chemistry") : "like you are no longer failing Organic Chemistry");
+		switch (((u_healing_penalty() - healing_penalty) > 0) - ((u_healing_penalty() - healing_penalty) < 0))
+		{
+		case 0:
+			break;
+		case 1:
+			if (!Hallucination) {
+				You_feel("%s.", (healing_penalty) ? "itchier" : "itchy");
+			}
+			else {
+				You_feel("%s.", (healing_penalty) ? "uglier" : "ugly");
 			}
 			healing_penalty = u_healing_penalty();
+			break;
+		case -1:
+			if (!Hallucination) {
+				You_feel("%s.", (u_healing_penalty()) ? "some relief" : "relieved");
+			}
+			else {
+				You_feel("%s.", (u_healing_penalty()) ? "pretty" : "beautiful");
+			}
+			healing_penalty = u_healing_penalty();
+			break;
 		}
 		
 		if (!oldBlind ^ !Blind) {  /* one or the other but not both */

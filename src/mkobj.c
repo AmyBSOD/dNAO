@@ -388,6 +388,8 @@ boolean artif;
 	otmp->objsize = MZ_MEDIUM;
 	otmp->bodytypeflag = MB_HUMANOID;
 	otmp->ovar1 = 0;
+	otmp->oward = 0;
+	otmp->oproperties = 0;
 	otmp->gifted = A_NONE;
 	otmp->lifted = 0;
 	otmp->shopOwned = 0;
@@ -498,10 +500,10 @@ boolean artif;
 			&& !rn2(100)
 		){
 			switch(d(1,4)){
-				case 1: otmp->ovar1 = WARD_TOUSTEFNA; break;
-				case 2: otmp->ovar1 = WARD_DREPRUN; break;
-				case 3: otmp->ovar1 = WARD_VEIOISTAFUR; break;
-				case 4: otmp->ovar1 = WARD_THJOFASTAFUR; break;
+				case 1: otmp->oward = WARD_TOUSTEFNA; break;
+				case 2: otmp->oward = WARD_DREPRUN; break;
+				case 3: otmp->oward = WARD_VEIOISTAFUR; break;
+				case 4: otmp->oward = WARD_THJOFASTAFUR; break;
 			}
 		}
 		break;
@@ -534,6 +536,9 @@ boolean artif;
 			break;
 		    }
 		}
+		break;
+	    case EYEBALL:
+			otmp->corpsenm = PM_HUMAN;
 		break;
 	    case TIN:
 		otmp->corpsenm = NON_PM;	/* empty (so far) */
@@ -574,7 +579,9 @@ boolean artif;
 			begin_burn(otmp, FALSE);
 			obj_extract_self(otmp);	 /* now release it for caller's use */
 		}
-		break;
+		if (artif && !rn2(Role_if(PM_PIRATE) ? 5 : 20))
+		    otmp = mk_artifact(otmp, (aligntyp)A_NONE);
+	break;
 	case TOOL_CLASS:
 	    switch(otmp->otyp) {
 		case TALLOW_CANDLE:
@@ -779,7 +786,9 @@ boolean artif;
 			doMaskStats(otmp);
 		break;
 		}
-	    break;
+		if (artif && !rn2(Role_if(PM_PIRATE) ? 10 : 40))
+		    otmp = mk_artifact(otmp, (aligntyp)A_NONE);
+	break;
 	case AMULET_CLASS:
 		if (otmp->otyp == AMULET_OF_YENDOR) flags.made_amulet = TRUE;
 		if(rn2(10) && (otmp->otyp == AMULET_OF_STRANGULATION ||
@@ -787,6 +796,8 @@ boolean artif;
 		   otmp->otyp == AMULET_OF_RESTFUL_SLEEP)) {
 			curse(otmp);
 		} else	blessorcurse(otmp, 10);
+		if (artif && !rn2(Role_if(PM_PIRATE) ? 5 : 20))
+		    otmp = mk_artifact(otmp, (aligntyp)A_NONE);
 	case VENOM_CLASS:
 	case CHAIN_CLASS:
 	case BALL_CLASS:
@@ -821,16 +832,18 @@ boolean artif;
 		if(otmp->otyp == SCR_WARD){
 			int prob = rn2(73);
 			/*The circle of acheron is so common and so easy to draw that noone makes ward scrolls of it*/
-			if(prob < 10) otmp->ovar1 = WINGS_OF_GARUDA;
-			else if(prob < 20) otmp->ovar1 = CARTOUCHE_OF_THE_CAT_LORD;
-			else if(prob < 30) otmp->ovar1 = SIGN_OF_THE_SCION_QUEEN;
-			else if(prob < 40) otmp->ovar1 = ELDER_ELEMENTAL_EYE;
-			else if(prob < 50) otmp->ovar1 = ELDER_SIGN;
-			else if(prob < 60) otmp->ovar1 = HAMSA;
-			else if(prob < 70) otmp->ovar1 = PENTAGRAM;
-			else otmp->ovar1 = HEXAGRAM;
+			if(prob < 10) otmp->oward = WINGS_OF_GARUDA;
+			else if(prob < 20) otmp->oward = CARTOUCHE_OF_THE_CAT_LORD;
+			else if(prob < 30) otmp->oward = SIGN_OF_THE_SCION_QUEEN;
+			else if(prob < 40) otmp->oward = ELDER_ELEMENTAL_EYE;
+			else if(prob < 50) otmp->oward = ELDER_SIGN;
+			else if(prob < 60) otmp->oward = HAMSA;
+			else if(prob < 70) otmp->oward = PENTAGRAM;
+			else otmp->oward = HEXAGRAM;
 		}
-		break;
+		if (artif && !rn2(Role_if(PM_PIRATE) ? 5 : 20))
+		    otmp = mk_artifact(otmp, (aligntyp)A_NONE);
+	break;
 	case SPBOOK_CLASS:
 		blessorcurse(otmp, 17);
 		// WARD_ACHERON			0x0000008L
@@ -853,103 +866,103 @@ boolean artif;
 		 case 0:
 		 break;
 		 case 1:
-			if( (rn2(3)) ) otmp->ovar1 = WARD_ACHERON;
+			if( (rn2(3)) ) otmp->oward = WARD_ACHERON;
 			else if( !(rn2(3)) ){
-				if( rn2(2) ) otmp->ovar1 = WARD_QUEEN;
-				else otmp->ovar1 = WARD_GARUDA;
+				if( rn2(2) ) otmp->oward = WARD_QUEEN;
+				else otmp->oward = WARD_GARUDA;
 			}
 		 break;
 		 case 2:
 			if( rn2(2) ){
-				if( !(rn2(8)) ) otmp->ovar1 = WARD_EYE;
-				else if( rn2(2) ) otmp->ovar1 = WARD_QUEEN;
-				else otmp->ovar1 = WARD_GARUDA;
+				if( !(rn2(8)) ) otmp->oward = WARD_EYE;
+				else if( rn2(2) ) otmp->oward = WARD_QUEEN;
+				else otmp->oward = WARD_GARUDA;
 			}
-			else if( rn2(3) ) otmp->ovar1 = WARD_ACHERON;
+			else if( rn2(3) ) otmp->oward = WARD_ACHERON;
 		 break;
 		 case 3:
 			if( !(rn2(3)) ){
-				if( !(rn2(5)) ) otmp->ovar1 = WARD_EYE;
-				else if( !(rn2(4)) ) otmp->ovar1 = WARD_QUEEN;
-				else if( !(rn2(3)) )otmp->ovar1 = WARD_GARUDA;
-				else if(   rn2(2) )otmp->ovar1 = WARD_ELDER_SIGN;
-				else otmp->ovar1 = WARD_CAT_LORD;
+				if( !(rn2(5)) ) otmp->oward = WARD_EYE;
+				else if( !(rn2(4)) ) otmp->oward = WARD_QUEEN;
+				else if( !(rn2(3)) )otmp->oward = WARD_GARUDA;
+				else if(   rn2(2) )otmp->oward = WARD_ELDER_SIGN;
+				else otmp->oward = WARD_CAT_LORD;
 			}
 			else if(rn2(2)){
-				if( !(rn2(4)) ) otmp->ovar1 = WARD_TOUSTEFNA;
-				else if( !(rn2(3)) )otmp->ovar1 = WARD_DREPRUN;
-				else if(  (rn2(2)) )otmp->ovar1 = WARD_VEIOISTAFUR;
-				else otmp->ovar1 = WARD_THJOFASTAFUR;
+				if( !(rn2(4)) ) otmp->oward = WARD_TOUSTEFNA;
+				else if( !(rn2(3)) )otmp->oward = WARD_DREPRUN;
+				else if(  (rn2(2)) )otmp->oward = WARD_VEIOISTAFUR;
+				else otmp->oward = WARD_THJOFASTAFUR;
 			}
-			else if( rn2(3) ) otmp->ovar1 = WARD_ACHERON;
+			else if( rn2(3) ) otmp->oward = WARD_ACHERON;
 		 break;
 		 case 4:
 			if( rn2(4) ){
-				if( !(rn2(9)) ) otmp->ovar1 = WARD_EYE;
-				else if( !rn2(8) ) otmp->ovar1 = WARD_QUEEN;
-				else if( !rn2(7) )otmp->ovar1 = WARD_GARUDA;
-				else if( !rn2(6) )otmp->ovar1 = WARD_ELDER_SIGN;
-				else if( !rn2(5) )otmp->ovar1 = WARD_CAT_LORD;
-				else if( !rn2(4) ) otmp->ovar1 = WARD_TOUSTEFNA;
-				else if( !rn2(3) )otmp->ovar1 = WARD_DREPRUN;
-				else if(  rn2(2) )otmp->ovar1 = WARD_VEIOISTAFUR;
-				else otmp->ovar1 = WARD_THJOFASTAFUR;
+				if( !(rn2(9)) ) otmp->oward = WARD_EYE;
+				else if( !rn2(8) ) otmp->oward = WARD_QUEEN;
+				else if( !rn2(7) )otmp->oward = WARD_GARUDA;
+				else if( !rn2(6) )otmp->oward = WARD_ELDER_SIGN;
+				else if( !rn2(5) )otmp->oward = WARD_CAT_LORD;
+				else if( !rn2(4) ) otmp->oward = WARD_TOUSTEFNA;
+				else if( !rn2(3) )otmp->oward = WARD_DREPRUN;
+				else if(  rn2(2) )otmp->oward = WARD_VEIOISTAFUR;
+				else otmp->oward = WARD_THJOFASTAFUR;
 			}
-			else otmp->ovar1 = WARD_ACHERON;
+			else otmp->oward = WARD_ACHERON;
 		 break;
 		 case 5:
 			if( !(rn2(4)) ){
-				if( !(rn2(2)) ) otmp->ovar1 = WARD_PENTAGRAM;
-				else otmp->ovar1 = WARD_HAMSA;
+				if( !(rn2(2)) ) otmp->oward = WARD_PENTAGRAM;
+				else otmp->oward = WARD_HAMSA;
 			}
 			else if( (rn2(3)) ){
-				if( !(rn2(8)) ) otmp->ovar1 = WARD_QUEEN;
-				else if( !rn2(7) )otmp->ovar1 = WARD_GARUDA;
-				else if( !rn2(6) )otmp->ovar1 = WARD_ELDER_SIGN;
-				else if( !rn2(5) )otmp->ovar1 = WARD_CAT_LORD;
-				else if( !rn2(4) ) otmp->ovar1 = WARD_TOUSTEFNA;
-				else if( !rn2(3) )otmp->ovar1 = WARD_DREPRUN;
-				else if(  rn2(2) )otmp->ovar1 = WARD_VEIOISTAFUR;
-				else otmp->ovar1 = WARD_THJOFASTAFUR;
+				if( !(rn2(8)) ) otmp->oward = WARD_QUEEN;
+				else if( !rn2(7) )otmp->oward = WARD_GARUDA;
+				else if( !rn2(6) )otmp->oward = WARD_ELDER_SIGN;
+				else if( !rn2(5) )otmp->oward = WARD_CAT_LORD;
+				else if( !rn2(4) ) otmp->oward = WARD_TOUSTEFNA;
+				else if( !rn2(3) )otmp->oward = WARD_DREPRUN;
+				else if(  rn2(2) )otmp->oward = WARD_VEIOISTAFUR;
+				else otmp->oward = WARD_THJOFASTAFUR;
 			}
-			else otmp->ovar1 = WARD_EYE;
+			else otmp->oward = WARD_EYE;
 		 break;
 		 case 6:
 			if( !(rn2(3)) ){
-				if( !(rn2(3)) ) otmp->ovar1 = WARD_PENTAGRAM;
-				else if( !rn2(2) )otmp->ovar1 = WARD_HEXAGRAM;
-				else otmp->ovar1 = WARD_HAMSA;
+				if( !(rn2(3)) ) otmp->oward = WARD_PENTAGRAM;
+				else if( !rn2(2) )otmp->oward = WARD_HEXAGRAM;
+				else otmp->oward = WARD_HAMSA;
 			}
 			else if( (rn2(6)) ){
-				if( !(rn2(8)) ) otmp->ovar1 = WARD_QUEEN;
-				else if( !rn2(7) )otmp->ovar1 = WARD_GARUDA;
-				else if( !rn2(6) )otmp->ovar1 = WARD_ELDER_SIGN;
-				else if( !rn2(5) )otmp->ovar1 = WARD_CAT_LORD;
-				else if( !rn2(4) ) otmp->ovar1 = WARD_TOUSTEFNA;
-				else if( !rn2(3) )otmp->ovar1 = WARD_DREPRUN;
-				else if(  rn2(2) )otmp->ovar1 = WARD_VEIOISTAFUR;
-				else otmp->ovar1 = WARD_THJOFASTAFUR;
+				if( !(rn2(8)) ) otmp->oward = WARD_QUEEN;
+				else if( !rn2(7) )otmp->oward = WARD_GARUDA;
+				else if( !rn2(6) )otmp->oward = WARD_ELDER_SIGN;
+				else if( !rn2(5) )otmp->oward = WARD_CAT_LORD;
+				else if( !rn2(4) ) otmp->oward = WARD_TOUSTEFNA;
+				else if( !rn2(3) )otmp->oward = WARD_DREPRUN;
+				else if(  rn2(2) )otmp->oward = WARD_VEIOISTAFUR;
+				else otmp->oward = WARD_THJOFASTAFUR;
 			}
-			else otmp->ovar1 = WARD_EYE;
+			else otmp->oward = WARD_EYE;
 		 break;
 		 case 7:
 			if( !(rn2(4)) ){
-				if( !(rn2(3)) ) otmp->ovar1 = WARD_EYE;
-				else if( !rn2(2) )otmp->ovar1 = WARD_ELDER_SIGN;
-				else otmp->ovar1 = WARD_CAT_LORD;
+				if( !(rn2(3)) ) otmp->oward = WARD_EYE;
+				else if( !rn2(2) )otmp->oward = WARD_ELDER_SIGN;
+				else otmp->oward = WARD_CAT_LORD;
 			}
 			else if( !(rn2(3)) ){
-				if( !(rn2(3)) ) otmp->ovar1 = WARD_ACHERON;
-				else if( !rn2(2) )otmp->ovar1 = WARD_QUEEN;
-				else otmp->ovar1 = WARD_GARUDA;
+				if( !(rn2(3)) ) otmp->oward = WARD_ACHERON;
+				else if( !rn2(2) )otmp->oward = WARD_QUEEN;
+				else otmp->oward = WARD_GARUDA;
 			}
 			else if( !(rn2(2)) ){
-				if( !(rn2(3)) ) otmp->ovar1 = WARD_HEXAGRAM;
-				else if( !rn2(2) )otmp->ovar1 = WARD_PENTAGRAM;
-				else otmp->ovar1 = WARD_HAMSA;
+				if( !(rn2(3)) ) otmp->oward = WARD_HEXAGRAM;
+				else if( !rn2(2) )otmp->oward = WARD_PENTAGRAM;
+				else otmp->oward = WARD_HAMSA;
 			}
 			else{
-				otmp->ovar1 = WARD_HEPTAGRAM;
+				otmp->oward = WARD_HEPTAGRAM;
 			}
 		 break;
 		 default:
@@ -957,6 +970,8 @@ boolean artif;
 				objects[otmp->otyp].oc_level, otmp->otyp);
 			return 0;
 		}
+		if (artif && !rn2(Role_if(PM_PIRATE) ? 5 : 20))
+		    otmp = mk_artifact(otmp, (aligntyp)A_NONE);
 	break;
 	case ARMOR_CLASS:
 		if(rn2(10) && (otmp->otyp == FUMBLE_BOOTS ||
@@ -969,7 +984,7 @@ boolean artif;
 			otmp->blessed = rn2(2);
 			otmp->spe = rne(3);
 		} else	blessorcurse(otmp, 10);
-		if (artif && !rn2(40))
+		if (artif && !rn2(Role_if(PM_PIRATE) ? 10 : 40))
 		    otmp = mk_artifact(otmp, (aligntyp)A_NONE);
 		/* simulate lacquered armor for samurai */
 		if (Role_if(PM_SAMURAI) && otmp->otyp == SPLINT_MAIL &&
@@ -1000,10 +1015,10 @@ boolean artif;
 		}
 		if(otmp->otyp == DROVEN_PLATE_MAIL || otmp->otyp == DROVEN_CHAIN_MAIL || otmp->otyp == CONSORT_S_SUIT){
 			otmp->ohaluengr = TRUE;
-			if(Race_if(PM_DROW) && Is_qstart(&u.uz)) otmp->ovar1 = u.start_house;
-			else if(!(rn2(10))) otmp->ovar1 = rn2(EDDER_SYMBOL+1-LOLTH_SYMBOL)+LOLTH_SYMBOL;
-			else if(!(rn2(4))) otmp->ovar1 = rn2(LAST_HOUSE+1-FIRST_HOUSE)+FIRST_HOUSE;
-			else otmp->ovar1 = rn2(LAST_FALLEN_HOUSE+1-FIRST_FALLEN_HOUSE)+FIRST_FALLEN_HOUSE;
+			if(Race_if(PM_DROW) && Is_qstart(&u.uz)) otmp->oward = u.start_house;
+			else if(!(rn2(10))) otmp->oward = rn2(EDDER_SYMBOL+1-LOLTH_SYMBOL)+LOLTH_SYMBOL;
+			else if(!(rn2(4))) otmp->oward = rn2(LAST_HOUSE+1-FIRST_HOUSE)+FIRST_HOUSE;
+			else otmp->oward = rn2(LAST_FALLEN_HOUSE+1-FIRST_FALLEN_HOUSE)+FIRST_FALLEN_HOUSE;
 		}
 
 	break;
@@ -1013,16 +1028,18 @@ boolean artif;
 			(objects[otmp->otyp].oc_dir == NODIR) ? 11 : 4);
 		blessorcurse(otmp, 17);
 		otmp->recharged = 0; /* used to control recharging */
-		break;
+		if (artif && !rn2(Role_if(PM_PIRATE) ? 5 : 20))
+		    otmp = mk_artifact(otmp, (aligntyp)A_NONE);
+	break;
 	case RING_CLASS:
 		if(isEngrRing(otmp->otyp) && !rn2(3) ){
 			if(rn2(4)){
 				otmp->ohaluengr = TRUE;
-				otmp->ovar1 = (long)random_haluIndex();
+				otmp->oward = (long)random_haluIndex();
 			}
 			else{
 				otmp->ohaluengr = FALSE;
-				otmp->ovar1 = rn2(4) ? CIRCLE_OF_ACHERON :
+				otmp->oward = rn2(4) ? CIRCLE_OF_ACHERON :
 								!rn2(6) ? HAMSA : 
 								!rn2(5) ? ELDER_SIGN : 
 								!rn2(4) ? WINGS_OF_GARUDA : 
@@ -1033,9 +1050,9 @@ boolean artif;
 		}
 		if(isSignetRing(otmp->otyp)){
 			otmp->ohaluengr = TRUE;
-			if(!(rn2(100))) otmp->ovar1 = rn2(EDDER_SYMBOL+1-LOLTH_SYMBOL)+LOLTH_SYMBOL;
-			else if(!(rn2(4))) otmp->ovar1 = rn2(LAST_HOUSE+1-FIRST_HOUSE)+FIRST_HOUSE;
-			else otmp->ovar1 = rn2(LAST_FALLEN_HOUSE+1-FIRST_FALLEN_HOUSE)+FIRST_FALLEN_HOUSE;
+			if(!(rn2(100))) otmp->oward = rn2(EDDER_SYMBOL+1-LOLTH_SYMBOL)+LOLTH_SYMBOL;
+			else if(!(rn2(4))) otmp->oward = rn2(LAST_HOUSE+1-FIRST_HOUSE)+FIRST_HOUSE;
+			else otmp->oward = rn2(LAST_FALLEN_HOUSE+1-FIRST_FALLEN_HOUSE)+FIRST_FALLEN_HOUSE;
 		}
 		if(objects[otmp->otyp].oc_charged) {
 		    blessorcurse(otmp, 3);
@@ -1054,7 +1071,9 @@ boolean artif;
 			  otmp->otyp == RIN_HUNGER || !rn2(9))) {
 			curse(otmp);
 		}
-		break;
+		if (artif && !rn2(Role_if(PM_PIRATE) ? 5 : 20))
+		    otmp = mk_artifact(otmp, (aligntyp)A_NONE);
+	break;
 	case ROCK_CLASS:
 		switch (otmp->otyp) {
 		    case STATUE:
@@ -1065,7 +1084,9 @@ boolean artif;
 			    (void) add_to_container(otmp,
 						    mkobj(SPBOOK_CLASS,FALSE));
 		}
-		break;
+		if (artif && !rn2(Role_if(PM_PIRATE) ? 5 : 20))
+		    otmp = mk_artifact(otmp, (aligntyp)A_NONE);
+	break;
 	case COIN_CLASS:
 		break;	/* do nothing */
 	default:
