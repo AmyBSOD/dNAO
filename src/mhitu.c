@@ -8703,8 +8703,8 @@ int dmg;
 					killer = "being sucked into the elder priest's belly and digested whole";
 					killer_format = KILLED_BY;
 					done(DIED);
+					break;
 				}
-			break;
 				if(allreadydone&(0x1<<6)) break;
 				allreadydone |= 0x1<<6;
 				n--; //else commit to the attack.
