@@ -2650,13 +2650,14 @@ inv_weight()
 		otmp = otmp->nobj;
 	}
 	
+/* This code crashes the game. Until Chris fixes it, I'll just disable it. --Amy
 	if(u.usteed){
 		otmp = u.usteed->minvent;
 		while ((otmp = otmp->nobj) != 0){
 			if(otmp->oartifact) otmp->owt = weight(otmp);
 			wt += otmp->owt;
 		}
-	}
+	}*/
 	
 	wc = weight_cap();
 	return (wt - wc);
