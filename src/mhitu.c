@@ -40,7 +40,7 @@ STATIC_DCL void FDECL(hitmsg,(struct monst *,struct attack *));
 static const int gazeattacks[] = {AD_DEAD, AD_CNCL, AD_PLYS, AD_DRLI, AD_ENCH, AD_STON, AD_LUCK, AD_DARK, AD_PSI, AD_MANA, AD_DISP, AD_ABDC,
 										AD_CONF, AD_SLOW, AD_STUN, AD_BLND, AD_FIRE, AD_FIRE, AD_DREN, AD_HODS, AD_DRST,
 										AD_DISE, AD_PEST, AD_TLPT, AD_PHYS, AD_SUCK, AD_DETH, AD_MALK, AD_WEEP,
-										AD_COLD, AD_COLD, AD_ELEC, AD_ELEC, AD_HALU, AD_SLEE, AD_BLNK };
+										AD_COLD, AD_COLD, AD_ELEC, AD_ELEC, AD_HALU, AD_SLEE, AD_BLNK, AD_STCK };
 static const int elementalgaze[] = {AD_FIRE,AD_COLD,AD_ELEC};
 
 static const int meleedmgtypes[] = {AD_PHYS, AD_SHDW, AD_STAR, AD_BLUD, AD_FIRE, AD_COLD, AD_SLEE, AD_ELEC, AD_DRST, AD_ACID, AD_BLND, AD_STUN, AD_SLOW,
@@ -4990,6 +4990,15 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		 }
              mdamageu(mtmp, d(3,8) + dmgplus);
 		}
+		break;
+
+	    case AD_STCK:
+		if (!mtmp->mcan && canseemon(mtmp) && !is_blind(mtmp) && !Blind && !rn2(5) ) {
+			if (!u.ustuck && !sticks(youracedata)){
+				pline("%s gazes to hold you in place!", Monnam(mtmp));
+				if(Upolyd && u.umonnum == PM_TOVE) You("are much too slithy to get stuck!");
+				else u.ustuck = mtmp;
+			}
 		break;
 
 	    case AD_DARK:
