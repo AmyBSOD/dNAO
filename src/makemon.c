@@ -3882,7 +3882,7 @@ register struct	monst	*mtmp;
 			case PM_CAPTAIN: mac = -3; break;
 			case PM_WATCHMAN: mac = 3; break;
 			case PM_WATCH_CAPTAIN: mac = -2; break;
-			default: impossible("odd mercenary %d?", monsndx(ptr));
+			default: /*impossible("odd mercenary %d?", monsndx(ptr));*/
 				mac = 0;
 				break;
 		    }
