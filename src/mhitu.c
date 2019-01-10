@@ -4999,6 +4999,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 				if(Upolyd && u.umonnum == PM_TOVE) You("are much too slithy to get stuck!");
 				else u.ustuck = mtmp;
 			}
+		}
 		break;
 
 	    case AD_DARK:
