@@ -527,11 +527,17 @@ $(O)sp_lev.tag: $(O)utility.tag $(DAT)/bigroom.des  $(DAT)/castle.des \
 	 $(DAT)/tourist.des $(DAT)/valkyrie.des $(DAT)/wizard.des \
 	 $(DAT)/law.des     $(DAT)/chaos.des    $(DAT)/neutrality.des \
 	 $(DAT)/tomb.des    $(DAT)/blacktemple.des $(DAT)/sunlesssea.des \
-	 $(DAT)/storage.des \
-	 $(DAT)/convict.des \
+	 $(DAT)/storage.des $(DAT)/anachrononaut.des \
+	 $(DAT)/convict.des $(DAT)/moria.des \
 	 $(DAT)/noble.des \
 	 $(DAT)/pirate.des \
 	 $(DAT)/binder.des \
+	 $(DAT)/gnomeranger.des \
+	 $(DAT)/hedrownoble.des \
+	 $(DAT)/hedrow.des \
+	 $(DAT)/drownoble.des \
+	 $(DAT)/drow.des \
+	 $(DAT)/erebor.des $(DAT)/elf.des \
 	 $(DAT)/labr.des
 	$(subst /,\,$(U)lev_comp $(DAT)/bigroom.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/castle.des)
@@ -539,9 +545,17 @@ $(O)sp_lev.tag: $(O)utility.tag $(DAT)/bigroom.des  $(DAT)/castle.des \
 	$(subst /,\,$(U)lev_comp $(DAT)/gehennom.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/knox.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/mines.des)
+	$(subst /,\,$(U)lev_comp $(DAT)/elf.des)
+	$(subst /,\,$(U)lev_comp $(DAT)/erebor.des)
+	$(subst /,\,$(U)lev_comp $(DAT)/moria.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/medusa.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/grue.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/oracle.des)
+	$(subst /,\,$(U)lev_comp $(DAT)/gnomeranger.des)
+	$(subst /,\,$(U)lev_comp $(DAT)/hedrownoble.des)
+	$(subst /,\,$(U)lev_comp $(DAT)/hedrow.des)
+	$(subst /,\,$(U)lev_comp $(DAT)/drownoble.des)
+	$(subst /,\,$(U)lev_comp $(DAT)/drow.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/sokoban.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/tower.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/yendor.des)
@@ -570,6 +584,7 @@ $(O)sp_lev.tag: $(O)utility.tag $(DAT)/bigroom.des  $(DAT)/castle.des \
 	$(subst /,\,$(U)lev_comp $(DAT)/noble.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/binder.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/labr.des)
+	$(subst /,\,$(U)lev_comp $(DAT)/anachrononaut.des)
 	$(subst /,\,$(U)lev_comp $(DAT)/pirate.des)
 	$(subst /,\,copy *.lev $(DAT))
 	$(subst /,\,del *.lev)
