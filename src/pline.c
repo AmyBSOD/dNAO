@@ -129,7 +129,7 @@ pline VA_DECL(const char *, line)
 
 	if (!line || !*line) return;
 	if (index(line, '%')) {
-	    Vsprintf(pbuf,line,VA_ARGS);
+	    vsnprintf(pbuf,line,VA_ARGS,sizeof pbuf);
 	    line = pbuf;
 	}
 	if(Role_if(PM_PIRATE)){/*Ben Collver's fixes*/
@@ -328,7 +328,7 @@ raw_printf VA_DECL(const char *, line)
 	    raw_print(line);
 	else {
 	    char pbuf[BUFSZ];
-	    Vsprintf(pbuf,line,VA_ARGS);
+	    vsnprintf(pbuf,line,VA_ARGS,sizeof pbuf);
 	    raw_print(pbuf);
 	}
 }
@@ -343,7 +343,7 @@ impossible VA_DECL(const char *, s)
 	if (program_state.in_impossible)
 		panic("impossible called impossible");
 	program_state.in_impossible = 1;
-	Vsprintf(pbuf,s,VA_ARGS);
+	vsnprintf(pbuf,s,VA_ARGS,sizeof pbuf);
 	pbuf[BUFSZ-1] = '\0';
 	paniclog("impossible", pbuf);
 	pline("%s", pbuf);
