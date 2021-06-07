@@ -2036,7 +2036,7 @@ boolean new_game;	/* false => restoring an old game */
 	  Hello((struct monst *) 0), plname, buf, urace.adj,
 	  (currentgend && urole.name.f) ? urole.name.f : urole.name.m);
 	if(iflags.dnethack_start_text){
-	pline("Attention: This is an early beta version of dnhslex. Frequent savebreaks are possible. If you manage to get far in the game and don't want to lose your character, message Amy (LarienTelrunya) in #em.slashem.me on Freenode IRC! Syntax: !tell LarienTelrunya please don't break saves until I finish my char");
+	pline("Attention: This is an early beta version of dnhslex. Frequent savebreaks are possible. If you manage to get far in the game and don't want to lose your character, message Amy (LarienTelrunya) in #em.slashem.me on Libera IRC! Syntax: !tell LarienTelrunya please don't break saves until I finish my char");
 	pline("Press Ctrl^W or type #ward to engrave a warding sign.");
 	if(Role_if(PM_PIRATE)) You("can swim! Type #swim while swimming on the surface to dive down to the bottom.");
 	else if(Role_if(PM_EXILE)){
